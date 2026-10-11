@@ -70,5 +70,17 @@
     "change_effect": "NEW_PAYMENT_INTENTS_ONLY",
     "direct_sales_connection": "PLATFORM_OWN_MERCHANT_ACCOUNT",
     "multi_seller_checkout": "SEPARATE_BY_SELLER_UNLESS_APPROVED"
+  },
+  "pg_marketplace": {
+    "provider_onboarding": true,
+    "provider_role": "PG_OPERATOR",
+    "provider_publication_requires_approval": true,
+    "pg_offerings_catalog": true,
+    "seller_selects_published_offering": true,
+    "merchant_underwriting_required": true,
+    "arkaon_connector_pipeline": "PROPOSAL_SANDBOX_AUDIT_APPROVAL",
+    "integration_mode_default": "MANAGED_SERVER_SIDE",
+    "seller_upload_requires_explicit_consent": true,
+    "live_activation": "BLOCKED_UNTIL_AUDIT_AND_OPERATOR_APPROVAL"
   }
 }
