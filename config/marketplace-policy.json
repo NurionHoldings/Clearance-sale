@@ -84,14 +84,26 @@
     "live_activation": "BLOCKED_UNTIL_AUDIT_AND_OPERATOR_APPROVAL"
   },
   "seller_external_storefront_policy": {
-    "integration_contract_required_for_onboarding": true,
-    "scope": "ATTRIBUTABLE_CLEARANCE_REFERRAL_ORDERS",
-    "signed_acceptance_evidence_required": true,
-    "storefront_ownership_verification_required": true,
-    "compatibility_review_required": true,
-    "unsupported_storefront_outcome": "ONBOARDING_BLOCKED_OR_APPROVED_HOSTED_ALTERNATIVE",
+    "integration_contract_required_for_onboarding": false,
+    "scope": "NOT_APPLICABLE_HOSTED_ONLY",
+    "storefront_ownership_verification_required": false,
+    "compatibility_review_required": false,
+    "unsupported_storefront_outcome": "NOT_APPLICABLE",
     "authorized_installation_only": true,
     "privacy_consents_separate": true,
     "production_release_requires_audit": true
+  },
+  "storefront_strategy": {
+    "selected_model": "PLATFORM_HOSTED_SELLER_STOREFRONTS_ONLY",
+    "seller_storefront_route": "/shops/{seller_slug}",
+    "catalog": "SELLER_MANAGED_PLATFORM_HOSTED",
+    "cart": "PLATFORM_HOSTED",
+    "checkout": "PLATFORM_HOSTED",
+    "payment_provider_selection": "SELLER_SELECTED_ACTIVE_PG_CONNECTION",
+    "external_storefront_checkout_integrations": false,
+    "external_storefront_referral_attribution": false,
+    "existing_seller_websites": "OPTIONAL_INFORMATIONAL_LINKS_ONLY",
+    "multi_seller_cart": "SPLIT_BY_LEGAL_SELLER_UNTIL_VERIFIED_MULTI_MERCHANT_SUPPORT",
+    "go_live": "BLOCKED_PENDING_IMPLEMENTATION_TESTS_AND_APPROVAL"
   }
 }
