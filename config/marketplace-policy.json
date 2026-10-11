@@ -82,5 +82,16 @@
     "integration_mode_default": "MANAGED_SERVER_SIDE",
     "seller_upload_requires_explicit_consent": true,
     "live_activation": "BLOCKED_UNTIL_AUDIT_AND_OPERATOR_APPROVAL"
+  },
+  "seller_external_storefront_policy": {
+    "integration_contract_required_for_onboarding": true,
+    "scope": "ATTRIBUTABLE_CLEARANCE_REFERRAL_ORDERS",
+    "signed_acceptance_evidence_required": true,
+    "storefront_ownership_verification_required": true,
+    "compatibility_review_required": true,
+    "unsupported_storefront_outcome": "ONBOARDING_BLOCKED_OR_APPROVED_HOSTED_ALTERNATIVE",
+    "authorized_installation_only": true,
+    "privacy_consents_separate": true,
+    "production_release_requires_audit": true
   }
 }
