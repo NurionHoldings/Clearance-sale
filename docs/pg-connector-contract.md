@@ -48,3 +48,15 @@ Each adapter must ship capability manifest, versioned spec references, contract 
 
 ## Status
 Specification only. No real PG connector or payment processing is implemented.
+
+
+## Seller-selected PG — binding product decision (2026-10)
+- **The seller, not the platform, selects a PG from the approved provider registry.** The platform acts as a technical integration broker, subject to applicable contractual permissions. Platform operators may approve connector security/compliance but may not silently override the seller's choice.
+- Seller portal displays comparable provider terms with effective dates, eligibility, supported payment methods, fees and settlement conditions. Figures must be provider-confirmed and labeled when indicative.
+- Seller initiates connection to selected provider, completes the PG's own merchant agreement and underwriting, then authorizes a merchant-account binding. Never treat clicking a provider as PG approval.
+- Store `seller_pg_connections(seller_id, provider_id, merchant_account_ref, status, effective_at, verified_at, credential_reference, terms_version)`. Suggested states: `SELECTED -> CONTRACT_PENDING -> PG_REVIEW -> CREDENTIALS_PENDING -> TESTING -> ACTIVE`, plus `SUSPENDED/REVOKED/FAILED`.
+- Each seller listing/order resolves the **seller's active PG connection**; platform direct-sale orders use the platform's own separate PG merchant connection. Reject checkout if connection inactive or payment method unsupported.
+- Seller may request PG change, but it takes effect only for new payment intents after validation; existing orders/refunds stay pinned to their original provider and merchant account.
+- Platform commission agreement remains separate from seller-PG fees and settlement agreement. Never assume the platform is entitled to intercept seller proceeds or conduct submerchant payouts.
+- Multi-seller cart: separate orders and payment attempts per legal seller/PG unless a specifically reviewed PG product supports a lawful multi-merchant flow.
+- The PG connector directory is open to qualified providers under published, non-discriminatory technical onboarding requirements; security, compliance and capability review remain mandatory.
