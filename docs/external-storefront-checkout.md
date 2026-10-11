@@ -29,3 +29,21 @@ Signed referral token forgery/expiry/replay, open redirect, cross-seller leakage
 
 ## Implementation status
 Design only. No external site can be modified, and no external checkout can be forced without installation/consent and compatible APIs.
+
+
+## Binding operator decision — mandatory seller integration undertaking
+- Seller onboarding must require explicit acceptance of the **commercial integration and attribution obligation** as an essential marketplace participation term, with version, timestamp, authenticated signer, signed document digest, and evidence retained. Seller can decline and not join; operator cannot claim acceptance on seller's behalf.
+- The undertaking covers **eligible orders attributable to Clearance-sale referrals**, not all purchases on the seller's existing store. Attribution window, refunds, returns, mixed baskets, seller PG choice and commission terms require explicit contract definitions.
+- Separate necessary marketplace contract acceptance from any privacy consents requiring independent choice; collect only lawful, necessary data.
+- At onboarding, register the seller's storefront URL, ownership proof, technology type and authorized technical access. ARKAON classifies official integration methods and restrictions.
+- If storefront checkout cannot legally/technically be redirected, seller must either (a) use an approved hosted storefront or catalog/checkout, (b) supply an authorized alternative compliant integration, or (c) remain ONBOARDING_BLOCKED. Do not falsely mark LIVE.
+- Never use unauthorized browser injection, covert scripts, circumvention of hosted-platform terms or installation without the site's authorized administrator approval.
+- A signed undertaking does not grant the platform rights against a third-party hosted storefront provider; their separate API and payment rules prevail.
+- Operator may enforce the contract through publication gating and audit, not through claiming impossible technical control over every external checkout.
+
+## ARKAON universal compatibility approach
+- Target broad coverage, not guaranteed universal integration. Identify technology via authorized public metadata and seller-supplied documentation; do not scrape protected areas or obtain credentials automatically.
+- Maintain a versioned capability registry by storefront engine and deployment mode, with evidence links, checkout extensibility, official API constraints, PG compatibility, plugin rights, webhook options, test status and last verification.
+- Decision outcomes: NATIVE_CONNECTOR, HOSTED_CHECKOUT, CUSTOM_INTEGRATION, HOSTED_STOREFRONT, UNSUPPORTED_HOLD.
+- Use a safe adapter SDK with common contracts for referral session, cart handoff, payment intent, order callback, refund and reconciliation. Generate PRs and sandbox proofs only; review before distribution.
+- Reevaluate on vendor API/policy change. Preserve audit evidence and rollback; never promise 100% coverage.
