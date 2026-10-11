@@ -1,0 +1,64 @@
+{
+  "schema_version": "clearance.marketplace/v1",
+  "status": "PROPOSED",
+  "categories": [
+    {
+      "id": "clothing",
+      "name": "의류",
+      "rank": 1
+    },
+    {
+      "id": "hats",
+      "name": "모자",
+      "rank": 2
+    },
+    {
+      "id": "shoes",
+      "name": "신발",
+      "rank": 3
+    },
+    {
+      "id": "sportswear",
+      "name": "운동복",
+      "rank": 4
+    },
+    {
+      "id": "club-gear",
+      "name": "특정 스포츠 동호회 용품",
+      "rank": 5
+    },
+    {
+      "id": "rider-gear",
+      "name": "라이더용품",
+      "rank": 6
+    }
+  ],
+  "sales_models": [
+    "PLATFORM_DIRECT",
+    "THIRD_PARTY_MARKETPLACE"
+  ],
+  "seller_onboarding": {
+    "states": [
+      "APPLIED",
+      "IDENTITY_REVIEW",
+      "CONTRACT_REVIEW",
+      "PG_REVIEW",
+      "APPROVED",
+      "SUSPENDED",
+      "REJECTED"
+    ],
+    "login_required_for_listing": true,
+    "approval_required_for_publication": true
+  },
+  "contract": {
+    "versioned": true,
+    "commission_basis": "PER_SELLER_CONTRACT",
+    "effective_date_required": true,
+    "immutable_accepted_snapshot": true,
+    "pg_allocation_required": true
+  },
+  "release": {
+    "production_payment_enabled": false,
+    "production_seller_signup_enabled": false
+  }
+}
