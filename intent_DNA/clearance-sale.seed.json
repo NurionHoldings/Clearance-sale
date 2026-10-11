@@ -1,0 +1,29 @@
+{
+  "schema_version": "apf.intent-dna-seed/v1",
+  "project_id": "CLEARANCE_SALE",
+  "status": "PROPOSED",
+  "approval_required": true,
+  "source_repository": "NurionHoldings/Clearance-sale",
+  "foundry_repository": "NurionHoldings/ARKAON-Pattern-Foundry",
+  "axes": {
+    "WHY": ["Connect nationwide surplus inventory and clearance demand without misrepresenting availability."],
+    "WHO": ["Buyers", "third-party sellers", "platform direct-sales operator", "platform administrators"],
+    "VALUE": ["Transparent discounted inventory transactions and accountable intermediation."],
+    "OUTCOME": ["Verified listings and traceable, lawful purchase and fulfillment workflows."],
+    "JOURNEY": ["Seller onboarding", "listing verification", "discovery", "order", "payment", "fulfillment", "returns or disputes", "settlement"],
+    "OBJECT": ["Seller", "Listing", "Inventory", "Order", "Payment", "Shipment", "Refund", "SettlementLedger", "AuditEvent"],
+    "OWNER": ["Every listing and order must identify its legal seller of record; payment and settlement amounts require authoritative ledger sources."],
+    "INVARIANT": ["Distinguish platform direct sales from third-party marketplace sales.", "Never allow unapproved sellers to publish live listings.", "Never mark an order paid without verified payment-provider evidence.", "Never pay out twice for the same settlement obligation."],
+    "CONSTRAINT": ["Korean consumer, e-commerce and privacy requirements", "least-privilege access", "production secrets excluded from Foundry ingestion"],
+    "RISK": ["False seller identity", "overselling", "fraudulent payment", "incorrect refunds", "settlement duplication", "personal-data exposure"],
+    "SIGNAL": ["Verified seller rate", "inventory consistency", "payment reconciliation", "refund turnaround", "incident rate"],
+    "EVOLUTION": ["Extend seller operations, product catalog, fulfillment, dispute resolution and settlement without changing seller-of-record and ledger invariants."]
+  },
+  "change_policy": {
+    "core": "LOCKED_CONTRACT_REOPEN",
+    "configurable": "IMPACTED_NODES_ONLY",
+    "experimental": "ISOLATED_TEST",
+    "production_changes": "HUMAN_APPROVAL_REQUIRED",
+    "final_audit": "ETERNIAN"
+  }
+}
