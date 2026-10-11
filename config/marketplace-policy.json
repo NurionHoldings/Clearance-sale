@@ -118,5 +118,31 @@
     "scheduled_reconciliation": true,
     "oversell_test_required": true,
     "production_release": "AUDIT_AND_OPERATOR_APPROVAL"
+  },
+  "seller_mobile_notifications": {
+    "required_capability": true,
+    "channels": [
+      "IN_APP_REALTIME",
+      "WEB_PUSH_PWA"
+    ],
+    "optional_fallback": [
+      "SMS",
+      "KAKAO_BIZ"
+    ],
+    "events": [
+      "PAYMENT_CONFIRMED",
+      "PAYMENT_CANCELLED",
+      "REFUND_CONFIRMED",
+      "INVENTORY_LOW",
+      "OUT_OF_STOCK",
+      "RESTOCKED",
+      "INVENTORY_SYNC_FAILED",
+      "INVENTORY_SYNC_RECOVERED"
+    ],
+    "verified_server_events_only": true,
+    "tenant_scoped": true,
+    "redact_buyer_personal_data": true,
+    "delivery_deduplication": true,
+    "production_release": "ETERNlAN_AUDIT_AND_OPERATOR_APPROVAL"
   }
 }
