@@ -76,7 +76,7 @@ def password_hash(password):
 def verify_password(password, encoded):
     try:
         algorithm, iterations, salt, expected=encoded.split("$")
-        if algorithm!="pbkdf2_sha256": return False
+        if algorithm!="pbkdf2_sha256" or iterations!="310000": return False
         got=hashlib.pbkdf2_hmac("sha256",password.encode(),bytes.fromhex(salt),int(iterations))
         return hmac.compare_digest(got,bytes.fromhex(expected))
     except (ValueError,TypeError):
@@ -154,6 +154,8 @@ def reserve(db,p,variant_id,quantity,key):
                          (p['seller_id'],key)).fetchone()
         if prior:
             if prior[1:]!=(variant_id,quantity): raise Conflict("idempotency mismatch")
+            state=db.execute("SELECT status FROM stock_reservations WHERE id=?",(prior[0],)).fetchone()[0]
+            if state!='held': raise Conflict("reservation already finalized")
             return prior[0]
         changed=db.execute("""UPDATE variants SET reserved=reserved+?
           WHERE id=? AND seller_id=? AND on_hand-reserved>=?""",
