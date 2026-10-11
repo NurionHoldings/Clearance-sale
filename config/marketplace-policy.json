@@ -60,5 +60,15 @@
   "release": {
     "production_payment_enabled": false,
     "production_seller_signup_enabled": false
+  },
+  "pg_selection": {
+    "decision_owner": "SELLER",
+    "platform_role": "TECHNICAL_CONNECTOR_BROKER",
+    "provider_registry": "QUALIFIED_OPEN_REGISTRY",
+    "merchant_contract_owner": "SELLER_AND_SELECTED_PG",
+    "require_verified_active_connection_before_checkout": true,
+    "change_effect": "NEW_PAYMENT_INTENTS_ONLY",
+    "direct_sales_connection": "PLATFORM_OWN_MERCHANT_ACCOUNT",
+    "multi_seller_checkout": "SEPARATE_BY_SELLER_UNLESS_APPROVED"
   }
 }
