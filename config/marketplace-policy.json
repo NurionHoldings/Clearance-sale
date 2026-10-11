@@ -105,5 +105,18 @@
     "existing_seller_websites": "OPTIONAL_INFORMATIONAL_LINKS_ONLY",
     "multi_seller_cart": "SPLIT_BY_LEGAL_SELLER_UNTIL_VERIFIED_MULTI_MERCHANT_SUPPORT",
     "go_live": "BLOCKED_PENDING_IMPLEMENTATION_TESTS_AND_APPROVAL"
+  },
+  "inventory_sync": {
+    "seller_external_store_auto_sync": true,
+    "requires_seller_authorization": true,
+    "source_of_truth": "EXPLICIT_PER_SELLER_VARIANT",
+    "preferred_mode": "ATOMIC_SHARED_RESERVATION",
+    "fallback_mode": "DEDICATED_STOCK_ALLOCATION",
+    "unsafe_shared_stock_behavior": "FAIL_CLOSED",
+    "webhook_verification": true,
+    "idempotent_events": true,
+    "scheduled_reconciliation": true,
+    "oversell_test_required": true,
+    "production_release": "AUDIT_AND_OPERATOR_APPROVAL"
   }
 }
