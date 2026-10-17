@@ -1,0 +1,52 @@
+name: Codex guarded change proposal
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "Approved small development task (no secrets or customer data)"
+        required: true
+        type: choice
+        options:
+          - seller-dashboard-tests
+          - inventory-invariant-tests
+permissions:
+  contents: read
+jobs:
+  propose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify API credential exists
+        env:
+          API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: test -n "$API_KEY"
+      - name: Run tests before Codex
+        run: |
+          if [ -d tests ]; then python -m unittest discover -s tests -v; fi
+      - name: Codex proposes isolated changes
+        uses: openai/codex-action@v1
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          permission-profile: ":workspace"
+          safety-strategy: drop-sudo
+          prompt-file: .github/codex/change-prompt.md
+      - name: Test proposed changes
+        run: |
+          if [ -d tests ]; then python -m unittest discover -s tests -v; fi
+          if [ -d backend ]; then python -m compileall -q backend; fi
+      - name: Export diff for human review
+        shell: bash
+        run: |
+          git diff --binary -- . ':(exclude).github/workflows/**' ':(exclude).github/codex/**' > proposed.patch
+          git diff --stat
+      - uses: actions/upload-artifact@v4
+        with:
+          name: codex-proposed-patch-${{ github.run_id }}
+          path: proposed.patch
+          retention-days: 3
