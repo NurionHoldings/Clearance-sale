@@ -2,7 +2,8 @@ import os
 import tempfile
 import unittest
 from backend.core import (connect,create_seller,authenticate,principal,create_product,
-                          list_products,add_variant,reserve,release,Denied,Conflict)
+                          list_products,add_variant,reserve,release,create_order,mark_order_paid,
+                          cancel_order,get_order,Denied,Conflict)
 
 class CoreTests(unittest.TestCase):
     def setUp(self):
@@ -40,6 +41,40 @@ class CoreTests(unittest.TestCase):
         release(self.db,self.pa,rid)
         release(self.db,self.pa,rid)
         self.assertEqual(self.db.execute("SELECT reserved FROM variants WHERE id=?",(vid,)).fetchone()[0],0)
+    def test_order_paid_commits_inventory_once(self):
+        pid=create_product(self.db,self.pa,'운동화','신발',30000)
+        vid=add_variant(self.db,self.pa,pid,'RUN-260',3)
+        rid=reserve(self.db,self.pa,vid,2,'reserve-paid')
+        oid=create_order(self.db,self.pa,rid,'order-paid')
+        self.assertEqual(oid,create_order(self.db,self.pa,rid,'order-paid'))
+        mark_order_paid(self.db,self.pa,oid)
+        mark_order_paid(self.db,self.pa,oid)
+        stock=self.db.execute("SELECT on_hand,reserved FROM variants WHERE id=?",(vid,)).fetchone()
+        self.assertEqual(stock,(1,0))
+        self.assertEqual(get_order(self.db,self.pa,oid)[2],'paid')
+        with self.assertRaises(Conflict):
+            cancel_order(self.db,self.pa,oid)
+    def test_order_cancel_releases_inventory(self):
+        pid=create_product(self.db,self.pa,'재킷','의류',20000)
+        vid=add_variant(self.db,self.pa,pid,'JACKET-M',4)
+        rid=reserve(self.db,self.pa,vid,1,'reserve-cancel')
+        oid=create_order(self.db,self.pa,rid,'order-cancel')
+        cancel_order(self.db,self.pa,oid)
+        cancel_order(self.db,self.pa,oid)
+        stock=self.db.execute("SELECT on_hand,reserved FROM variants WHERE id=?",(vid,)).fetchone()
+        self.assertEqual(stock,(4,0))
+        self.assertEqual(get_order(self.db,self.pa,oid)[2],'cancelled')
+        with self.assertRaises(Conflict):
+            mark_order_paid(self.db,self.pa,oid)
+    def test_order_tenant_isolation(self):
+        pid=create_product(self.db,self.pa,'헬멧','라이더용품',45000)
+        vid=add_variant(self.db,self.pa,pid,'HELMET-L',1)
+        rid=reserve(self.db,self.pa,vid,1,'reserve-isolation')
+        oid=create_order(self.db,self.pa,rid,'order-isolation')
+        with self.assertRaises(Denied):
+            get_order(self.db,self.pb,oid)
+        with self.assertRaises(Denied):
+            mark_order_paid(self.db,self.pb,oid)
     def test_invalid_values(self):
         with self.assertRaises(ValueError):
             create_product(self.db,self.pa,'상품','신발',-1)
