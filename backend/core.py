@@ -41,6 +41,14 @@ CREATE TABLE IF NOT EXISTS stock_reservations (
  CHECK(status IN ('held','released','committed')),
  FOREIGN KEY(variant_id,seller_id) REFERENCES variants(id,seller_id),
  UNIQUE(seller_id,idempotency_key));
+CREATE TABLE IF NOT EXISTS orders (
+ id TEXT PRIMARY KEY, seller_id TEXT NOT NULL,
+ reservation_id TEXT NOT NULL UNIQUE,
+ status TEXT NOT NULL CHECK(status IN ('pending_payment','paid','cancelled')),
+ idempotency_key TEXT NOT NULL,
+ created_at INTEGER NOT NULL, paid_at INTEGER, cancelled_at INTEGER,
+ FOREIGN KEY(reservation_id,seller_id) REFERENCES stock_reservations(id,seller_id),
+ UNIQUE(seller_id,idempotency_key));
 CREATE TABLE IF NOT EXISTS audit_events (
  id TEXT PRIMARY KEY, seller_id TEXT NOT NULL, actor_id TEXT NOT NULL,
  event TEXT NOT NULL, subject_id TEXT NOT NULL, created_at INTEGER NOT NULL);
@@ -142,11 +150,7 @@ def add_variant(db,p,product_id,sku,on_hand):
     return vid
 
 def reserve(db,p,variant_id,quantity,key):
-    """Internal stock reservation primitive, not a public checkout endpoint.
-
-    Requires an authenticated approved seller principal. Payment and order state
-    machines are intentionally not implemented in this milestone.
-    """
+    """Internal stock reservation primitive, not a public checkout endpoint."""
     if not isinstance(quantity,int) or isinstance(quantity,bool) or quantity<=0 or not key:
         raise ValueError("invalid reservation")
     with transaction(db):
@@ -179,3 +183,84 @@ def release(db,p,reservation_id):
         db.execute("UPDATE stock_reservations SET status='released' WHERE id=? AND seller_id=?",
                    (reservation_id,p['seller_id']))
         _audit(db,p,'stock.released',reservation_id)
+
+def create_order(db,p,reservation_id,key):
+    if not key: raise ValueError("order idempotency key required")
+    with transaction(db):
+        prior=db.execute("SELECT id,reservation_id FROM orders WHERE seller_id=? AND idempotency_key=?",
+                         (p['seller_id'],key)).fetchone()
+        if prior:
+            if prior[1]!=reservation_id: raise Conflict("order idempotency mismatch")
+            return prior[0]
+        reservation=db.execute("SELECT status FROM stock_reservations WHERE id=? AND seller_id=?",
+                               (reservation_id,p['seller_id'])).fetchone()
+        if not reservation: raise Denied("reservation not owned")
+        if reservation[0]!='held': raise Conflict("reservation not active")
+        oid=secrets.token_hex(16)
+        db.execute("INSERT INTO orders(id,seller_id,reservation_id,status,idempotency_key,created_at) VALUES (?,?,?,?,?,?)",
+                   (oid,p['seller_id'],reservation_id,'pending_payment',key,int(time.time())))
+        _audit(db,p,'order.created',oid)
+        return oid
+
+def mark_order_paid(db,p,order_id):
+    with transaction(db):
+        row=db.execute("""SELECT o.status,r.id,r.variant_id,r.quantity,r.status
+                          FROM orders o JOIN stock_reservations r ON r.id=o.reservation_id AND r.seller_id=o.seller_id
+                          WHERE o.id=? AND o.seller_id=?""",
+                       (order_id,p['seller_id'])).fetchone()
+        if not row: raise Denied("order not owned")
+        if row[0]=='paid': return
+        if row[0]!='pending_payment' or row[4]!='held': raise Conflict("order cannot be paid")
+        changed=db.execute("""UPDATE variants SET on_hand=on_hand-?, reserved=reserved-?
+                              WHERE id=? AND seller_id=? AND reserved>=? AND on_hand>=?""",
+                           (row[3],row[3],row[2],p['seller_id'],row[3],row[3])).rowcount
+        if changed!=1: raise Conflict("stock invariant violated")
+        db.execute("UPDATE stock_reservations SET status='committed' WHERE id=? AND seller_id=?",
+                   (row[1],p['seller_id']))
+        db.execute("UPDATE orders SET status='paid', paid_at=? WHERE id=? AND seller_id=?",
+                   (int(time.time()),order_id,p['seller_id']))
+        _audit(db,p,'order.paid',order_id)
+
+def cancel_order(db,p,order_id):
+    with transaction(db):
+        row=db.execute("""SELECT o.status,r.id,r.variant_id,r.quantity,r.status
+                          FROM orders o JOIN stock_reservations r ON r.id=o.reservation_id AND r.seller_id=o.seller_id
+                          WHERE o.id=? AND o.seller_id=?""",
+                       (order_id,p['seller_id'])).fetchone()
+        if not row: raise Denied("order not owned")
+        if row[0]=='cancelled': return
+        if row[0]=='paid': raise Conflict("paid order requires refund workflow")
+        if row[0]!='pending_payment' or row[4]!='held': raise Conflict("order cannot be cancelled")
+        db.execute("UPDATE variants SET reserved=reserved-? WHERE id=? AND seller_id=?",
+                   (row[3],row[2],p['seller_id']))
+        db.execute("UPDATE stock_reservations SET status='released' WHERE id=? AND seller_id=?",
+                   (row[1],p['seller_id']))
+        db.execute("UPDATE orders SET status='cancelled', cancelled_at=? WHERE id=? AND seller_id=?",
+                   (int(time.time()),order_id,p['seller_id']))
+        _audit(db,p,'order.cancelled',order_id)
+
+def get_order(db,p,order_id):
+    row=db.execute("SELECT id,reservation_id,status,created_at,paid_at,cancelled_at FROM orders WHERE id=? AND seller_id=?",
+                   (order_id,p['seller_id'])).fetchone()
+    if not row: raise Denied("order not owned")
+    return row
+
+
+def seller_dashboard(db,p):
+    """Seller-scoped operational summary; not a settlement or verified PG report."""
+    seller=p['seller_id']
+    products=db.execute("""SELECT status,COUNT(*) FROM products WHERE seller_id=? GROUP BY status""",(seller,)).fetchall()
+    orders=db.execute("""SELECT status,COUNT(*) FROM orders WHERE seller_id=? GROUP BY status""",(seller,)).fetchall()
+    stock=db.execute("""SELECT COALESCE(SUM(on_hand),0),COALESCE(SUM(reserved),0),
+        COALESCE(SUM(on_hand-reserved),0) FROM variants WHERE seller_id=?""",(seller,)).fetchone()
+    return {'products':dict(products),'orders':dict(orders),
+            'stock':{'on_hand':stock[0],'reserved':stock[1],'available':stock[2]},
+            'payment_verified':False,'settlement_available':False}
+
+def seller_orders(db,p,limit=50):
+    """Read-only seller order list with bounded pagination size."""
+    if not isinstance(limit,int) or isinstance(limit,bool) or not 1<=limit<=100:
+        raise ValueError('limit must be 1..100')
+    return db.execute("""SELECT id,status,created_at,paid_at,cancelled_at FROM orders
+        WHERE seller_id=? ORDER BY created_at DESC,id DESC LIMIT ?""",
+        (p['seller_id'],limit)).fetchall()
