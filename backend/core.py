@@ -244,3 +244,23 @@ def get_order(db,p,order_id):
                    (order_id,p['seller_id'])).fetchone()
     if not row: raise Denied("order not owned")
     return row
+
+
+def seller_dashboard(db,p):
+    """Seller-scoped operational summary; not a settlement or verified PG report."""
+    seller=p['seller_id']
+    products=db.execute("""SELECT status,COUNT(*) FROM products WHERE seller_id=? GROUP BY status""",(seller,)).fetchall()
+    orders=db.execute("""SELECT status,COUNT(*) FROM orders WHERE seller_id=? GROUP BY status""",(seller,)).fetchall()
+    stock=db.execute("""SELECT COALESCE(SUM(on_hand),0),COALESCE(SUM(reserved),0),
+        COALESCE(SUM(on_hand-reserved),0) FROM variants WHERE seller_id=?""",(seller,)).fetchone()
+    return {'products':dict(products),'orders':dict(orders),
+            'stock':{'on_hand':stock[0],'reserved':stock[1],'available':stock[2]},
+            'payment_verified':False,'settlement_available':False}
+
+def seller_orders(db,p,limit=50):
+    """Read-only seller order list with bounded pagination size."""
+    if not isinstance(limit,int) or isinstance(limit,bool) or not 1<=limit<=100:
+        raise ValueError('limit must be 1..100')
+    return db.execute("""SELECT id,status,created_at,paid_at,cancelled_at FROM orders
+        WHERE seller_id=? ORDER BY created_at DESC,id DESC LIMIT ?""",
+        (p['seller_id'],limit)).fetchall()
