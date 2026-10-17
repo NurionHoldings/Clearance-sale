@@ -1,0 +1,51 @@
+name: Cloud development verification
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 0,12 * * *'
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: cloud-dev-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Unit tests (when backend exists)
+        shell: bash
+        run: |
+          if [ -d tests ]; then python -m unittest discover -s tests -v; else echo "No backend tests on this ref"; fi
+      - name: Syntax check
+        run: |
+          if [ -d backend ]; then python -m compileall -q backend; fi
+      - name: Production safety check
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path("config/marketplace-policy.json")
+          if p.exists():
+              policy=json.loads(p.read_text(encoding="utf-8"))
+              release=policy.get("release",{})
+              assert release.get("production_payment_enabled") is False
+              assert release.get("production_seller_signup_enabled") is False
+          print("Production gates remain closed")
+          PY
+      - name: Upload verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloud-verification-${{ github.run_id }}
+          path: README.md
+          retention-days: 7
