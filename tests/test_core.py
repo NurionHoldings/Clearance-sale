@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from backend.core import (connect,create_seller,authenticate,principal,create_product,
                           list_products,add_variant,reserve,release,create_order,mark_order_paid,
-                          cancel_order,get_order,Denied,Conflict)
+                          cancel_order,get_order,seller_dashboard,seller_orders,Denied,Conflict)
 
 class CoreTests(unittest.TestCase):
     def setUp(self):
@@ -75,6 +75,22 @@ class CoreTests(unittest.TestCase):
             get_order(self.db,self.pb,oid)
         with self.assertRaises(Denied):
             mark_order_paid(self.db,self.pb,oid)
+    def test_seller_dashboard_isolation(self):
+        pid=create_product(self.db,self.pa,'재킷','의류',20000)
+        vid=add_variant(self.db,self.pa,pid,'JACKET-XL',5)
+        rid=reserve(self.db,self.pa,vid,2,'dashboard-reserve')
+        create_order(self.db,self.pa,rid,'dashboard-order')
+        a=seller_dashboard(self.db,self.pa)
+        b=seller_dashboard(self.db,self.pb)
+        self.assertEqual(a['stock'],{'on_hand':5,'reserved':2,'available':3})
+        self.assertEqual(b['stock'],{'on_hand':0,'reserved':0,'available':0})
+        self.assertEqual(a['orders']['pending_payment'],1)
+        self.assertEqual(b['orders'],{})
+        self.assertEqual(len(seller_orders(self.db,self.pa)),1)
+        self.assertEqual(seller_orders(self.db,self.pb),[])
+        self.assertFalse(a['payment_verified'])
+        with self.assertRaises(ValueError): seller_orders(self.db,self.pa,101)
+
     def test_invalid_values(self):
         with self.assertRaises(ValueError):
             create_product(self.db,self.pa,'상품','신발',-1)
