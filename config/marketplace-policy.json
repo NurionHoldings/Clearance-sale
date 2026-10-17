@@ -1,0 +1,148 @@
+{
+  "schema_version": "clearance.marketplace/v1",
+  "status": "PROPOSED",
+  "categories": [
+    {
+      "id": "clothing",
+      "name": "의류",
+      "rank": 1
+    },
+    {
+      "id": "hats",
+      "name": "모자",
+      "rank": 2
+    },
+    {
+      "id": "shoes",
+      "name": "신발",
+      "rank": 3
+    },
+    {
+      "id": "sportswear",
+      "name": "운동복",
+      "rank": 4
+    },
+    {
+      "id": "club-gear",
+      "name": "특정 스포츠 동호회 용품",
+      "rank": 5
+    },
+    {
+      "id": "rider-gear",
+      "name": "라이더용품",
+      "rank": 6
+    }
+  ],
+  "sales_models": [
+    "PLATFORM_DIRECT",
+    "THIRD_PARTY_MARKETPLACE"
+  ],
+  "seller_onboarding": {
+    "states": [
+      "APPLIED",
+      "IDENTITY_REVIEW",
+      "CONTRACT_REVIEW",
+      "PG_REVIEW",
+      "APPROVED",
+      "SUSPENDED",
+      "REJECTED"
+    ],
+    "login_required_for_listing": true,
+    "approval_required_for_publication": true
+  },
+  "contract": {
+    "versioned": true,
+    "commission_basis": "PER_SELLER_CONTRACT",
+    "effective_date_required": true,
+    "immutable_accepted_snapshot": true,
+    "pg_allocation_required": true
+  },
+  "release": {
+    "production_payment_enabled": false,
+    "production_seller_signup_enabled": false
+  },
+  "pg_selection": {
+    "decision_owner": "SELLER",
+    "platform_role": "TECHNICAL_CONNECTOR_BROKER",
+    "provider_registry": "QUALIFIED_OPEN_REGISTRY",
+    "merchant_contract_owner": "SELLER_AND_SELECTED_PG",
+    "require_verified_active_connection_before_checkout": true,
+    "change_effect": "NEW_PAYMENT_INTENTS_ONLY",
+    "direct_sales_connection": "PLATFORM_OWN_MERCHANT_ACCOUNT",
+    "multi_seller_checkout": "SEPARATE_BY_SELLER_UNLESS_APPROVED"
+  },
+  "pg_marketplace": {
+    "provider_onboarding": true,
+    "provider_role": "PG_OPERATOR",
+    "provider_publication_requires_approval": true,
+    "pg_offerings_catalog": true,
+    "seller_selects_published_offering": true,
+    "merchant_underwriting_required": true,
+    "arkaon_connector_pipeline": "PROPOSAL_SANDBOX_AUDIT_APPROVAL",
+    "integration_mode_default": "MANAGED_SERVER_SIDE",
+    "seller_upload_requires_explicit_consent": true,
+    "live_activation": "BLOCKED_UNTIL_AUDIT_AND_OPERATOR_APPROVAL"
+  },
+  "seller_external_storefront_policy": {
+    "integration_contract_required_for_onboarding": false,
+    "scope": "NOT_APPLICABLE_HOSTED_ONLY",
+    "storefront_ownership_verification_required": false,
+    "compatibility_review_required": false,
+    "unsupported_storefront_outcome": "NOT_APPLICABLE",
+    "authorized_installation_only": true,
+    "privacy_consents_separate": true,
+    "production_release_requires_audit": true
+  },
+  "storefront_strategy": {
+    "selected_model": "PLATFORM_HOSTED_SELLER_STOREFRONTS_ONLY",
+    "seller_storefront_route": "/shops/{seller_slug}",
+    "catalog": "SELLER_MANAGED_PLATFORM_HOSTED",
+    "cart": "PLATFORM_HOSTED",
+    "checkout": "PLATFORM_HOSTED",
+    "payment_provider_selection": "SELLER_SELECTED_ACTIVE_PG_CONNECTION",
+    "external_storefront_checkout_integrations": false,
+    "external_storefront_referral_attribution": false,
+    "existing_seller_websites": "OPTIONAL_INFORMATIONAL_LINKS_ONLY",
+    "multi_seller_cart": "SPLIT_BY_LEGAL_SELLER_UNTIL_VERIFIED_MULTI_MERCHANT_SUPPORT",
+    "go_live": "BLOCKED_PENDING_IMPLEMENTATION_TESTS_AND_APPROVAL"
+  },
+  "inventory_sync": {
+    "seller_external_store_auto_sync": true,
+    "requires_seller_authorization": true,
+    "source_of_truth": "EXPLICIT_PER_SELLER_VARIANT",
+    "preferred_mode": "ATOMIC_SHARED_RESERVATION",
+    "fallback_mode": "DEDICATED_STOCK_ALLOCATION",
+    "unsafe_shared_stock_behavior": "FAIL_CLOSED",
+    "webhook_verification": true,
+    "idempotent_events": true,
+    "scheduled_reconciliation": true,
+    "oversell_test_required": true,
+    "production_release": "AUDIT_AND_OPERATOR_APPROVAL"
+  },
+  "seller_mobile_notifications": {
+    "required_capability": true,
+    "channels": [
+      "IN_APP_REALTIME",
+      "WEB_PUSH_PWA"
+    ],
+    "optional_fallback": [
+      "SMS",
+      "KAKAO_BIZ"
+    ],
+    "events": [
+      "PAYMENT_CONFIRMED",
+      "PAYMENT_CANCELLED",
+      "REFUND_CONFIRMED",
+      "INVENTORY_LOW",
+      "OUT_OF_STOCK",
+      "RESTOCKED",
+      "INVENTORY_SYNC_FAILED",
+      "INVENTORY_SYNC_RECOVERED"
+    ],
+    "verified_server_events_only": true,
+    "tenant_scoped": true,
+    "redact_buyer_personal_data": true,
+    "delivery_deduplication": true,
+    "production_release": "ETERNlAN_AUDIT_AND_OPERATOR_APPROVAL"
+  }
+}
