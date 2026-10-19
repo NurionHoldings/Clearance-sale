@@ -37,6 +37,11 @@ class SellerDashboardDemoTests(unittest.TestCase):
         self.assertIn('if(column===5)', self.page)
         self.assertNotIn('if(value===statusText)', self.page)
 
+    def test_accessible_table_and_filtered_result_announcement(self):
+        self.assertIn('<caption class="muted">가상 상품 재고 목록', self.page)
+        self.assertIn('id="result-count" class="muted" role="status" aria-live="polite"', self.page)
+        self.assertIn('$("result-count").textContent=', self.page)
+
     def test_inventory_statuses(self):
         for status in ("active", "inactive", "low_stock", "out_of_stock"):
             self.assertIn('value="' + status + '"', self.page)
