@@ -9,7 +9,7 @@ from .seller_access_policy import (
     AccessDecision, SellerMembership, SellerPrincipal, can_access_seller_inventory,
 )
 from .seller_dashboard_service import SellerAccessDenied, get_authorized_seller_dashboard
-from .seller_inventory_scope import scoped_inventory_loader
+from .seller_inventory_scope import InventoryScopeError, scoped_inventory_loader
 
 
 def get_session_seller_dashboard(
@@ -24,20 +24,31 @@ def get_session_seller_dashboard(
         load_session, load_membership, query_inventory_by_seller,
     )):
         raise SellerAccessDenied("Trusted server loaders required")
-    principal = load_session(session_token)
+    try:
+        principal = load_session(session_token)
+    except Exception as exc:
+        raise SellerAccessDenied("Seller dashboard unavailable") from None
     if not isinstance(principal, SellerPrincipal) or not principal.authenticated:
         raise SellerAccessDenied("Unauthenticated principal")
     if not isinstance(principal.user_id, str) or not principal.user_id.strip():
         raise SellerAccessDenied("Invalid principal")
-    membership = load_membership(principal.user_id, seller_id)
+    try:
+        membership = load_membership(principal.user_id, seller_id)
+    except Exception:
+        raise SellerAccessDenied("Seller dashboard unavailable") from None
     if not isinstance(membership, SellerMembership) or (
         can_access_seller_inventory(
             principal, membership, seller_id=seller_id, action="read"
         ) is not AccessDecision.ALLOW
     ):
         raise SellerAccessDenied("Seller membership denied")
-    return get_authorized_seller_dashboard(
-        principal=principal, membership=membership, seller_id=seller_id,
-        load_inventory=scoped_inventory_loader(query_inventory_by_seller),
-        status=status, low_stock_threshold=low_stock_threshold,
-    )
+    try:
+        return get_authorized_seller_dashboard(
+            principal=principal, membership=membership, seller_id=seller_id,
+            load_inventory=scoped_inventory_loader(query_inventory_by_seller),
+            status=status, low_stock_threshold=low_stock_threshold,
+        )
+    except InventoryScopeError:
+        raise SellerAccessDenied("Seller dashboard unavailable") from None
+    except Exception:
+        raise SellerAccessDenied("Seller dashboard unavailable") from None
