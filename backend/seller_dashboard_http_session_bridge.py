@@ -15,6 +15,10 @@ def extract_seller_session(cookie_header):
     """Read a single opaque cookie; reject ambiguous or malformed headers."""
     if not isinstance(cookie_header, str) or not cookie_header or len(cookie_header) > 8192:
         return None
+    # Duplicate session names are ambiguous; never let a parser choose one.
+    cookie_names = [part.split("=", 1)[0].strip() for part in cookie_header.split(";") if "=" in part]
+    if cookie_names.count(SESSION_COOKIE) != 1:
+        return None
     try:
         parsed = SimpleCookie()
         parsed.load(cookie_header)
