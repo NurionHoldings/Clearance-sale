@@ -96,6 +96,19 @@ class SellerDashboardBrowserE2E(unittest.TestCase):
         search.fill("")
         self.assertEqual(self.page.locator("#products tr").count(), 5)
 
+    def test_inventory_sorting_and_empty_result_guidance(self):
+        self.page.locator("#sort-order").select_option("available_asc")
+        self.assertEqual(self.page.locator("#products tr").first.locator("td").first.inner_text(), "C-303")
+        self.page.locator("#sort-order").select_option("available_desc")
+        self.assertEqual(self.page.locator("#products tr").first.locator("td").first.inner_text(), "A-101")
+        self.page.locator("#product-search").fill("존재하지않는상품")
+        self.assertEqual(self.page.locator("#products tr").count(), 0)
+        self.assertIn("검색어와 일치하는 상품이 없습니다.", self.page.locator("#empty").inner_text())
+        self.page.locator("#product-search").fill("")
+        self.page.locator("#status").select_option("inactive")
+        self.page.locator("#product-search").fill("A-101")
+        self.assertIn("검색어와 일치하는 상품이 없습니다.", self.page.locator("#empty").inner_text())
+
     def test_filters_include_ephemeral_item_without_storage(self):
         self.page.locator("#draft-stock").fill("0")
         self.page.locator("#draft-preview").click()
