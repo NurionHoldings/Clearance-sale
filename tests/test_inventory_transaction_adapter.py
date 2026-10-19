@@ -14,6 +14,7 @@ class FakeTransaction:
         self.receipt = None
         self.writes = []
         self.commits = 0
+        self.rollbacks = 0
         self.affected_rows = 1
 
     def get_receipt(self, seller_id, key):
@@ -32,6 +33,9 @@ class FakeTransaction:
 
     def commit(self):
         self.commits += 1
+
+    def rollback(self):
+        self.rollbacks += 1
 
 
 class InventoryTransactionAdapterTests(unittest.TestCase):
@@ -54,6 +58,7 @@ class InventoryTransactionAdapterTests(unittest.TestCase):
         self.assertTrue(response["replayed"])
         self.assertEqual(len(self.tx.writes), previous_writes)
         self.assertEqual(self.tx.commits, 1)
+        self.assertEqual(self.tx.rollbacks, 1)
 
     def test_cas_conflict_prevents_receipt_and_commit(self):
         self.tx.affected_rows = 0
@@ -62,6 +67,7 @@ class InventoryTransactionAdapterTests(unittest.TestCase):
         self.assertEqual([w[0] for w in self.tx.writes], ["cas"])
         self.assertIsNone(self.tx.receipt)
         self.assertEqual(self.tx.commits, 0)
+        self.assertEqual(self.tx.rollbacks, 1)
 
     def test_changed_command_same_key_is_rejected(self):
         execute_inventory_transaction(self.command, transaction=self.tx)
@@ -70,6 +76,14 @@ class InventoryTransactionAdapterTests(unittest.TestCase):
         with self.assertRaises(IdempotencyConflict):
             execute_inventory_transaction(changed, transaction=self.tx)
         self.assertEqual(self.tx.commits, 1)
+        self.assertEqual(self.tx.rollbacks, 1)
+
+    def test_adapter_without_rollback_is_rejected_before_data_access(self):
+        self.tx.rollback = None
+        with self.assertRaises(TypeError):
+            execute_inventory_transaction(self.command, transaction=self.tx)
+        self.assertEqual(self.tx.writes, [])
+        self.assertEqual(self.tx.commits, 0)
 
 
 if __name__ == "__main__":
