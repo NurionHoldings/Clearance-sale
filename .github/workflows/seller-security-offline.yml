@@ -49,6 +49,7 @@ jobs:
               "test_seller_login_throttle_identity",
               "test_seller_throttled_login_flow",
               "test_seller_auth_events",
+              "test_seller_login_alert_projection",
           )
           suite = unittest.TestSuite()
           for name in modules:
