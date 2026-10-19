@@ -1,0 +1,48 @@
+name: Seller security offline verification
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  seller-security:
+    name: Seller security offline verification (required)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run all seller security tests without skips
+        run: |
+          python - <<'PY'
+          import sys
+          import unittest
+
+          modules = (
+              "test_seller_access_policy",
+              "test_seller_dashboard_service",
+              "test_seller_inventory_scope",
+              "test_seller_identity_resolver",
+              "test_inventory_write_service",
+              "test_seller_dashboard_session_service",
+              "test_seller_diagnostics",
+              "test_seller_diagnostic_throttle",
+              "test_seller_dashboard_diagnostic_wiring",
+          )
+          suite = unittest.TestSuite()
+          for name in modules:
+              suite.addTests(unittest.defaultTestLoader.discover(
+                  start_dir="tests", pattern=name + ".py"
+              ))
+          result = unittest.TextTestRunner(verbosity=2).run(suite)
+          if result.testsRun < 20 or result.skipped or not result.wasSuccessful():
+              print("Seller security gate failed: expected >=20 passing tests, zero skips",
+                    file=sys.stderr)
+              sys.exit(1)
+          print("Seller security offline gate passed:", result.testsRun)
+          PY
