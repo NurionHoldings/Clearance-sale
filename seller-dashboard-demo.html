@@ -76,9 +76,9 @@ function render(){
  $("products").replaceChildren(...rows.map(row=>{
   const tr=document.createElement("tr");
   const statusText=!row.active?"판매 중지":row.available===0?"품절":row.available<=threshold?"재고 부족":"판매 중";
-  for(const value of [row.sku,row.name,row.onHand,row.reserved,row.available,statusText]){
+  for(const [column,value] of [row.sku,row.name,row.onHand,row.reserved,row.available,statusText].entries()){
    const td=document.createElement("td");td.textContent=String(value);
-   if(value===statusText){const tag=document.createElement("span");tag.className="tag"+(statusText==="품절"?" danger":statusText==="재고 부족"?" warning":"");tag.textContent=statusText;td.replaceChildren(tag);}
+   if(column===5){const tag=document.createElement("span");tag.className="tag"+(statusText==="품절"?" danger":statusText==="재고 부족"?" warning":"");tag.textContent=statusText;td.replaceChildren(tag);}
    tr.append(td);
   }return tr;
  }));
