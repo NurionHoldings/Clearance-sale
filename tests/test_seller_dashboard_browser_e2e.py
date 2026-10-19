@@ -138,6 +138,21 @@ class SellerDashboardBrowserE2E(unittest.TestCase):
         preview.locator("summary").click()
         self.assertIn("임시 시연 데이터", preview.inner_text())
 
+    def test_mobile_inventory_cards_and_stock_meters(self):
+        self.page.set_viewport_size({"width": 375, "height": 812})
+        self.assertEqual(self.page.locator("#products tr").count(), 5)
+        self.assertEqual(self.page.locator("#products progress").count(), 4)
+        first = self.page.locator("#products tr").first
+        self.assertEqual(first.locator('td[data-label="상품 코드"]').count(), 1)
+        self.assertEqual(first.locator("progress").get_attribute("max"), "12")
+        self.assertEqual(first.locator("progress").get_attribute("value"), "9")
+        self.assertEqual(self.page.locator("thead").evaluate("(el) => getComputedStyle(el).display"), "none")
+        self.assertEqual(first.evaluate("(el) => getComputedStyle(el).display"), "block")
+        self.assertLessEqual(
+            self.page.evaluate("document.documentElement.scrollWidth"),
+            self.page.evaluate("window.innerWidth"),
+        )
+
     def test_filters_include_ephemeral_item_without_storage(self):
         self.page.locator("#draft-stock").fill("0")
         self.page.locator("#draft-preview").click()
