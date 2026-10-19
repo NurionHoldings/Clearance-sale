@@ -109,6 +109,21 @@ class SellerDashboardBrowserE2E(unittest.TestCase):
         self.page.locator("#product-search").fill("A-101")
         self.assertIn("검색어와 일치하는 상품이 없습니다.", self.page.locator("#empty").inner_text())
 
+    def test_quick_inventory_filters_and_reset(self):
+        self.page.locator("#product-search").fill("A-101")
+        self.page.locator("#show-low-stock").click()
+        self.assertEqual(self.page.locator("#status").input_value(), "low_stock")
+        self.assertEqual(self.page.locator("#product-search").input_value(), "")
+        self.assertEqual(self.page.locator("#products tr").count(), 2)
+        self.page.locator("#show-out-of-stock").click()
+        self.assertEqual(self.page.locator("#status").input_value(), "out_of_stock")
+        self.assertEqual(self.page.locator("#products tr").count(), 1)
+        self.page.locator("#sort-order").select_option("available_desc")
+        self.page.locator("#reset-inventory-filters").click()
+        self.assertEqual(self.page.locator("#status").input_value(), "all")
+        self.assertEqual(self.page.locator("#sort-order").input_value(), "sku_asc")
+        self.assertEqual(self.page.locator("#products tr").count(), 5)
+
     def test_filters_include_ephemeral_item_without_storage(self):
         self.page.locator("#draft-stock").fill("0")
         self.page.locator("#draft-preview").click()
