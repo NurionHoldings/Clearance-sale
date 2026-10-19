@@ -43,6 +43,7 @@ jobs:
               "test_postgres_seller_auth_store",
               "test_seller_login_service",
               "test_seller_auth_http_security",
+              "test_seller_auth_request_adapter",
           )
           suite = unittest.TestSuite()
           for name in modules:
