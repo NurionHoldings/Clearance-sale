@@ -57,7 +57,9 @@ def logout_seller(*, token, store):
             or not callable(getattr(store, "revoke_token", None))):
         raise SellerLoginDenied("Logout unavailable")
     try:
-        store.revoke_token(token)
+        revoked_count = store.revoke_token(token)
+        if type(revoked_count) is not int or revoked_count != 1:
+            raise SellerLoginDenied("Logout unavailable")
         connection.commit()
     except Exception:
         if callable(getattr(connection, "rollback", None)):
