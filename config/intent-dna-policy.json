@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "project": "Clearance-sale",
+  "default_decision": "HOLD",
+  "allowed_tasks": {
+    "seller-dashboard-tests": {
+      "risk": "low",
+      "paths": [
+        "backend/",
+        "tests/"
+      ],
+      "approval": "operator-dispatch"
+    },
+    "inventory-invariant-tests": {
+      "risk": "low",
+      "paths": [
+        "backend/",
+        "tests/"
+      ],
+      "approval": "operator-dispatch"
+    }
+  },
+  "protected_paths": [
+    ".github/",
+    "config/",
+    "docs/"
+  ],
+  "prohibited_topics": [
+    "payment",
+    "settlement",
+    "production-deployment",
+    "authentication",
+    "personal-data",
+    "merchant-activation"
+  ],
+  "release": {
+    "auto_merge": false,
+    "auto_deploy": false,
+    "requires_human_approval": true
+  }
+}

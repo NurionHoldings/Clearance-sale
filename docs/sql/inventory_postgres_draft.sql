@@ -1,0 +1,6 @@
+-- Historical draft retained for reference only; do not apply.
+-- The TEXT identity types in this old draft conflict with the UUID types in
+-- db/migrations/001_inventory_contract_draft.sql.
+-- Use the reviewed canonical migration after identity types, RLS,
+-- parent foreign keys, backup and rollback strategy are approved.
+-- DO NOT EXECUTE THIS FILE.

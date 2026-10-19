@@ -1,0 +1,73 @@
+name: Seller security offline verification
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  seller-security:
+    name: Seller security offline verification (required)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run all seller security tests without skips
+        run: |
+          python - <<'PY'
+          import sys
+          import unittest
+
+          modules = (
+              "test_seller_access_policy",
+              "test_seller_dashboard_service",
+              "test_seller_inventory_scope",
+              "test_seller_identity_resolver",
+              "test_inventory_write_service",
+              "test_seller_dashboard_session_service",
+              "test_seller_diagnostics",
+              "test_seller_diagnostic_throttle",
+              "test_seller_dashboard_diagnostic_wiring",
+              "test_seller_dashboard_read_response",
+              "test_seller_dashboard_route_adapter",
+              "test_seller_dashboard_http_session_bridge",
+              "test_seller_dashboard_wsgi_adapter",
+              "test_seller_identity_sql_draft",
+              "test_seller_session_lifecycle",
+              "test_seller_password_security",
+              "test_postgres_seller_auth_store",
+              "test_seller_login_service",
+              "test_seller_auth_http_security",
+              "test_seller_auth_request_adapter",
+              "test_seller_authenticated_dashboard_flow",
+              "test_postgres_seller_login_throttle",
+              "test_seller_login_throttle_identity",
+              "test_seller_throttled_login_flow",
+              "test_seller_auth_events",
+              "test_seller_login_alert_projection",
+              "test_admin_security_alert_service",
+              "test_admin_security_alert_review",
+              "test_postgres_security_alert_review_store",
+              "test_admin_security_alert_dashboard",
+              "test_admin_security_alert_api_adapter",
+              "test_admin_security_alert_session_bridge",
+              "test_security_admin_session_resolver",
+              "test_postgres_security_admin_grant_store",
+          )
+          suite = unittest.TestSuite()
+          for name in modules:
+              suite.addTests(unittest.defaultTestLoader.discover(
+                  start_dir="tests", pattern=name + ".py"
+              ))
+          result = unittest.TextTestRunner(verbosity=2).run(suite)
+          if result.testsRun < 20 or result.skipped or not result.wasSuccessful():
+              print("Seller security gate failed: expected >=20 passing tests, zero skips",
+                    file=sys.stderr)
+              sys.exit(1)
+          print("Seller security offline gate passed:", result.testsRun)
+          PY

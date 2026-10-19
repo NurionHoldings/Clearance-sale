@@ -1,0 +1,55 @@
+name: Codex offline safety checks
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static-guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate offline safety invariants
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          propose = Path(".github/workflows/codex-propose.yml").read_text()
+          review = Path(".github/workflows/codex-review.yml").read_text()
+          required = {
+              "manual proposal": "workflow_dispatch:" in propose,
+              "manual review": "workflow_dispatch:" in review,
+              "read-only repository token": all("contents: read" in x for x in (propose, review)),
+              "no token persistence": all("persist-credentials: false" in x for x in (propose, review)),
+              "restricted workspace": 'permission-profile: ":workspace"' in propose,
+              "read-only review": 'permission-profile: ":read-only"' in review,
+              "no sudo": all("safety-strategy: drop-sudo" in x for x in (propose, review)),
+              "approved task restriction": "Unsupported task" in propose,
+              "approved prompt integrity": "APPROVED_PROMPT_SHA" in propose,
+              "path enforcement": "--check-changes" in propose and "intent_DNA post-change gate" in propose,
+              "human review artifact": "proposed.patch" in propose,
+              "no empty patches": "No reviewable patch generated" in propose,
+              "audit integrity verification": "intent_dna_review_gate.py" in propose,
+          }
+          for name, ok in required.items():
+              print(f'{"PASS" if ok else "FAIL"}: {name}')
+          if not all(required.values()):
+              raise SystemExit("Offline guard failed")
+          PY
+      - name: intent_DNA policy unit tests
+        run: PYTHONDONTWRITEBYTECODE=1 python -B -m unittest discover -s tests -p "test_intent_dna_gate.py" -v
+      - name: Review gate import smoke test
+        run: python scripts/intent_dna_review_gate.py --help
+      - name: PR handoff CLI smoke test
+        run: python scripts/intent_dna_pr_handoff.py --help
+      - name: Python syntax check
+        run: |
+          if [ -d backend ]; then python -B -m compileall -q backend; fi
+          if [ -d tests ]; then PYTHONDONTWRITEBYTECODE=1 python -B -m unittest discover -s tests -v; else echo "::notice::Tests directory absent"; fi
