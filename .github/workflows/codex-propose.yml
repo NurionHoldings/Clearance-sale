@@ -48,7 +48,7 @@ jobs:
           esac
       - name: Record approved prompt checksum
         shell: bash
-        run: echo "APPROVED_PROMPT_SHA=$(sha256sum .github/codex/change-prompt.md | cut -d\x27 \x27 -f1)" >> "$GITHUB_ENV"
+        run: echo "APPROVED_PROMPT_SHA=$(sha256sum .github/codex/change-prompt.md | cut -d' ' -f1)" >> "$GITHUB_ENV"
       - name: Codex proposes isolated changes
         uses: openai/codex-action@v1
         with:
@@ -59,7 +59,7 @@ jobs:
       - name: Enforce allowed change paths
         shell: bash
         run: |
-          test "$(sha256sum .github/codex/change-prompt.md | cut -d\x27 \x27 -f1)" = "$APPROVED_PROMPT_SHA" || { echo "::error::Approved prompt was modified"; exit 1; }
+          test "$(sha256sum .github/codex/change-prompt.md | cut -d' ' -f1)" = "$APPROVED_PROMPT_SHA" || { echo "::error::Approved prompt was modified"; exit 1; }
           python - <<'PY'
           import subprocess, sys
           changed = subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=all"], text=True).splitlines()
@@ -73,7 +73,6 @@ jobs:
         env:
           APPROVED_TASK: ${{ inputs.task }}
         run: |
-          git restore -- .github/codex/change-prompt.md
           python scripts/intent_dna_gate.py --task "$APPROVED_TASK" --check-changes
       - name: Test proposed changes
         run: |
