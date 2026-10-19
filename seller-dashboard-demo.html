@@ -29,7 +29,7 @@ button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{ou
 <section id="inventory-overview" aria-label="재고 요약"><h2>재고 현황</h2><div id="metrics" class="metrics"></div></section>
 <section aria-label="재고 알림"><h2>재고 경고</h2><div class="panel"><ul id="alerts" class="alerts" aria-live="polite"></ul></div></section>
 <section aria-label="상품 목록"><h2>상품별 재고</h2>
-<div class="controls"><label for="status">상태 필터<select id="status"><option value="all">전체</option><option value="active">판매 중</option><option value="inactive">판매 중지</option><option value="low_stock">재고 부족</option><option value="out_of_stock">품절</option></select></label>
+<div class="controls"><label for="product-search">상품 검색 (코드·상품명)<input id="product-search" type="search" autocomplete="off" placeholder="가상 상품 검색"></label><label for="status">상태 필터<select id="status"><option value="all">전체</option><option value="active">판매 중</option><option value="inactive">판매 중지</option><option value="low_stock">재고 부족</option><option value="out_of_stock">품절</option></select></label>
 <label for="threshold">재고 부족 기준 수량<input id="threshold" type="number" min="0" max="10000" step="1" value="5"></label></div>
 <p id="preview-disclosure" class="notice" role="status" aria-live="polite" hidden>미등록 시연 상품 1개가 목록·요약·경고 수치에 포함되어 있습니다. 실제 등록 또는 저장되지 않습니다. <button id="clear-draft-preview" type="button">시연 상품 제거</button></p>
 <p id="result-count" class="muted" role="status" aria-live="polite"></p>
@@ -78,7 +78,8 @@ function render(){
  $("preview-disclosure").hidden=!draftPreviewItem;
  const data=snapshot(threshold),status=$("status").value;
  const filters={all:()=>true,active:r=>r.active,inactive:r=>!r.active,low_stock:r=>r.active&&r.available>0&&r.available<=threshold,out_of_stock:r=>r.active&&r.available===0};
- const rows=data.rows.filter(filters[status]||filters.all);
+ const keyword=$("product-search").value.trim().toLocaleLowerCase("ko-KR");
+ const rows=data.rows.filter(filters[status]||filters.all).filter(row=>!keyword||row.sku.toLocaleLowerCase("ko-KR").includes(keyword)||row.name.toLocaleLowerCase("ko-KR").includes(keyword));
  $("result-count").textContent="표시 중인 상품 "+rows.length+"개 / 전체 "+data.rows.length+"개";
  $("metrics").replaceChildren(...data.metrics.map(([label,value])=>{
   const box=document.createElement("div");box.className="metric";
@@ -102,6 +103,7 @@ function render(){
  }));
  $("empty").hidden=rows.length!==0;
 }
+$("product-search").addEventListener("input",render);
 $("status").addEventListener("change",render);
 $("threshold").addEventListener("change",render);
 render();
