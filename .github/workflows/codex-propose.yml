@@ -32,7 +32,7 @@ jobs:
         run: test -n "$API_KEY"
       - name: Run tests before Codex
         run: |
-          if [ -d tests ]; then python -m unittest discover -s tests -v; else echo "::notice::No tests directory; no test coverage"; fi
+          if [ -d tests ]; then PYTHONDONTWRITEBYTECODE=1 python -B -m unittest discover -s tests -v; else echo "::notice::No tests directory; no test coverage"; fi
       - name: Select approved task
         shell: bash
         env:
@@ -77,8 +77,8 @@ jobs:
       - name: Test proposed changes
         id: verify_changes
         run: |
-          if [ -d tests ]; then python -m unittest discover -s tests -v; fi
-          if [ -d backend ]; then python -m compileall -q backend; fi
+          if [ -d tests ]; then PYTHONDONTWRITEBYTECODE=1 python -B -m unittest discover -s tests -v; fi
+          if [ -d backend ]; then PYTHONDONTWRITEBYTECODE=1 python -B -c "import ast,pathlib; [ast.parse(p.read_text(encoding=\u0027utf-8\u0027), filename=str(p)) for p in pathlib.Path(\u0027backend\u0027).rglob(\u0027*.py\u0027)]"; fi
       - name: Export diff for human review
         id: export_patch
         shell: bash
