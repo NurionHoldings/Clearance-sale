@@ -75,6 +75,15 @@ class SellerDashboardDemoTests(unittest.TestCase):
         for forbidden in ("localStorage", "sessionStorage", "indexedDB", "fetch("):
             self.assertNotIn(forbidden, self.page)
 
+    def test_preview_rows_are_explicitly_labeled_and_removable(self):
+        self.assertIn('id="preview-disclosure"', self.page)
+        self.assertIn('id="clear-draft-preview"', self.page)
+        self.assertIn('row.sku===draftPreviewItem.sku', self.page)
+        self.assertIn('(미등록 시연)', self.page)
+        self.assertIn('draftPreviewItem=null;', self.page)
+        self.assertIn('시연 상품이 제거되었습니다.', self.page)
+        self.assertIn('실제 등록 또는 저장되지 않습니다.', self.page)
+
     def test_inventory_statuses(self):
         for status in ("active", "inactive", "low_stock", "out_of_stock"):
             self.assertIn('value="' + status + '"', self.page)
