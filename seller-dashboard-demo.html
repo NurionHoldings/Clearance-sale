@@ -12,15 +12,15 @@ a{color:inherit}.notice{padding:14px 16px;background:#fff4db;border-left:4px sol
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .metric,.panel{background:white;border:1px solid #dce4ef;border-radius:14px;padding:18px}
 .metric strong{display:block;font-size:28px;margin-top:10px}.muted{color:#5a6880}
-.controls{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:18px 0}
+.controls{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:18px 0}.inventory-filters{background:#fff;border:1px solid #dce4ef;border-radius:12px;padding:12px}.inventory-filters label{flex:1 1 180px}.inventory-filters input,.inventory-filters select{width:100%;min-height:44px}
 label{display:grid;gap:6px;font-weight:650}select,input{padding:10px;border:1px solid #b5c2d3;border-radius:8px;font:inherit}
-button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #3478d6;outline-offset:2px}
+button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #3478d6;outline-offset:2px}
 .table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:540px}th,td{text-align:left;padding:13px 10px;border-bottom:1px solid #e4eaf2}th{background:#eef3f9}caption{text-align:left;padding:0 0 10px}
 .tag{display:inline-block;border-radius:20px;padding:5px 9px;background:#e8eef8;font-size:13px}
 .tag.warning{background:#fff0cb;color:#805200}.tag.danger{background:#ffe0df;color:#a02b28}
 .stock-meter{display:block;width:100%;max-width:180px;height:8px;margin-top:6px;accent-color:#2766aa}.stock-meter.warning{accent-color:#aa7100}.stock-meter.danger{accent-color:#b32f2f}
 .alerts{padding-left:22px;line-height:1.9}footer{margin-top:28px;color:#5a6880;font-size:13px}
-@media(max-width:600px){main{padding:18px 12px 50px}.metric,.panel{padding:14px}.controls{align-items:stretch}.controls label{flex:1;min-width:130px}table{min-width:0}thead{display:none}tbody tr{display:block;border:1px solid #dce4ef;border-radius:10px;margin-bottom:12px;padding:8px}tbody td{display:grid;grid-template-columns:minmax(90px,36%) 1fr;gap:8px;border-bottom:1px solid #edf0f5;padding:9px 5px;overflow-wrap:anywhere}tbody td::before{content:attr(data-label);font-weight:650;color:#52617a}tbody td:last-child{border-bottom:0}}
+@media(max-width:600px){main{padding:18px 12px 50px}.metric,.panel{padding:14px}.controls{align-items:stretch}.controls label{flex:1;min-width:130px}.inventory-filters{display:grid;grid-template-columns:1fr 1fr}.inventory-filters label:first-child{grid-column:1/-1}.inventory-filters label{min-width:0}.inventory-filters input,.inventory-filters select{font-size:16px}.alerts{padding-left:20px}.metric strong{font-size:24px}table{min-width:0}thead{display:none}tbody tr{display:block;border:1px solid #dce4ef;border-radius:10px;margin-bottom:12px;padding:8px}tbody td{display:grid;grid-template-columns:minmax(90px,36%) 1fr;gap:8px;border-bottom:1px solid #edf0f5;padding:9px 5px;overflow-wrap:anywhere}tbody td::before{content:attr(data-label);font-weight:650;color:#52617a}tbody td:last-child{border-bottom:0}}
 </style>
 </head>
 <body>
@@ -30,11 +30,11 @@ button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{ou
 <section id="inventory-overview" aria-label="재고 요약"><h2>재고 현황</h2><div id="metrics" class="metrics"></div></section>
 <section aria-label="재고 알림"><h2>재고 경고</h2><div class="controls"><button type="button" id="show-low-stock">재고 부족만 보기</button><button type="button" id="show-out-of-stock">품절만 보기</button><button type="button" id="reset-inventory-filters">전체 상품 보기</button></div><div class="panel"><ul id="alerts" class="alerts" aria-live="polite"></ul></div></section>
 <section aria-label="상품 목록"><h2>상품별 재고</h2>
-<div class="controls"><label for="product-search">상품 검색 (코드·상품명)<input id="product-search" type="search" autocomplete="off" placeholder="가상 상품 검색"></label><label for="status">상태 필터<select id="status"><option value="all">전체</option><option value="active">판매 중</option><option value="inactive">판매 중지</option><option value="low_stock">재고 부족</option><option value="out_of_stock">품절</option></select></label>
+<div class="controls inventory-filters" role="group" aria-label="상품 검색과 재고 필터"><label for="product-search">상품 검색 (코드·상품명)<input id="product-search" type="search" autocomplete="off" placeholder="가상 상품 검색"></label><label for="status">상태 필터<select id="status"><option value="all">전체</option><option value="active">판매 중</option><option value="inactive">판매 중지</option><option value="low_stock">재고 부족</option><option value="out_of_stock">품절</option></select></label>
 <label for="sort-order">정렬 기준<select id="sort-order"><option value="sku_asc">상품 코드순</option><option value="name_asc">상품명순</option><option value="available_asc">판매 가능 적은 순</option><option value="available_desc">판매 가능 많은 순</option></select></label>
 <label for="threshold">재고 부족 기준 수량<input id="threshold" type="number" min="0" max="10000" step="1" value="5"></label></div>
 <p id="preview-disclosure" class="notice" role="status" aria-live="polite" hidden>미등록 시연 상품 1개가 목록·요약·경고 수치에 포함되어 있습니다. 실제 등록 또는 저장되지 않습니다. <button id="clear-draft-preview" type="button">시연 상품 제거</button></p>
-<p id="result-count" class="muted" role="status" aria-live="polite"></p>
+<p id="result-count" class="muted" role="status" aria-live="polite"></p><p id="active-filters" class="muted"></p>
 <div class="panel table-wrap"><table><caption class="muted">가상 상품 재고 목록 — 읽기 전용</caption><thead><tr><th>상품 코드</th><th>상품명</th><th>보유</th><th>예약</th><th>판매 가능</th><th>상태</th></tr></thead><tbody id="products"></tbody></table><p id="empty" class="muted" hidden>해당하는 상품이 없습니다.</p></div>
 </section>
 <section aria-label="상품 등록 사전검사"><h2>상품 등록 미리보기</h2>
@@ -86,6 +86,7 @@ function render(){
  const compareText=(a,b)=>a.localeCompare(b,"ko-KR");
  rows.sort((a,b)=>sortOrder==="name_asc"?compareText(a.name,b.name)||compareText(a.sku,b.sku):sortOrder==="available_asc"?(a.available-b.available)||compareText(a.sku,b.sku):sortOrder==="available_desc"?(b.available-a.available)||compareText(a.sku,b.sku):compareText(a.sku,b.sku));
  $("result-count").textContent="표시 중인 상품 "+rows.length+"개 / 전체 "+data.rows.length+"개";
+ $("active-filters").textContent="현재 보기: "+$("status").selectedOptions[0].textContent+" · "+$("sort-order").selectedOptions[0].textContent+(keyword?" · 검색어: "+$("product-search").value.trim():"");
  $("metrics").replaceChildren(...data.metrics.map(([label,value])=>{
   const box=document.createElement("div");box.className="metric";
   const title=document.createElement("span");title.className="muted";title.textContent=label;
