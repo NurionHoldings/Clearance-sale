@@ -53,6 +53,13 @@ class SellerDashboardDemoTests(unittest.TestCase):
         self.assertIn('source.some(item=>item.sku.trim()===sku)', self.page)
         self.assertIn('document.createElement("li")', self.page)
 
+    def test_draft_integer_validator_uses_single_regex_escape(self):
+        line = next(line for line in self.page.splitlines() if "const validNumber=" in line)
+        self.assertIn("Number.isSafeInteger", line)
+        self.assertIn("Number(raw)<=max", line)
+        self.assertIn(chr(92) + "d+", line)
+        self.assertNotIn(chr(92) * 2 + "d+", line)
+
     def test_inventory_statuses(self):
         for status in ("active", "inactive", "low_stock", "out_of_stock"):
             self.assertIn('value="' + status + '"', self.page)
