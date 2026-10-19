@@ -48,6 +48,7 @@ jobs:
               "test_postgres_seller_login_throttle",
               "test_seller_login_throttle_identity",
               "test_seller_throttled_login_flow",
+              "test_seller_auth_events",
           )
           suite = unittest.TestSuite()
           for name in modules:
