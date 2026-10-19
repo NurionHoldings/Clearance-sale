@@ -23,17 +23,20 @@ def seller_inventory_summary(items):
     for item in items:
         if not isinstance(item, InventoryItem):
             raise TypeError("Expected InventoryItem")
-        if not item.sku or not item.sku.strip() or item.sku in seen:
-            raise ValueError("SKU must be unique and nonempty")
-        if not item.name or not item.name.strip():
-            raise ValueError("Product name required")
+        if not isinstance(item.sku, str) or not 1 <= len(item.sku.strip()) <= 64:
+            raise ValueError("SKU must be 1 to 64 characters")
+        normalized_sku = item.sku.strip()
+        if normalized_sku in seen:
+            raise ValueError("Duplicate SKU")
+        if not isinstance(item.name, str) or not 1 <= len(item.name.strip()) <= 200:
+            raise ValueError("Product name must be 1 to 200 characters")
         if type(item.active) is not bool:
             raise TypeError("Active status must be boolean")
-        seen.add(item.sku)
+        seen.add(normalized_sku)
         available = available_quantity(item.on_hand, item.reserved)
         rows.append({
-            "sku": item.sku,
-            "name": item.name,
+            "sku": normalized_sku,
+            "name": item.name.strip(),
             "on_hand": item.on_hand,
             "reserved": item.reserved,
             "available": available if item.active else 0,
