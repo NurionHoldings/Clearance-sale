@@ -53,6 +53,15 @@ class SellerAccessPolicyTests(unittest.TestCase):
                     AccessDecision.DENY,
                 )
 
+    def test_malformed_principal_identity_is_denied_without_exception(self):
+        for identity in (None, 123, [], {}, ""):
+            with self.subTest(identity=identity):
+                principal = SellerPrincipal(identity, True)
+                self.assertEqual(
+                    can_access_seller_inventory(principal, self.owner, seller_id="seller-A"),
+                    AccessDecision.DENY,
+                )
+
     def test_viewer_read_only_and_bad_inputs(self):
         viewer = SellerMembership("user-1", "seller-A", "viewer", "active")
         self.assertEqual(
