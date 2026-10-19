@@ -23,3 +23,13 @@ required.
 
 This workflow does not authenticate a real user, configure an HTTP endpoint,
 enable inventory writes, connect a production database, or deploy anything.
+
+## Regression review (2026-10-19)
+
+The cross-tenant session test previously expected the internal
+`InventoryScopeError`, although the public dashboard boundary intentionally
+maps it to `SellerAccessDenied("Seller dashboard unavailable")` and removes the
+original exception cause. The test now checks the public security contract.
+This is a source-level correction, **not** a claim that CI passed. Recent
+GitHub Actions jobs showed zero executed steps; runner/billing remediation and
+fresh green checks remain prerequisites for merge.
