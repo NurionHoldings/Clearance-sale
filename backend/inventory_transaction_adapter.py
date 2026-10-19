@@ -35,7 +35,11 @@ def execute_inventory_transaction(command, *, transaction):
     try:
         return _execute_inventory_transaction(command, transaction, fingerprint)
     except Exception:
-        rollback()
+        try:
+            rollback()
+        except Exception as rollback_error:
+            # Preserve the original failure as the cause of rollback failure.
+            raise RuntimeError("Inventory rollback failed") from rollback_error
         raise
 
 
