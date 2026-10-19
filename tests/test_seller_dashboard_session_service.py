@@ -52,6 +52,21 @@ class SellerDashboardSessionTests(unittest.TestCase):
             self.fetch(membership=wrong)
         self.assertEqual([call[0] for call in self.calls], ["session", "membership"])
 
+    def test_missing_trusted_loader_is_denied_before_session_lookup(self):
+        for missing in ("load_session", "load_membership", "query_inventory_by_seller"):
+            with self.subTest(missing=missing):
+                kwargs = {
+                    "session_token": "trusted-session",
+                    "seller_id": "seller-A",
+                    "load_session": lambda token: self.principal,
+                    "load_membership": lambda user, seller: self.membership,
+                    "query_inventory_by_seller": lambda seller: self.records,
+                }
+                kwargs[missing] = None
+                with self.assertRaises(SellerAccessDenied):
+                    get_session_seller_dashboard(**kwargs)
+        self.assertEqual(self.calls, [])
+
     def test_cross_tenant_row_fails_entire_response(self):
         foreign = [("seller-B", InventoryItem("sku-2", "Foreign", 3, 0, True))]
         with self.assertRaises(InventoryScopeError):
