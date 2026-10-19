@@ -124,6 +124,7 @@ function previewDraft(){
  render();
  $("draft-result").textContent=errors.length?"":"미리보기: "+sku+" · "+name+" · "+Number(priceRaw).toLocaleString("ko-KR")+"원 · 판매 가능 "+(Number(stockRaw)-Number(reservedRaw))+"개";
 }
+["draft-sku","draft-name","draft-price","draft-stock","draft-reserved"].forEach(id=>$(id).addEventListener("input",()=>{draftPreviewItem=null;$("draft-result").textContent="";$("draft-errors").replaceChildren();$("draft-message").textContent="입력값이 변경되었습니다. 다시 사전검사하세요.";render();}));
 $("draft-preview").addEventListener("click",previewDraft);
 $("clear-draft-preview").addEventListener("click",()=>{draftPreviewItem=null;$("draft-result").textContent="";$("draft-message").textContent="시연 상품이 제거되었습니다. 실제 재고에는 변경이 없습니다.";render();});
 </script>
