@@ -143,6 +143,7 @@ class PostgresInventoryIntegrationTests(unittest.TestCase):
         second_started = threading.Event()
         results = []
         failures = []
+        unexpected = []
 
         def worker(request_key, ready, other_ready):
             connection = psycopg.connect(URL, autocommit=False)
@@ -160,6 +161,8 @@ class PostgresInventoryIntegrationTests(unittest.TestCase):
                     results.append(outcome)
                 except InventoryConflict:
                     failures.append("stale")
+            except Exception as exc:
+                unexpected.append(repr(exc))
             finally:
                 connection.close()
 
@@ -170,6 +173,7 @@ class PostgresInventoryIntegrationTests(unittest.TestCase):
         left.join(timeout=15)
         right.join(timeout=15)
         self.assertFalse(left.is_alive() or right.is_alive(), "Database contention timed out")
+        self.assertEqual(unexpected, [], "Worker errors: " + repr(unexpected))
         self.assertEqual(len(results), 1)
         self.assertEqual(failures, ["stale"])
         with self.connection.cursor() as cur:
