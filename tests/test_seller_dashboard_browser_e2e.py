@@ -124,6 +124,20 @@ class SellerDashboardBrowserE2E(unittest.TestCase):
         self.assertEqual(self.page.locator("#sort-order").input_value(), "sku_asc")
         self.assertEqual(self.page.locator("#products tr").count(), 5)
 
+    def test_stock_severity_and_accessible_product_details(self):
+        self.assertIn("긴급 · 품절", self.page.locator("#alerts").inner_text())
+        self.assertIn("주의 · 재고 부족", self.page.locator("#alerts").inner_text())
+        details = self.page.locator("#products tr").first.locator("details")
+        self.assertFalse(details.evaluate("(el) => el.open"))
+        details.locator("summary").click()
+        self.assertTrue(details.evaluate("(el) => el.open"))
+        self.assertIn("예약: 3개", details.inner_text())
+        self.assertIn("가상 샘플 데이터", details.inner_text())
+        self.page.locator("#draft-preview").click()
+        preview = self.page.locator("#products tr").filter(has_text="미등록 시연")
+        preview.locator("summary").click()
+        self.assertIn("임시 시연 데이터", preview.inner_text())
+
     def test_filters_include_ephemeral_item_without_storage(self):
         self.page.locator("#draft-stock").fill("0")
         self.page.locator("#draft-preview").click()
