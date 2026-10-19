@@ -67,6 +67,25 @@ class SellerDashboardSessionTests(unittest.TestCase):
                     get_session_seller_dashboard(**kwargs)
         self.assertEqual(self.calls, [])
 
+    def test_internal_loader_errors_do_not_leak_sensitive_details(self):
+        def broken(*args):
+            raise RuntimeError("private-db-host internal connection secret")
+        base = {
+            "session_token": "trusted-session",
+            "seller_id": "seller-A",
+            "load_session": lambda token: self.principal,
+            "load_membership": lambda user, seller: self.membership,
+            "query_inventory_by_seller": lambda seller: self.records,
+        }
+        for loader in ("load_session", "load_membership", "query_inventory_by_seller"):
+            with self.subTest(loader=loader):
+                kwargs = dict(base)
+                kwargs[loader] = broken
+                with self.assertRaises(SellerAccessDenied) as caught:
+                    get_session_seller_dashboard(**kwargs)
+                self.assertEqual(str(caught.exception), "Seller dashboard unavailable")
+                self.assertIsNone(caught.exception.__cause__)
+
     def test_cross_tenant_row_fails_entire_response(self):
         foreign = [("seller-B", InventoryItem("sku-2", "Foreign", 3, 0, True))]
         with self.assertRaises(InventoryScopeError):
