@@ -52,6 +52,7 @@ jobs:
               "test_seller_login_alert_projection",
               "test_admin_security_alert_service",
               "test_admin_security_alert_review",
+              "test_postgres_security_alert_review_store",
           )
           suite = unittest.TestSuite()
           for name in modules:
