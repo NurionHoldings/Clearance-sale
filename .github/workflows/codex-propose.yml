@@ -28,7 +28,7 @@ jobs:
         run: test -n "$API_KEY"
       - name: Run tests before Codex
         run: |
-          if [ -d tests ]; then python -m unittest discover -s tests -v; fi
+          if [ -d tests ]; then python -m unittest discover -s tests -v; else echo "::notice::No tests directory; no test coverage"; fi
       - name: Select approved task
         shell: bash
         env:
@@ -75,7 +75,21 @@ jobs:
           git add -N -- backend/ tests/
           git diff --binary -- backend/ tests/ > proposed.patch
           git diff --stat -- backend/ tests/
-          test -s proposed.patch || echo "::warning::No changes were proposed"
+          test -s proposed.patch || { echo "::error::No reviewable patch generated"; exit 1; }
+      - name: Write audit summary
+        if: always()
+        shell: bash
+        env:
+          APPROVED_TASK: ${{ inputs.task }}
+        run: |
+          {
+            echo "## Codex proposal audit"
+            echo "Task: $APPROVED_TASK"
+            echo "Run: $GITHUB_RUN_ID"
+            echo "Commit: $GITHUB_SHA"
+            echo "Patch present: $(test -s proposed.patch && echo yes || echo no)"
+            echo "Human approval required before merge or deployment."
+          } >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         with:
           name: codex-proposed-patch-${{ github.run_id }}
