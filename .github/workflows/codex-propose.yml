@@ -72,7 +72,9 @@ jobs:
       - name: Export diff for human review
         shell: bash
         run: |
-          git add -N -- backend/ tests/
+          for dir in backend tests; do
+            if [ -d "$dir" ]; then git add -N -- "$dir/"; fi
+          done
           git diff --binary -- backend/ tests/ > proposed.patch
           git diff --stat -- backend/ tests/
           test -s proposed.patch || { echo "::error::No reviewable patch generated"; exit 1; }
