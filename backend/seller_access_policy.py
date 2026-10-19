@@ -36,7 +36,7 @@ def can_access_seller_inventory(principal, membership, *, seller_id, action="rea
         return AccessDecision.DENY
     if membership.user_id != principal.user_id or membership.seller_id != seller_id:
         return AccessDecision.DENY
-    if membership.status != "active":
+    if membership.status != "active" or not isinstance(membership.role, str) or not isinstance(action, str):
         return AccessDecision.DENY
     allowed = {
         "viewer": frozenset({"read"}),
