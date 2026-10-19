@@ -19,9 +19,11 @@ def validate(task: str, paths: list[str]) -> dict:
     if not policy["release"]["requires_human_approval"]:
         errors.append("Human approval required")
     if spec:
+        if spec.get("risk") != "low" or spec.get("approval") != "operator-dispatch":
+            errors.append("Task risk or approval is not eligible for unattended proposal")
         for path in paths:
             normalized = path.replace("\\", "/")
-            if normalized.startswith("/") or ".." in Path(normalized).parts or not any(normalized.startswith(prefix) for prefix in spec["paths"]):
+            if normalized.startswith("/") or ".." in normalized.split("/") or not any(normalized.startswith(prefix) for prefix in spec["paths"]):
                 errors.append(f"Out-of-scope path: {path}")
     return {"task": task, "decision": "ALLOW_PROPOSAL" if not errors else "HOLD", "risk": spec["risk"] if spec else "unknown", "errors": errors, "requires_human_approval": True}
 
