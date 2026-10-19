@@ -26,16 +26,30 @@ def validate(task: str, paths: list[str]) -> dict:
     return {"task": task, "decision": "ALLOW_PROPOSAL" if not errors else "HOLD", "risk": spec["risk"] if spec else "unknown", "errors": errors, "requires_human_approval": True}
 
 def changed_paths() -> list[str]:
-    output = subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=all"], cwd=ROOT, text=True)
+    """Read Git porcelain -z safely, including spaces and rename source paths."""
+    data = subprocess.check_output(
+        ["git", "status", "--porcelain=v1", "-z", "--untracked-files=all"],
+        cwd=ROOT,
+    )
+    entries = data.split(b"\\0")
     paths = []
-    for line in output.splitlines():
-        status, path = line[:2], line[3:]
-        if path == ".github/codex/change-prompt.md":
-            continue  # checked separately against the approved SHA256
-        if " -> " in path:
-            paths.extend(path.split(" -> ", 1))
-        else:
+    i = 0
+    while i < len(entries):
+        record = entries[i]
+        i += 1
+        if not record:
+            continue
+        status = record[:2].decode("ascii", errors="replace")
+        path = record[3:].decode("utf-8", errors="surrogateescape")
+        if path != ".github/codex/change-prompt.md":
             paths.append(path)
+        if "R" in status or "C" in status:
+            if i >= len(entries) or not entries[i]:
+                raise ValueError("Incomplete git rename/copy record")
+            source = entries[i].decode("utf-8", errors="surrogateescape")
+            i += 1
+            if source != ".github/codex/change-prompt.md":
+                paths.append(source)
     return paths
 
 if __name__ == "__main__":
