@@ -5,7 +5,7 @@ idempotency key, row locking or atomic CAS, and rollback on any failure.
 """
 from dataclasses import dataclass
 
-from .inventory_concurrency_contract import require_compare_and_swap_result
+from .inventory_concurrency_contract import InventoryVersion, require_compare_and_swap_result
 from .inventory_idempotency_contract import (
     IdempotencyConflict, fingerprint_inventory_command,
     plan_idempotent_inventory_command,
@@ -29,12 +29,23 @@ def execute_inventory_transaction(command, *, transaction):
     This function MUST run only after authentication and write authorization.
     """
     fingerprint = fingerprint_inventory_command(command)
+    try:
+        return _execute_inventory_transaction(command, transaction, fingerprint)
+    except Exception:
+        rollback = getattr(transaction, "rollback", None)
+        if callable(rollback):
+            rollback()
+        raise
+
+
+def _execute_inventory_transaction(command, transaction, fingerprint):
     receipt = transaction.get_receipt(command.seller_id, command.idempotency_key)
     if receipt is not None:
         if (not isinstance(receipt, StoredInventoryReceipt)
                 or receipt.seller_id != command.seller_id
                 or receipt.idempotency_key != command.idempotency_key
                 or receipt.fingerprint != fingerprint
+                or not isinstance(receipt.result, InventoryVersion)
                 or receipt.result.product_id != command.product_id):
             raise IdempotencyConflict("Conflicting or invalid stored receipt")
         return {"replayed": True, "result": receipt.result}
