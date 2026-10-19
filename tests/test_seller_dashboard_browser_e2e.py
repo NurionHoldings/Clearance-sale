@@ -78,6 +78,24 @@ class SellerDashboardBrowserE2E(unittest.TestCase):
         self.assertIn("전체 5개", self.page.locator("#result-count").inner_text())
         self.assertFalse(self.page.locator("#preview-disclosure").is_visible())
 
+    def test_inventory_search_combines_with_status_and_preview(self):
+        search = self.page.locator("#product-search")
+        search.fill("A-101")
+        self.assertEqual(self.page.locator("#products tr").count(), 1)
+        self.assertIn("가전 전시상품", self.page.locator("#products").inner_text())
+        self.page.locator("#status").select_option("out_of_stock")
+        self.assertEqual(self.page.locator("#products tr").count(), 0)
+        self.page.locator("#status").select_option("all")
+        search.fill("시연 상품")
+        self.assertEqual(self.page.locator("#products tr").count(), 0)
+        self.page.locator("#draft-preview").click()
+        self.assertEqual(self.page.locator("#products tr").count(), 1)
+        self.assertIn("미등록 시연", self.page.locator("#products").inner_text())
+        self.page.locator("#clear-draft-preview").click()
+        self.assertEqual(self.page.locator("#products tr").count(), 0)
+        search.fill("")
+        self.assertEqual(self.page.locator("#products tr").count(), 5)
+
     def test_filters_include_ephemeral_item_without_storage(self):
         self.page.locator("#draft-stock").fill("0")
         self.page.locator("#draft-preview").click()
