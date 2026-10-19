@@ -21,7 +21,7 @@ class SellerDashboardWSGITests(unittest.TestCase):
         )
 
     def request(self, path="/api/seller/dashboard", query="seller_id=seller-A",
-                method="GET", cookie="seller_session=verified"):
+                method="GET", cookie="__Host-seller_session=verified"):
         received = []
         environ = {"PATH_INFO": path, "QUERY_STRING": query,
                    "REQUEST_METHOD": method, "HTTP_COOKIE": cookie}
