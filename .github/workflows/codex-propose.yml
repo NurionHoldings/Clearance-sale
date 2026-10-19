@@ -49,6 +49,10 @@ jobs:
       - name: Record approved prompt checksum
         shell: bash
         run: echo "APPROVED_PROMPT_SHA=$(sha256sum .github/codex/change-prompt.md | cut -d' ' -f1)" >> "$GITHUB_ENV"
+      - name: Pin policy and gate checksums
+        shell: bash
+        run: |
+          sha256sum scripts/intent_dna_gate.py scripts/intent_dna_audit.py scripts/intent_dna_review_gate.py config/intent-dna-policy.json > "$RUNNER_TEMP/intent-dna-protected.sha256"
       - name: Codex proposes isolated changes
         uses: openai/codex-action@v1
         with:
@@ -56,6 +60,9 @@ jobs:
           permission-profile: ":workspace"
           safety-strategy: drop-sudo
           prompt-file: .github/codex/change-prompt.md
+      - name: Verify policy and gate integrity
+        shell: bash
+        run: sha256sum --check "$RUNNER_TEMP/intent-dna-protected.sha256"
       - name: Verify approved prompt integrity
         shell: bash
         run: |
