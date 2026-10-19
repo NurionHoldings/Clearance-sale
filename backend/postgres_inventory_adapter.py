@@ -20,6 +20,13 @@ class PostgresInventoryTransaction:
             raise RuntimeError("Transaction already closed")
         return self.connection.cursor()
 
+    def acquire_idempotency_lock(self, seller_id, key):
+        with self._cursor() as cursor:
+            cursor.execute(
+                "SELECT pg_advisory_xact_lock(hashtextextended(%s, 0))",
+                (f"{seller_id}:{key}",),
+            )
+
     def get_receipt(self, seller_id, key):
         with self._cursor() as cursor:
             cursor.execute(
