@@ -8,7 +8,7 @@ from http.cookies import CookieError, SimpleCookie
 
 from .seller_dashboard_route_adapter import handle_seller_dashboard_request
 
-SESSION_COOKIE = "seller_session"
+SESSION_COOKIE = "__Host-seller_session"
 
 
 def extract_seller_session(cookie_header):
