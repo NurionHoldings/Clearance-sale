@@ -27,7 +27,16 @@ def validate(task: str, paths: list[str]) -> dict:
 
 def changed_paths() -> list[str]:
     output = subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=all"], cwd=ROOT, text=True)
-    return [line[3:] for line in output.splitlines() if line[3:] != ".github/codex/change-prompt.md"]
+    paths = []
+    for line in output.splitlines():
+        status, path = line[:2], line[3:]
+        if path == ".github/codex/change-prompt.md":
+            continue  # checked separately against the approved SHA256
+        if " -> " in path:
+            paths.extend(path.split(" -> ", 1))
+        else:
+            paths.append(path)
+    return paths
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
