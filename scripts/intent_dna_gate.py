@@ -31,7 +31,7 @@ def changed_paths() -> list[str]:
         ["git", "status", "--porcelain=v1", "-z", "--untracked-files=all"],
         cwd=ROOT,
     )
-    entries = data.split(b"\\0")
+    entries = data.split(bytes([0]))
     paths = []
     i = 0
     while i < len(entries):
