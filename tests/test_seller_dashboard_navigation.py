@@ -18,6 +18,11 @@ class SellerDashboardNavigationTests(unittest.TestCase):
         self.assertIn('aria-label="판매자 재고 대시보드 샘플 체험"', self.home)
         self.assertIn('header nav a:focus-visible', self.home)
 
+    def test_home_navigation_is_relative_and_no_auth_claim(self):
+        self.assertIn('href="seller-dashboard-demo.html"', self.home)
+        self.assertNotIn('href="/seller-dashboard-demo.html"', self.home)
+        self.assertIn("시연 전용", self.demo.read_text(encoding="utf-8"))
+
     def test_demo_does_not_claim_operational_access(self):
         page = self.demo.read_text(encoding="utf-8")
         self.assertIn("시연 전용", page)
