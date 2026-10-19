@@ -25,7 +25,7 @@ def validate(task: str, paths: list[str]) -> dict:
             errors.append("Task risk or approval is not eligible for unattended proposal")
         for path in paths:
             normalized = path.replace("\\", "/")
-            if (normalized.startswith("/") or normalized.startswith("//") or ":" in normalized.split("/")[0]
+            if (not normalized or normalized.startswith("/") or normalized.startswith("//") or ":" in normalized.split("/")[0]
                 or ".." in normalized.split("/") or not any(normalized.startswith(prefix) for prefix in spec["paths"])
                 or any(normalized.startswith(prefix) for prefix in policy.get("protected_paths", []))):
                 errors.append(f"Out-of-scope path: {path}")
