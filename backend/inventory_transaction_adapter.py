@@ -44,6 +44,9 @@ def execute_inventory_transaction(command, *, transaction):
 
 
 def _execute_inventory_transaction(command, transaction, fingerprint):
+    lock = getattr(transaction, "acquire_idempotency_lock", None)
+    if callable(lock):
+        lock(command.seller_id, command.idempotency_key)
     receipt = transaction.get_receipt(command.seller_id, command.idempotency_key)
     if receipt is not None:
         if (not isinstance(receipt, StoredInventoryReceipt)
