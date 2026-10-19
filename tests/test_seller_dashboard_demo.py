@@ -1,4 +1,7 @@
 import unittest
+import shutil
+import subprocess
+import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -91,6 +94,23 @@ class SellerDashboardDemoTests(unittest.TestCase):
         self.assertIn('입력값이 변경되었습니다. 다시 사전검사하세요.', self.page)
         self.assertIn('draftPreviewItem=null;', self.page)
         self.assertIn('$("draft-errors").replaceChildren()', self.page)
+
+    @unittest.skipUnless(shutil.which("node"), "Node.js not available")
+    def test_browser_numeric_validator_executes_boundaries(self):
+        line = next(line for line in self.page.splitlines() if "const validNumber=" in line)
+        expression = line.strip().split("=", 1)[1].removesuffix(";")
+        cases = [("0", 1000000), ("1000000", 1000000), ("1000001", 1000000),
+                 ("-1", 1000000), ("1.5", 1000000), ("", 1000000), ("abc", 1000000)]
+        script = "const check=" + expression + ";console.log(JSON.stringify(" + \
+                 json.dumps(cases) + ".map(([raw,max])=>check(raw,max))));"
+        output = subprocess.run(["node", "-e", script], check=True, capture_output=True, text=True)
+        self.assertEqual(json.loads(output.stdout), [True, True, False, False, False, False, False])
+
+    def test_invalid_draft_does_not_leave_a_preview_row(self):
+        self.assertIn('draftPreviewItem=null;', self.page)
+        self.assertIn('if(!errors.length){draftPreviewItem=Object.freeze(', self.page)
+        self.assertIn('errors.length?"":"미리보기:', self.page)
+        self.assertIn('(미등록 시연)', self.page)
 
     def test_inventory_statuses(self):
         for status in ("active", "inactive", "low_stock", "out_of_stock"):
