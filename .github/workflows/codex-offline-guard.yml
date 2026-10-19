@@ -47,6 +47,8 @@ jobs:
         run: python -m unittest discover -s tests -p "test_intent_dna_gate.py" -v
       - name: Review gate import smoke test
         run: python scripts/intent_dna_review_gate.py --help
+      - name: PR handoff CLI smoke test
+        run: python scripts/intent_dna_pr_handoff.py --help
       - name: Python syntax check
         run: |
           if [ -d backend ]; then python -m compileall -q backend; fi
