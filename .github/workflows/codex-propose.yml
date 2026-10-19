@@ -1,0 +1,132 @@
+name: Codex guarded change proposal
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "Approved small development task (no secrets or customer data)"
+        required: true
+        type: choice
+        options:
+          - seller-dashboard-tests
+          - inventory-invariant-tests
+permissions:
+  contents: read
+jobs:
+  propose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: intent_DNA preflight gate
+        env:
+          APPROVED_TASK: ${{ inputs.task }}
+        run: python scripts/intent_dna_gate.py --task "$APPROVED_TASK"
+      - name: Verify API credential exists
+        env:
+          API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: test -n "$API_KEY"
+      - name: Run tests before Codex
+        run: |
+          if [ -d tests ]; then PYTHONDONTWRITEBYTECODE=1 python -B -m unittest discover -s tests -v; else echo "::notice::No tests directory; no test coverage"; fi
+      - name: Select approved task
+        shell: bash
+        env:
+          APPROVED_TASK: ${{ inputs.task }}
+        run: |
+          case "$APPROVED_TASK" in
+            seller-dashboard-tests|inventory-invariant-tests) ;;
+            *) echo "::error::Unsupported task"; exit 1 ;;
+          esac
+          case "$APPROVED_TASK" in
+            seller-dashboard-tests) printf "\nApproved task: improve seller dashboard tests only.\n" >> .github/codex/change-prompt.md ;;
+            inventory-invariant-tests) printf "\nApproved task: improve inventory invariant tests only.\n" >> .github/codex/change-prompt.md ;;
+          esac
+      - name: Record approved prompt checksum
+        shell: bash
+        run: echo "APPROVED_PROMPT_SHA=$(sha256sum .github/codex/change-prompt.md | cut -d' ' -f1)" >> "$GITHUB_ENV"
+      - name: Pin policy and gate checksums
+        shell: bash
+        run: |
+          sha256sum scripts/intent_dna_gate.py scripts/intent_dna_audit.py scripts/intent_dna_review_gate.py config/intent-dna-policy.json > "$RUNNER_TEMP/intent-dna-protected.sha256"
+      - name: Codex proposes isolated changes
+        uses: openai/codex-action@v1
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          permission-profile: ":workspace"
+          safety-strategy: drop-sudo
+          prompt-file: .github/codex/change-prompt.md
+      - name: Verify policy and gate integrity
+        id: verify_integrity
+        shell: bash
+        run: sha256sum --check "$RUNNER_TEMP/intent-dna-protected.sha256"
+      - name: Verify approved prompt integrity
+        shell: bash
+        run: |
+          test "$(sha256sum .github/codex/change-prompt.md | cut -d' ' -f1)" = "$APPROVED_PROMPT_SHA" || { echo "::error::Approved prompt was modified"; exit 1; }
+      - name: intent_DNA post-change gate
+        id: verify_scope
+        env:
+          APPROVED_TASK: ${{ inputs.task }}
+        run: |
+          python scripts/intent_dna_gate.py --task "$APPROVED_TASK" --check-changes
+      - name: Test proposed changes
+        id: verify_changes
+        run: |
+          if [ -d tests ]; then PYTHONDONTWRITEBYTECODE=1 python -B -m unittest discover -s tests -v; fi
+          if [ -d backend ]; then PYTHONDONTWRITEBYTECODE=1 python -B -c "import ast,pathlib; [ast.parse(p.read_text(encoding='utf-8'), filename=str(p)) for p in pathlib.Path('backend').rglob('*.py')]"; fi
+      - name: Export diff for human review
+        id: export_patch
+        shell: bash
+        run: |
+          for dir in backend tests; do
+            if [ -d "$dir" ]; then git add -N -- "$dir/"; fi
+          done
+          paths=()
+          for dir in backend tests; do
+            if [ -d "$dir" ]; then paths+=("$dir"); fi
+          done
+          if [ "${#paths[@]}" -eq 0 ]; then echo "::error::No approved source directories"; exit 1; fi
+          git diff --binary -- "${paths[@]}" > proposed.patch
+          git diff --stat -- "${paths[@]}"
+          test -s proposed.patch || { echo "::error::No reviewable patch generated"; exit 1; }
+      - name: Generate intent_DNA audit manifest
+        if: always()
+        shell: bash
+        env:
+          APPROVED_TASK: ${{ inputs.task }}
+        run: |
+          decision=HOLD
+          if [ "${{ steps.verify_integrity.outcome }}" = success ] && [ "${{ steps.verify_scope.outcome }}" = success ] && [ "${{ steps.verify_changes.outcome }}" = success ] && [ "${{ steps.export_patch.outcome }}" = success ] && [ -s proposed.patch ]; then decision=ALLOW_PROPOSAL; fi
+          python scripts/intent_dna_audit.py --task "$APPROVED_TASK" --decision "$decision" --commit "$GITHUB_SHA" --patch proposed.patch --output intent-dna-audit.json
+      - name: Verify audit evidence for human review
+        if: steps.export_patch.outcome == 'success'
+        shell: bash
+        run: python scripts/intent_dna_review_gate.py --audit intent-dna-audit.json --patch proposed.patch --commit "$GITHUB_SHA"
+      - name: Write audit summary
+        if: always()
+        shell: bash
+        env:
+          APPROVED_TASK: ${{ inputs.task }}
+        run: |
+          {
+            echo "## Codex proposal audit"
+            echo "Task: $APPROVED_TASK"
+            echo "Run: $GITHUB_RUN_ID"
+            echo "Commit: $GITHUB_SHA"
+            echo "Patch present: $(test -s proposed.patch && echo yes || echo no)"
+            echo "Human approval required before merge or deployment."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: codex-proposed-patch-${{ github.run_id }}
+          path: |
+            proposed.patch
+            intent-dna-audit.json
+          if-no-files-found: warn
+          retention-days: 3

@@ -14,3 +14,10 @@ An autonomous coding agent is **not** installed or authorized by this workflow. 
 
 ## Safety
 Do not auto-merge changes touching payments, authentication, seller identity, contracts, personal data, settlements or deployment. Never allow an AI-generated PR to bypass CI, branch protection or operator approval. Scheduled tasks do not imply continuous unattended execution. Never grant an agent unrestricted admin rights.
+
+## Mandatory operator blocker — GitHub Actions billing (2026-10-19)
+- **Status: BLOCKED / operator action required.** GitHub Actions run pages show: `We are having a problem billing your account. Please update your payment method...`.
+- **Operator next action:** check the NurionHoldings organization billing settings and payment method or outstanding charges; do not share payment details in repository issues or chat.
+- **After billing is resolved:** rerun the failed `Codex offline safety checks` and `Cloud development verification` jobs on PR #5; inspect their actual logs and require both checks to pass.
+- **Release gate:** no merge, production deployment, or claim of CI success while the checks remain blocked or failing. Continue only isolated offline/read-only development.
+- **Do not confuse this with** the earlier Python syntax-check command defect, which was separately corrected in commit `d5e7edb2dbab2d4c9abff7a6dd92f4e81726a08e`.
