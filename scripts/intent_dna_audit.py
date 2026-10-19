@@ -3,7 +3,6 @@
 import argparse
 import hashlib
 import json
-from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,6 +21,8 @@ def build_record(task, decision, commit, patch_file=None):
         "auto_merge": False,
         "auto_deploy": False,
     }
+    if decision == "ALLOW_PROPOSAL" and (patch_file is None or not Path(patch_file).is_file() or not Path(patch_file).stat().st_size):
+        raise ValueError("ALLOW_PROPOSAL requires a nonempty patch")
     if patch_file is not None and Path(patch_file).is_file():
         record["patch_sha256"] = hashlib.sha256(Path(patch_file).read_bytes()).hexdigest()
     return record
