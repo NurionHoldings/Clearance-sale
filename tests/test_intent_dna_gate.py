@@ -23,6 +23,14 @@ class IntentDNAGateTests(unittest.TestCase):
             paths = module.changed_paths()
             self.assertIn("config/old.py", paths)
             self.assertEqual(module.validate("seller-dashboard-tests", paths)["decision"], "HOLD")
+    def test_absolute_path(self):
+        self.assertEqual(module.validate("seller-dashboard-tests", ["/tests/escape.py"])["decision"], "HOLD")
+    def test_backslash_traversal(self):
+        self.assertEqual(module.validate("seller-dashboard-tests", ["tests\\\\..\\\\config\\\\policy.json"])["decision"], "HOLD")
+    def test_no_auto_release(self):
+        result = module.validate("inventory-invariant-tests", ["tests/stock.py"])
+        self.assertTrue(result["requires_human_approval"])
+        self.assertEqual(result["decision"], "ALLOW_PROPOSAL")
     def test_traversal(self):
         self.assertEqual(module.validate("inventory-invariant-tests", ["tests/../config/secrets"])["decision"], "HOLD")
 
