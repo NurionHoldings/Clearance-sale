@@ -90,6 +90,14 @@ class InventoryTransactionAdapterTests(unittest.TestCase):
         self.assertIsInstance(caught.exception.__cause__, OSError)
         self.assertEqual(self.tx.commits, 0)
 
+    def test_invalid_command_rolls_back_before_any_data_access(self):
+        invalid = InventoryCommand("seller-A", "product-1", "", 3, delta_reserved=2)
+        with self.assertRaises((ValueError, TypeError)):
+            execute_inventory_transaction(invalid, transaction=self.tx)
+        self.assertEqual(self.tx.writes, [])
+        self.assertEqual(self.tx.commits, 0)
+        self.assertEqual(self.tx.rollbacks, 1)
+
     def test_adapter_without_rollback_is_rejected_before_data_access(self):
         self.tx.rollback = None
         with self.assertRaises(TypeError):
