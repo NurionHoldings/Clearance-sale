@@ -31,6 +31,10 @@ class IntentDNAGateTests(unittest.TestCase):
         result = module.validate("inventory-invariant-tests", ["tests/stock.py"])
         self.assertTrue(result["requires_human_approval"])
         self.assertEqual(result["decision"], "ALLOW_PROPOSAL")
+    def test_drive_letter_path(self):
+        result = module.validate("seller-dashboard-tests", ["C:/tests/outside.py"])
+        self.assertEqual(result["decision"], "HOLD")
+
     def test_traversal(self):
         self.assertEqual(module.validate("inventory-invariant-tests", ["tests/../config/secrets"])["decision"], "HOLD")
 
