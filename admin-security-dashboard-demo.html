@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>보안 경고 대시보드 | 개발 시연</title>
+<style>
+:root{font-family:system-ui,"Malgun Gothic",sans-serif;color:#1b2940;background:#f2f5fa}*{box-sizing:border-box}body{margin:0}header{background:#14233a;color:white;padding:26px max(18px,calc((100vw - 1080px)/2))}header h1{margin:0 0 7px;font-size:clamp(24px,3vw,34px)}main{max-width:1080px;margin:auto;padding:20px 18px 70px}a{color:inherit}.notice{background:#fff3db;border-left:4px solid #ba7b19;padding:15px;border-radius:9px;line-height:1.6}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:22px 0}.metric,.panel{background:white;border:1px solid #dce4ee;border-radius:15px;padding:18px}.metric strong{display:block;font-size:30px;margin-top:7px}.controls{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin:16px 0}label{display:grid;gap:7px;font-weight:650}select{min-height:43px;padding:8px;border:1px solid #a9b7c9;border-radius:9px;background:white;font:inherit}button{border:1px solid #b9c6d7;border-radius:9px;background:white;padding:9px 13px;font:inherit;cursor:pointer}button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #3177c9;outline-offset:2px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:670px}th,td{padding:13px 10px;border-bottom:1px solid #e5eaf1;text-align:left}th{background:#edf2f8}.pill{display:inline-block;padding:5px 10px;border-radius:20px;font-weight:700;font-size:13px}.critical{background:#ffe2e2;color:#982727}.warning{background:#fff0c8;color:#855a06}.muted{color:#5c6c81}.details{margin-top:20px}dl{display:grid;grid-template-columns:140px 1fr;gap:10px}dt{font-weight:700}dd{margin:0;overflow-wrap:anywhere}footer{color:#617086;font-size:13px;margin-top:24px}@media(max-width:650px){dl{grid-template-columns:1fr}dt{margin-top:8px}main{padding:16px 12px 45px}}
+</style></head><body>
+<header><h1>🛡 보안 경고 대시보드</h1><div>땡처리 마켓 · 관리자 화면 개발 시연</div></header>
+<main><div class="notice" role="note"><strong>가상 데이터 전용 · 운영 기능 아님</strong> — 이 화면에는 실제 관리자 로그인, API 호출, 데이터베이스 조회 또는 경고 상태 저장 기능이 없습니다. 아래 정보는 모두 고정된 예시입니다. 공개 서비스에 실제 보안 경고를 노출하지 마세요.</div>
+<section aria-label="보안 경고 요약"><h2>로그인 이상 징후 요약</h2><div class="metrics" id="metrics"></div></section>
+<section aria-label="경고 목록"><h2>경고 목록</h2><div class="controls"><label for="severity">위험도<select id="severity"><option value="all">전체</option><option value="critical">위험</option><option value="warning">주의</option></select></label><label for="state">검토 상태<select id="state"><option value="all">전체</option><option value="open">미확인</option><option value="reviewing">검토 중</option><option value="resolved">처리 완료</option></select></label><button id="reset" type="button">필터 초기화</button></div>
+<p id="count" class="muted" role="status" aria-live="polite"></p>
+<div class="panel table-wrap"><table><caption class="muted">예시 경고 · 읽기 전용</caption><thead><tr><th>위험도</th><th>반복 횟수</th><th>검토 상태</th><th>변경 버전</th><th>상세</th></tr></thead><tbody id="rows"></tbody></table><p id="empty" hidden>조건에 맞는 경고가 없습니다.</p></div></section>
+<section class="panel details" aria-label="경고 상세"><h2>경고 상세</h2><div id="detail" aria-live="polite">경고 목록에서 상세보기를 선택하세요.</div></section>
+<footer>개발 시연 전용 · 실제 운영 전 서버 측 관리자 인증, HTTPS, Cache-Control: no-store, API 연결 및 보안 검증 필요</footer></main>
+<script>
+'use strict';
+// Static demonstration values only. Never put live security records in public HTML.
+const demo={read_only:true,alerts:[
+{severity:'critical',reason:'repeated_authentication_denials',attempts:19,bucket_digest:'a'.repeat(64),review_state:'reviewing',review_version:2},
+{severity:'warning',reason:'repeated_authentication_denials',attempts:7,bucket_digest:'b'.repeat(64),review_state:'open',review_version:0},
+{severity:'critical',reason:'repeated_authentication_denials',attempts:16,bucket_digest:'c'.repeat(64),review_state:'resolved',review_version:3},
+{severity:'warning',reason:'repeated_authentication_denials',attempts:5,bucket_digest:'d'.repeat(64),review_state:'open',review_version:1}
+]};
+const severityText={critical:'위험',warning:'주의'},stateText={open:'미확인',reviewing:'검토 중',resolved:'처리 완료'};
+const $=id=>document.getElementById(id);
+function node(tag,text,cls){const el=document.createElement(tag);el.textContent=String(text);if(cls)el.className=cls;return el}
+function renderMetrics(){const values=[['전체 경고',demo.alerts.length],['위험',demo.alerts.filter(a=>a.severity==='critical').length],['주의',demo.alerts.filter(a=>a.severity==='warning').length],['미확인',demo.alerts.filter(a=>a.review_state==='open').length]];for(const [label,value] of values){const card=node('div','', 'metric');card.append(node('span',label),node('strong',value));$('metrics').append(card)}}
+function showDetail(alert){const dl=node('dl','');for(const [key,value] of [['위험도',severityText[alert.severity]],['반복 횟수',alert.attempts],['원인','반복 로그인 거부 또는 차단'],['검토 상태',stateText[alert.review_state]],['변경 버전',alert.review_version],['식별값 (예시)',alert.bucket_digest.slice(0,12)+'…']]){dl.append(node('dt',key),node('dd',value))}$('detail').replaceChildren(dl)}
+function render(){const severity=$('severity').value,state=$('state').value;const list=demo.alerts.filter(a=>(severity==='all'||a.severity===severity)&&(state==='all'||a.review_state===state));$('rows').replaceChildren();$('count').textContent='표시 '+list.length+'건 / 전체 '+demo.alerts.length+'건';$('empty').hidden=list.length!==0;for(const alert of list){const tr=node('tr','');const badge=node('span',severityText[alert.severity],'pill '+alert.severity);const td=node('td','');td.append(badge);tr.append(td,node('td',alert.attempts),node('td',stateText[alert.review_state]),node('td',alert.review_version));const cell=node('td',''),button=node('button','상세보기');button.type='button';button.addEventListener('click',()=>showDetail(alert));cell.append(button);tr.append(cell);$('rows').append(tr)}}
+$('severity').addEventListener('change',render);$('state').addEventListener('change',render);$('reset').addEventListener('click',()=>{$('severity').value='all';$('state').value='all';render()});renderMetrics();render();
+</script></body></html>
