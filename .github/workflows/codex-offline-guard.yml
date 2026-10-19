@@ -51,5 +51,5 @@ jobs:
         run: python scripts/intent_dna_pr_handoff.py --help
       - name: Python syntax check
         run: |
-          if [ -d backend ]; then python -B -c "import ast,pathlib; [ast.parse(p.read_text(encoding=\u0027utf-8\u0027), filename=str(p)) for p in pathlib.Path(\u0027backend\u0027).rglob(\u0027*.py\u0027)]"; fi
+          if [ -d backend ]; then python -B -m compileall -q backend; fi
           if [ -d tests ]; then PYTHONDONTWRITEBYTECODE=1 python -B -m unittest discover -s tests -v; else echo "::notice::Tests directory absent"; fi
