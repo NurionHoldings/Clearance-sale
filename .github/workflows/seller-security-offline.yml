@@ -37,6 +37,7 @@ jobs:
               "test_seller_dashboard_route_adapter",
               "test_seller_dashboard_http_session_bridge",
               "test_seller_dashboard_wsgi_adapter",
+              "test_seller_identity_sql_draft",
           )
           suite = unittest.TestSuite()
           for name in modules:
