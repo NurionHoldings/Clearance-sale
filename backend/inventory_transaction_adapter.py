@@ -29,12 +29,13 @@ def execute_inventory_transaction(command, *, transaction):
     This function MUST run only after authentication and write authorization.
     """
     fingerprint = fingerprint_inventory_command(command)
+    rollback = getattr(transaction, "rollback", None)
+    if not callable(rollback):
+        raise TypeError("Transactional adapter must support rollback")
     try:
         return _execute_inventory_transaction(command, transaction, fingerprint)
     except Exception:
-        rollback = getattr(transaction, "rollback", None)
-        if callable(rollback):
-            rollback()
+        rollback()
         raise
 
 
@@ -48,6 +49,7 @@ def _execute_inventory_transaction(command, transaction, fingerprint):
                 or not isinstance(receipt.result, InventoryVersion)
                 or receipt.result.product_id != command.product_id):
             raise IdempotencyConflict("Conflicting or invalid stored receipt")
+        transaction.rollback()  # End the read-only replay transaction.
         return {"replayed": True, "result": receipt.result}
 
     current = transaction.get_balance(command.seller_id, command.product_id)
