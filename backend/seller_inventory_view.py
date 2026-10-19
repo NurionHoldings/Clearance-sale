@@ -46,3 +46,29 @@ def seller_inventory_summary(items):
         "available_units": sum(row["available"] for row in rows),
         "items": rows,
     }
+
+
+
+def filter_inventory_rows(summary, status="all", low_stock_threshold=5):
+    """Filter an existing snapshot without modifying it or accessing storage.
+
+    Status: all, active, inactive, low_stock, out_of_stock.
+    Low stock means 1..threshold available units for an active item.
+    """
+    allowed = {"all", "active", "inactive", "low_stock", "out_of_stock"}
+    if status not in allowed:
+        raise ValueError("Unsupported inventory status")
+    if type(low_stock_threshold) is not int or low_stock_threshold < 0:
+        raise ValueError("Low stock threshold must be a nonnegative integer")
+    rows = summary["items"]
+    if status == "all":
+        selected = rows
+    elif status == "active":
+        selected = [row for row in rows if row["active"]]
+    elif status == "inactive":
+        selected = [row for row in rows if not row["active"]]
+    elif status == "low_stock":
+        selected = [row for row in rows if row["active"] and 0 < row["available"] <= low_stock_threshold]
+    else:
+        selected = [row for row in rows if row["active"] and row["available"] == 0]
+    return [row.copy() for row in selected]
