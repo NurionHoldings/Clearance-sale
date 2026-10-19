@@ -2,6 +2,7 @@
 import unittest
 from backend.seller_auth_request_adapter import handle_auth_request
 from backend.seller_password_security import hash_seller_password
+from backend.seller_session_lifecycle import digest_session_token
 
 
 class Connection:
@@ -23,7 +24,10 @@ class Store:
     def save_session(self, record):
         self.record = record
     def revoke_token(self, token):
-        self.record = None
+        if self.record and self.record.token_digest == digest_session_token(token):
+            self.record = None
+            return 1
+        return 0
 
 
 class SellerAuthRequestTests(unittest.TestCase):
@@ -59,12 +63,15 @@ class SellerAuthRequestTests(unittest.TestCase):
         self.assertIsNone(cookie)
 
     def test_logout_clears_cookie_after_commit(self):
+        login_status, _, login_cookie = handle_auth_request(**self.params)
+        self.assertEqual(login_status, 200)
+        token = login_cookie.split(";", 1)[0].split("=", 1)[1]
         status, body, cookie = handle_auth_request(
             **(self.params | {"action": "logout", "credentials": None,
-                               "session_token": "opaque-session"}))
+                               "session_token": token}))
         self.assertEqual(status, 200)
         self.assertIn("Max-Age=0", cookie)
-        self.assertEqual(self.store.connection.commits, 1)
+        self.assertEqual(self.store.connection.commits, 2)
 
 
 if __name__ == "__main__":
