@@ -92,5 +92,11 @@ class SellerLoginServiceTests(unittest.TestCase):
             token=token, store=self.store, now=self.now))
 
 
+    def test_logout_missing_session_fails_closed(self):
+        with self.assertRaises(SellerLoginDenied):
+            logout_seller(token="missing-session", store=self.store)
+        self.assertEqual(self.store.connection.commits, 0)
+        self.assertEqual(self.store.connection.rollbacks, 1)
+
 if __name__ == "__main__":
     unittest.main()
