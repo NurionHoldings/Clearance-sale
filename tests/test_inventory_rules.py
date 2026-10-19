@@ -33,6 +33,19 @@ class InventoryRulesTests(unittest.TestCase):
                 with self.assertRaises((ValueError, TypeError)):
                     inventory.reserve(10, 0, requested)
 
+    def test_stock_adjustment_respects_reservations(self):
+        self.assertEqual(inventory.validate_inventory_adjustment(10, 3, -7), 3)
+        self.assertEqual(inventory.validate_inventory_adjustment(10, 3, 5), 15)
+        with self.assertRaises(ValueError):
+            inventory.validate_inventory_adjustment(10, 3, -8)
+
+    def test_stock_adjustment_rejects_invalid_delta(self):
+        for delta in (True, 1.5, "2", None):
+            with self.subTest(delta=delta), self.assertRaises(TypeError):
+                inventory.validate_inventory_adjustment(10, 3, delta)
+        with self.assertRaises(ValueError):
+            inventory.validate_inventory_adjustment(2, 3, 1)
+
     def test_release_cannot_exceed_reserved(self):
         with self.assertRaises(ValueError):
             inventory.release(10, 2, 3)
