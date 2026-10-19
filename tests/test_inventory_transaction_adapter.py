@@ -78,6 +78,18 @@ class InventoryTransactionAdapterTests(unittest.TestCase):
         self.assertEqual(self.tx.commits, 1)
         self.assertEqual(self.tx.rollbacks, 1)
 
+    def test_rollback_failure_is_reported(self):
+        self.tx.affected_rows = 0
+
+        def broken_rollback():
+            raise OSError("database connection lost")
+
+        self.tx.rollback = broken_rollback
+        with self.assertRaisesRegex(RuntimeError, "Inventory rollback failed") as caught:
+            execute_inventory_transaction(self.command, transaction=self.tx)
+        self.assertIsInstance(caught.exception.__cause__, OSError)
+        self.assertEqual(self.tx.commits, 0)
+
     def test_adapter_without_rollback_is_rejected_before_data_access(self):
         self.tx.rollback = None
         with self.assertRaises(TypeError):
