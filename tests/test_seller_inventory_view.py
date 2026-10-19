@@ -4,7 +4,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "backend"))
-from seller_inventory_view import InventoryItem, seller_inventory_summary
+from seller_inventory_view import InventoryItem, seller_inventory_summary, filter_inventory_rows
 
 
 class SellerInventoryViewTests(unittest.TestCase):
@@ -31,6 +31,33 @@ class SellerInventoryViewTests(unittest.TestCase):
     def test_invalid_inventory_rejected(self):
         with self.assertRaises(ValueError):
             seller_inventory_summary([InventoryItem("A", "Invalid", 1, 2)])
+
+    def test_inventory_status_filters(self):
+        snapshot = seller_inventory_summary([
+            InventoryItem("A", "Available", 10, 1),
+            InventoryItem("B", "Low", 3, 1),
+            InventoryItem("C", "Sold out", 2, 2),
+            InventoryItem("D", "Inactive", 10, 0, False),
+        ])
+        self.assertEqual([r["sku"] for r in filter_inventory_rows(snapshot, "active")], ["A", "B", "C"])
+        self.assertEqual([r["sku"] for r in filter_inventory_rows(snapshot, "inactive")], ["D"])
+        self.assertEqual([r["sku"] for r in filter_inventory_rows(snapshot, "low_stock", 2)], ["B"])
+        self.assertEqual([r["sku"] for r in filter_inventory_rows(snapshot, "out_of_stock")], ["C"])
+
+    def test_invalid_filter_and_threshold(self):
+        snapshot = seller_inventory_summary([])
+        for status in ("missing", "", None):
+            with self.subTest(status=status), self.assertRaises(ValueError):
+                filter_inventory_rows(snapshot, status)
+        for threshold in (-1, True, 2.5):
+            with self.subTest(threshold=threshold), self.assertRaises(ValueError):
+                filter_inventory_rows(snapshot, "low_stock", threshold)
+
+    def test_filter_does_not_mutate_snapshot(self):
+        snapshot = seller_inventory_summary([InventoryItem("A", "Item", 2, 0)])
+        rows = filter_inventory_rows(snapshot)
+        rows[0]["available"] = 999
+        self.assertEqual(snapshot["items"][0]["available"], 2)
 
     def test_input_unchanged(self):
         items = [InventoryItem("A", "Item", 4, 1)]
