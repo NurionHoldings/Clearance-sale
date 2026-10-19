@@ -46,5 +46,20 @@ class SellerDashboardFlowTests(unittest.TestCase):
         self.assertEqual(code, 403)
         self.assertEqual(calls, [])
 
+    def test_revoked_session_is_denied(self):
+        from dataclasses import replace
+        token, record = issue_session(user_id="user-1", now=datetime.now(timezone.utc))
+        record = replace(record, revoked_at=datetime.now(timezone.utc))
+        class Store:
+            def load_session_record(self, value):
+                return record if value == token else None
+            def load_membership(self, user, seller):
+                raise AssertionError("Membership must not be read")
+        code, _ = authenticated_dashboard_flow(
+            auth_store=Store(), seller_id="seller-A",
+            cookie_header="__Host-seller_session=" + token,
+            query_inventory_by_seller=lambda seller: self.fail("Inventory must not be read"))
+        self.assertEqual(code, 403)
+
 if __name__ == "__main__":
     unittest.main()
