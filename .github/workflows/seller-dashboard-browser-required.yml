@@ -38,12 +38,12 @@ jobs:
               start_dir="tests", pattern="test_seller_dashboard_browser_e2e.py"
           )
           result = unittest.TextTestRunner(verbosity=2).run(suite)
-          if result.testsRun < 3 or result.skipped or not result.wasSuccessful():
+          if result.testsRun < 4 or result.skipped or not result.wasSuccessful():
               print(
                   "RELEASE GATE FAILED: required Chromium E2E must run "
-                  "all 3 tests without skip/failure",
+                  "all 4 tests without skip/failure",
                   file=sys.stderr,
               )
               sys.exit(1)
-          print("Chromium E2E gate passed: 3 tests executed, 0 skipped")
+          print("Chromium E2E gate passed: 4 tests executed, 0 skipped")
           PY
