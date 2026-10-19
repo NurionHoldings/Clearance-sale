@@ -71,6 +71,17 @@ class SellerLoginServiceTests(unittest.TestCase):
         self.assertEqual(self.store.connection.rollbacks, 1)
         self.assertEqual(self.store.connection.commits, 0)
 
+    def test_rollback_failure_still_returns_generic_login_error(self):
+        self.store.fail_save = True
+        def broken_rollback():
+            raise RuntimeError("private database detail")
+        self.store.connection.rollback = broken_rollback
+        with self.assertRaises(SellerLoginDenied) as raised:
+            authenticate_seller(user_id="user-1",
+                                password="long-example-password-2026",
+                                store=self.store, now=self.now)
+        self.assertEqual(str(raised.exception), "Authentication unavailable")
+
     def test_logout_revokes_and_commits(self):
         token, _ = authenticate_seller(
             user_id="user-1", password="long-example-password-2026",
