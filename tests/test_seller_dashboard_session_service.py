@@ -86,6 +86,36 @@ class SellerDashboardSessionTests(unittest.TestCase):
                 self.assertEqual(str(caught.exception), "Seller dashboard unavailable")
                 self.assertIsNone(caught.exception.__cause__)
 
+    def test_diagnostics_are_sanitized_and_do_not_change_public_error(self):
+        events = []
+        def broken(*args):
+            raise RuntimeError("secret-database-password")
+        with self.assertRaises(SellerAccessDenied) as caught:
+            get_session_seller_dashboard(
+                session_token="private-session-token", seller_id="seller-A",
+                load_session=lambda token: self.principal,
+                load_membership=lambda user, seller: self.membership,
+                query_inventory_by_seller=broken,
+                report_error=lambda code, stage: events.append((code, stage)),
+            )
+        self.assertEqual(events, [("seller_dashboard_dependency_failed", "dashboard")])
+        self.assertEqual(str(caught.exception), "Seller dashboard unavailable")
+        self.assertNotIn("secret", repr(events))
+        self.assertNotIn("private-session-token", repr(events))
+
+    def test_diagnostic_reporter_failure_cannot_expose_internal_exception(self):
+        def broken(*args):
+            raise RuntimeError("private-db-host")
+        with self.assertRaises(SellerAccessDenied) as caught:
+            get_session_seller_dashboard(
+                session_token="trusted-session", seller_id="seller-A",
+                load_session=broken,
+                load_membership=lambda user, seller: self.membership,
+                query_inventory_by_seller=lambda seller: self.records,
+                report_error=broken,
+            )
+        self.assertEqual(str(caught.exception), "Seller dashboard unavailable")
+
     def test_cross_tenant_row_fails_entire_response(self):
         foreign = [("seller-B", InventoryItem("sku-2", "Foreign", 3, 0, True))]
         with self.assertRaises(InventoryScopeError):
