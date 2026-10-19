@@ -10,6 +10,7 @@ from .seller_access_policy import (
 )
 from .seller_dashboard_service import SellerAccessDenied, get_authorized_seller_dashboard
 from .seller_inventory_scope import InventoryScopeError, scoped_inventory_loader
+from .seller_diagnostics import safe_report_seller_diagnostic
 
 
 def get_session_seller_dashboard(
@@ -31,7 +32,10 @@ def get_session_seller_dashboard(
     def record_failure(stage):
         if report_error is not None:
             try:
-                report_error("seller_dashboard_dependency_failed", stage)
+                safe_report_seller_diagnostic(
+                    lambda event: report_error(event.code, event.stage),
+                    "seller_dashboard_dependency_failed", stage,
+                )
             except Exception:
                 pass  # Diagnostics must not replace the safe public failure.
 
