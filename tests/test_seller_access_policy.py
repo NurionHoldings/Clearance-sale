@@ -62,6 +62,19 @@ class SellerAccessPolicyTests(unittest.TestCase):
                     AccessDecision.DENY,
                 )
 
+    def test_malformed_role_and_action_are_denied(self):
+        for role in ([], {}, None):
+            membership = SellerMembership("user-1", "seller-A", role, "active")
+            self.assertEqual(
+                can_access_seller_inventory(self.principal, membership, seller_id="seller-A"),
+                AccessDecision.DENY,
+            )
+        for action in ([], {}, None):
+            self.assertEqual(
+                can_access_seller_inventory(self.principal, self.owner, seller_id="seller-A", action=action),
+                AccessDecision.DENY,
+            )
+
     def test_viewer_read_only_and_bad_inputs(self):
         viewer = SellerMembership("user-1", "seller-A", "viewer", "active")
         self.assertEqual(
