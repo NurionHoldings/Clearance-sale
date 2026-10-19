@@ -33,7 +33,7 @@ jobs:
               "no sudo": all("safety-strategy: drop-sudo" in x for x in (propose, review)),
               "approved task restriction": "Unsupported task" in propose,
               "approved prompt integrity": "APPROVED_PROMPT_SHA" in propose,
-              "path enforcement": "Disallowed changes" in propose,
+              "path enforcement": "--check-changes" in propose and "intent_DNA post-change gate" in propose,
               "human review artifact": "proposed.patch" in propose,
               "no empty patches": "No reviewable patch generated" in propose,
           }
