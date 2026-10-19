@@ -28,11 +28,11 @@ def execute_inventory_transaction(command, *, transaction):
     commit(). The adapter must guarantee atomicity and rollback on failure.
     This function MUST run only after authentication and write authorization.
     """
-    fingerprint = fingerprint_inventory_command(command)
     rollback = getattr(transaction, "rollback", None)
     if not callable(rollback):
         raise TypeError("Transactional adapter must support rollback")
     try:
+        fingerprint = fingerprint_inventory_command(command)
         return _execute_inventory_transaction(command, transaction, fingerprint)
     except Exception:
         try:
