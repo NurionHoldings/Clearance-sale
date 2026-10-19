@@ -42,6 +42,17 @@ class SellerDashboardDemoTests(unittest.TestCase):
         self.assertIn('id="result-count" class="muted" role="status" aria-live="polite"', self.page)
         self.assertIn('$("result-count").textContent=', self.page)
 
+    def test_product_draft_preview_korean_validation(self):
+        for token in ('id="draft-sku"', 'id="draft-name"', 'id="draft-price"',
+                      'id="draft-stock"', 'id="draft-reserved"',
+                      'id="draft-preview"', 'id="draft-errors"',
+                      '이미 등록된 상품 코드입니다.', '등록 전 검사',
+                      '실제 상품 등록은 진행되지 않았습니다.'):
+            with self.subTest(token=token):
+                self.assertIn(token, self.page)
+        self.assertIn('source.some(item=>item.sku.trim()===sku)', self.page)
+        self.assertIn('document.createElement("li")', self.page)
+
     def test_inventory_statuses(self):
         for status in ("active", "inactive", "low_stock", "out_of_stock"):
             self.assertIn('value="' + status + '"', self.page)
