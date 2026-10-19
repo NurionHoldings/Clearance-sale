@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>판매자 재고 대시보드 | 시연 전용</title>
+<style>
+:root{font-family:system-ui,"Malgun Gothic",sans-serif;color:#1b2940;background:#f3f6fa}
+*{box-sizing:border-box}body{margin:0}main{max-width:1100px;margin:auto;padding:26px 18px 70px}
+header{background:#17263c;color:white;padding:22px max(18px,calc((100vw - 1100px)/2))}
+h1{margin:0 0 8px;font-size:clamp(23px,3vw,34px)}h2{font-size:20px;margin:30px 0 14px}
+a{color:inherit}.notice{padding:14px 16px;background:#fff4db;border-left:4px solid #bd7c14;border-radius:8px;margin:18px 0;line-height:1.6}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.metric,.panel{background:white;border:1px solid #dce4ef;border-radius:14px;padding:18px}
+.metric strong{display:block;font-size:28px;margin-top:10px}.muted{color:#5a6880}
+.controls{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:18px 0}
+label{display:grid;gap:6px;font-weight:650}select,input{padding:10px;border:1px solid #b5c2d3;border-radius:8px;font:inherit}
+button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #3478d6;outline-offset:2px}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:540px}th,td{text-align:left;padding:13px 10px;border-bottom:1px solid #e4eaf2}th{background:#eef3f9}
+.tag{display:inline-block;border-radius:20px;padding:5px 9px;background:#e8eef8;font-size:13px}
+.tag.warning{background:#fff0cb;color:#805200}.tag.danger{background:#ffe0df;color:#a02b28}
+.alerts{padding-left:22px;line-height:1.9}footer{margin-top:28px;color:#5a6880;font-size:13px}
+@media(max-width:600px){main{padding:18px 12px 50px}.metric,.panel{padding:14px}.controls{align-items:stretch}.controls label{flex:1;min-width:130px}}
+</style>
+</head>
+<body>
+<header><h1>판매자 재고 대시보드</h1><div>샘플 상품만 사용하는 읽기 전용 시제품</div></header>
+<main>
+<div class="notice" role="note"><strong>시연 전용</strong> — 모든 상품과 수량은 가상 데이터입니다. 로그인, 실제 판매자 정보 조회, 주문, 결제, 재고 수정은 제공하지 않습니다.</div>
+<section aria-label="재고 요약"><h2>재고 현황</h2><div id="metrics" class="metrics"></div></section>
+<section aria-label="재고 알림"><h2>재고 경고</h2><div class="panel"><ul id="alerts" class="alerts" aria-live="polite"></ul></div></section>
+<section aria-label="상품 목록"><h2>상품별 재고</h2>
+<div class="controls"><label for="status">상태 필터<select id="status"><option value="all">전체</option><option value="active">판매 중</option><option value="inactive">판매 중지</option><option value="low_stock">재고 부족</option><option value="out_of_stock">품절</option></select></label>
+<label for="threshold">재고 부족 기준 수량<input id="threshold" type="number" min="0" max="10000" step="1" value="5"></label></div>
+<div class="panel table-wrap"><table><thead><tr><th>상품 코드</th><th>상품명</th><th>보유</th><th>예약</th><th>판매 가능</th><th>상태</th></tr></thead><tbody id="products"></tbody></table><p id="empty" class="muted" hidden>해당하는 상품이 없습니다.</p></div>
+</section>
+<footer>땡처리 마켓 · 독립형 화면 시연 · 서버 통신 없음 · 운영 사용 금지</footer>
+</main>
+<script>
+"use strict";
+const source=Object.freeze([
+{sku:"A-101",name:"가전 전시상품",onHand:12,reserved:3,active:true},
+{sku:"B-202",name:"시즌오프 의류",onHand:4,reserved:2,active:true},
+{sku:"C-303",name:"사무용 의자",onHand:6,reserved:6,active:true},
+{sku:"D-404",name:"주방 집기",onHand:20,reserved:0,active:false},
+{sku:"E-505",name:"생활용품 박스",onHand:8,reserved:4,active:true}
+].map(item=>Object.freeze(item)));
+const $=id=>document.getElementById(id);
+function snapshot(threshold){
+ const rows=source.map(item=>({...item,available:item.active?item.onHand-item.reserved:0}));
+ const active=rows.filter(row=>row.active);
+ const low=active.filter(row=>row.available>0&&row.available<=threshold);
+ const out=active.filter(row=>row.available===0);
+ return {rows,low,out,metrics:[
+ ["전체 상품",rows.length],["판매 중",active.length],["판매 중지",rows.length-active.length],
+ ["판매 가능 수량",active.reduce((sum,row)=>sum+row.available,0)],
+ ["재고 부족",low.length],["품절",out.length]
+ ]};
+}
+function render(){
+ const raw=$("threshold").value;
+ const threshold=raw.trim()!==""&&Number.isInteger(Number(raw))&&Number(raw)>=0&&Number(raw)<=10000?Number(raw):5;
+ if(String(threshold)!==raw)$("threshold").value=String(threshold);
+ const data=snapshot(threshold),status=$("status").value;
+ const filters={all:()=>true,active:r=>r.active,inactive:r=>!r.active,low_stock:r=>r.active&&r.available>0&&r.available<=threshold,out_of_stock:r=>r.active&&r.available===0};
+ const rows=data.rows.filter(filters[status]||filters.all);
+ $("metrics").replaceChildren(...data.metrics.map(([label,value])=>{
+  const box=document.createElement("div");box.className="metric";
+  const title=document.createElement("span");title.className="muted";title.textContent=label;
+  const number=document.createElement("strong");number.textContent=value.toLocaleString("ko-KR");
+  box.append(title,number);return box;
+ }));
+ const warnings=[...data.out.map(r=>({row:r,type:"품절"})),...data.low.sort((a,b)=>a.available-b.available).map(r=>({row:r,type:"재고 부족"}))];
+ $("alerts").replaceChildren(...(warnings.length?warnings.map(({row,type})=>{
+  const li=document.createElement("li");li.textContent=type+" · "+row.name+" ("+row.sku+") — 판매 가능 "+row.available+"개";return li;
+ }):[Object.assign(document.createElement("li"),{textContent:"현재 경고 대상이 없습니다."})]));
+ $("products").replaceChildren(...rows.map(row=>{
+  const tr=document.createElement("tr");
+  const statusText=!row.active?"판매 중지":row.available===0?"품절":row.available<=threshold?"재고 부족":"판매 중";
+  for(const value of [row.sku,row.name,row.onHand,row.reserved,row.available,statusText]){
+   const td=document.createElement("td");td.textContent=String(value);
+   if(value===statusText){const tag=document.createElement("span");tag.className="tag"+(statusText==="품절"?" danger":statusText==="재고 부족"?" warning":"");tag.textContent=statusText;td.replaceChildren(tag);}
+   tr.append(td);
+  }return tr;
+ }));
+ $("empty").hidden=rows.length!==0;
+}
+$("status").addEventListener("change",render);
+$("threshold").addEventListener("change",render);
+render();
+</script>
+</body></html>
