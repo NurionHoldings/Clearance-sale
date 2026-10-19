@@ -34,8 +34,11 @@ class PostgresInventoryIntegrationTests(unittest.TestCase):
         if not any(word in name for word in ("test", "ci", "scratch")):
             cls.connection.close()
             raise RuntimeError("Refusing non-test database name")
+        schema = SCHEMA.read_text(encoding="utf-8")
+        # The migration draft contains BEGIN/COMMIT; run it on a fresh
+        # connection and avoid an already-open read transaction.
         with cls.connection.cursor() as cur:
-            cur.execute(SCHEMA.read_text(encoding="utf-8"))
+            cur.execute(schema)
         cls.connection.commit()
 
     @classmethod
