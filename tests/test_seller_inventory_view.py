@@ -28,6 +28,23 @@ class SellerInventoryViewTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             seller_inventory_summary([InventoryItem("A", "One", 1, 0), InventoryItem("A", "Two", 2, 0)])
 
+    def test_sku_normalization_rejects_whitespace_duplicates(self):
+        with self.assertRaises(ValueError):
+            seller_inventory_summary([
+                InventoryItem(" A ", "First", 2, 0),
+                InventoryItem("A", "Second", 3, 0),
+            ])
+
+    def test_product_identifier_limits_and_types(self):
+        for sku, name in ((None, "Valid"), (123, "Valid"), ("X" * 65, "Valid"), ("A", None), ("A", 123), ("A", "Y" * 201)):
+            with self.subTest(sku=sku, name=name), self.assertRaises(ValueError):
+                seller_inventory_summary([InventoryItem(sku, name, 1, 0)])
+
+    def test_product_identifier_whitespace_is_normalized(self):
+        rows = seller_inventory_summary([InventoryItem(" A ", " Sample ", 1, 0)])["items"]
+        self.assertEqual(rows[0]["sku"], "A")
+        self.assertEqual(rows[0]["name"], "Sample")
+
     def test_invalid_inventory_rejected(self):
         with self.assertRaises(ValueError):
             seller_inventory_summary([InventoryItem("A", "Invalid", 1, 2)])
