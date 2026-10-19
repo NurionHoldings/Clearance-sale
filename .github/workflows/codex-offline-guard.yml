@@ -44,12 +44,12 @@ jobs:
               raise SystemExit("Offline guard failed")
           PY
       - name: intent_DNA policy unit tests
-        run: python -m unittest discover -s tests -p "test_intent_dna_gate.py" -v
+        run: PYTHONDONTWRITEBYTECODE=1 python -B -m unittest discover -s tests -p "test_intent_dna_gate.py" -v
       - name: Review gate import smoke test
         run: python scripts/intent_dna_review_gate.py --help
       - name: PR handoff CLI smoke test
         run: python scripts/intent_dna_pr_handoff.py --help
       - name: Python syntax check
         run: |
-          if [ -d backend ]; then python -m compileall -q backend; fi
-          if [ -d tests ]; then python -m unittest discover -s tests -v; else echo "::notice::Tests directory absent"; fi
+          if [ -d backend ]; then python -B -c "import ast,pathlib; [ast.parse(p.read_text(encoding=\u0027utf-8\u0027), filename=str(p)) for p in pathlib.Path(\u0027backend\u0027).rglob(\u0027*.py\u0027)]"; fi
+          if [ -d tests ]; then PYTHONDONTWRITEBYTECODE=1 python -B -m unittest discover -s tests -v; else echo "::notice::Tests directory absent"; fi
