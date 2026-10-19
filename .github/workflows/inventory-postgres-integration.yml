@@ -45,8 +45,8 @@ jobs:
               start_dir="tests", pattern="test_postgres_inventory_integration.py"
           )
           result = unittest.TextTestRunner(verbosity=2).run(suite)
-          if result.testsRun != 6 or result.skipped or not result.wasSuccessful():
-              print("RELEASE GATE FAILED: all 6 PostgreSQL tests must pass without skips", file=sys.stderr)
+          if result.testsRun != 7 or result.skipped or not result.wasSuccessful():
+              print("RELEASE GATE FAILED: all 7 PostgreSQL tests must pass without skips", file=sys.stderr)
               sys.exit(1)
           print("PostgreSQL integration gate passed")
           PY
