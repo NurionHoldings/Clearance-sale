@@ -36,6 +36,7 @@ jobs:
               "test_seller_dashboard_read_response",
               "test_seller_dashboard_route_adapter",
               "test_seller_dashboard_http_session_bridge",
+              "test_seller_dashboard_wsgi_adapter",
           )
           suite = unittest.TestSuite()
           for name in modules:
