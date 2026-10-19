@@ -27,7 +27,7 @@ button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{ou
 <main>
 <div class="notice" role="note"><strong>시연 전용</strong> — 모든 상품과 수량은 가상 데이터입니다. 로그인, 실제 판매자 정보 조회, 주문, 결제, 재고 수정은 제공하지 않습니다.</div>
 <section id="inventory-overview" aria-label="재고 요약"><h2>재고 현황</h2><div id="metrics" class="metrics"></div></section>
-<section aria-label="재고 알림"><h2>재고 경고</h2><div class="panel"><ul id="alerts" class="alerts" aria-live="polite"></ul></div></section>
+<section aria-label="재고 알림"><h2>재고 경고</h2><div class="controls"><button type="button" id="show-low-stock">재고 부족만 보기</button><button type="button" id="show-out-of-stock">품절만 보기</button><button type="button" id="reset-inventory-filters">전체 상품 보기</button></div><div class="panel"><ul id="alerts" class="alerts" aria-live="polite"></ul></div></section>
 <section aria-label="상품 목록"><h2>상품별 재고</h2>
 <div class="controls"><label for="product-search">상품 검색 (코드·상품명)<input id="product-search" type="search" autocomplete="off" placeholder="가상 상품 검색"></label><label for="status">상태 필터<select id="status"><option value="all">전체</option><option value="active">판매 중</option><option value="inactive">판매 중지</option><option value="low_stock">재고 부족</option><option value="out_of_stock">품절</option></select></label>
 <label for="sort-order">정렬 기준<select id="sort-order"><option value="sku_asc">상품 코드순</option><option value="name_asc">상품명순</option><option value="available_asc">판매 가능 적은 순</option><option value="available_desc">판매 가능 많은 순</option></select></label>
@@ -108,6 +108,10 @@ function render(){
  $("empty").hidden=rows.length!==0;
  $("empty").textContent=keyword?"검색어와 일치하는 상품이 없습니다. 검색어를 변경하거나 지워주세요.":status!=="all"?"선택한 상태에 해당하는 상품이 없습니다. 상태 필터를 변경해 주세요.":"표시할 상품이 없습니다.";
 }
+const selectInventoryStatus=status=>{$("status").value=status;$("product-search").value="";render();$("result-count").scrollIntoView({block:"nearest"});};
+$("show-low-stock").addEventListener("click",()=>selectInventoryStatus("low_stock"));
+$("show-out-of-stock").addEventListener("click",()=>selectInventoryStatus("out_of_stock"));
+$("reset-inventory-filters").addEventListener("click",()=>{$("sort-order").value="sku_asc";selectInventoryStatus("all");});
 $("product-search").addEventListener("input",render);
 $("sort-order").addEventListener("change",render);
 $("status").addEventListener("change",render);
