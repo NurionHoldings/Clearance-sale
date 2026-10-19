@@ -17,6 +17,10 @@ class IntentDNAAuditTests(unittest.TestCase):
         self.assertFalse(record["auto_deploy"])
         self.assertFalse(record["auto_merge"])
 
+    def test_approval_requires_patch(self):
+        with self.assertRaises(ValueError):
+            module.build_record("seller-dashboard-tests", "ALLOW_PROPOSAL", "abc123")
+
     def test_patch_hash_is_deterministic(self):
         with tempfile.TemporaryDirectory() as directory:
             patch = Path(directory) / "proposal.patch"
