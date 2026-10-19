@@ -227,6 +227,39 @@ class PostgresInventoryIntegrationTests(unittest.TestCase):
             self.assertEqual(cur.fetchone(), (2, 4))
         self.connection.rollback()
 
+    def test_same_request_key_is_isolated_by_seller(self):
+        other_seller = str(uuid4())
+        with self.connection.cursor() as cur:
+            cur.execute(
+                "INSERT INTO inventory_balances(seller_id,product_id,on_hand,reserved,version) "
+                "VALUES (%s,%s,10,1,3)", (other_seller, self.product),
+            )
+        self.connection.commit()
+        try:
+            for seller in (self.seller, other_seller):
+                result = execute_inventory_transaction(
+                    InventoryCommand(seller, self.product, self.key, 3, delta_reserved=1),
+                    transaction=PostgresInventoryTransaction(self.connection),
+                )
+                self.assertFalse(result["replayed"])
+            with self.connection.cursor() as cur:
+                cur.execute(
+                    "SELECT seller_id, reserved, version FROM inventory_balances "
+                    "WHERE product_id=%s AND seller_id IN (%s,%s)",
+                    (self.product, self.seller, other_seller),
+                )
+                balances = {str(seller): (reserved, version)
+                            for seller, reserved, version in cur.fetchall()}
+            self.assertEqual(balances[self.seller], (2, 4))
+            self.assertEqual(balances[other_seller], (2, 4))
+            self.connection.rollback()
+        finally:
+            self.connection.rollback()
+            with self.connection.cursor() as cur:
+                cur.execute("DELETE FROM inventory_request_receipts WHERE seller_id=%s", (other_seller,))
+                cur.execute("DELETE FROM inventory_balances WHERE seller_id=%s", (other_seller,))
+            self.connection.commit()
+
     def test_database_rejects_invalid_balance(self):
         with self.assertRaises(psycopg.errors.CheckViolation):
             with self.connection.cursor() as cur:
