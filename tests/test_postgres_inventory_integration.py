@@ -92,6 +92,50 @@ class PostgresInventoryIntegrationTests(unittest.TestCase):
             self.assertEqual(cur.fetchone(), (1, 3))
         self.connection.rollback()
 
+    def test_same_key_different_payload_is_rejected(self):
+        from backend.inventory_idempotency_contract import IdempotencyConflict
+        first = InventoryCommand(self.seller, self.product, self.key, 3, delta_reserved=1)
+        execute_inventory_transaction(first, transaction=PostgresInventoryTransaction(self.connection))
+        changed = InventoryCommand(self.seller, self.product, self.key, 3, delta_reserved=2)
+        with self.assertRaises(IdempotencyConflict):
+            execute_inventory_transaction(changed, transaction=PostgresInventoryTransaction(self.connection))
+        with self.connection.cursor() as cur:
+            cur.execute(
+                "SELECT reserved, version FROM inventory_balances "
+                "WHERE seller_id=%s AND product_id=%s", (self.seller, self.product)
+            )
+            self.assertEqual(cur.fetchone(), (2, 4))
+        self.connection.rollback()
+
+    def test_competing_stale_version_fails_without_receipt(self):
+        first = InventoryCommand(self.seller, self.product, self.key, 3, delta_reserved=1)
+        execute_inventory_transaction(first, transaction=PostgresInventoryTransaction(self.connection))
+        stale_key = "stale-" + str(uuid4())
+        stale = InventoryCommand(self.seller, self.product, stale_key, 3, delta_reserved=1)
+        with self.assertRaises(InventoryConflict):
+            execute_inventory_transaction(stale, transaction=PostgresInventoryTransaction(self.connection))
+        with self.connection.cursor() as cur:
+            cur.execute(
+                "SELECT count(*) FROM inventory_request_receipts "
+                "WHERE seller_id=%s AND idempotency_key=%s", (self.seller, stale_key)
+            )
+            self.assertEqual(cur.fetchone()[0], 0)
+        self.connection.rollback()
+
+    def test_unique_receipt_key_constraint(self):
+        from backend.inventory_transaction_adapter import StoredInventoryReceipt
+        receipt = StoredInventoryReceipt(
+            self.seller, self.key, "f" * 64,
+            InventoryVersion(self.product, 10, 1, 3),
+        )
+        first = PostgresInventoryTransaction(self.connection)
+        first.save_receipt(receipt)
+        first.commit()
+        second = PostgresInventoryTransaction(self.connection)
+        with self.assertRaises(psycopg.errors.UniqueViolation):
+            second.save_receipt(receipt)
+        second.rollback()
+
     def test_database_rejects_invalid_balance(self):
         with self.assertRaises(psycopg.errors.CheckViolation):
             with self.connection.cursor() as cur:
