@@ -3,7 +3,6 @@
 This is not a public route and does not connect to a production database.
 All stores and inventory queries are injected by a trusted server.
 """
-from .seller_auth_request_adapter import handle_auth_request
 from .seller_dashboard_http_session_bridge import handle_cookie_authenticated_dashboard
 from .seller_login_service import resolve_seller_session
 
