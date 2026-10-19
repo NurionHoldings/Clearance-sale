@@ -78,7 +78,7 @@ jobs:
         id: verify_changes
         run: |
           if [ -d tests ]; then PYTHONDONTWRITEBYTECODE=1 python -B -m unittest discover -s tests -v; fi
-          if [ -d backend ]; then PYTHONDONTWRITEBYTECODE=1 python -B -c "import ast,pathlib; [ast.parse(p.read_text(encoding=\u0027utf-8\u0027), filename=str(p)) for p in pathlib.Path(\u0027backend\u0027).rglob(\u0027*.py\u0027)]"; fi
+          if [ -d backend ]; then PYTHONDONTWRITEBYTECODE=1 python -B -c "import ast,pathlib; [ast.parse(p.read_text(encoding='utf-8'), filename=str(p)) for p in pathlib.Path('backend').rglob('*.py')]"; fi
       - name: Export diff for human review
         id: export_patch
         shell: bash
@@ -86,8 +86,8 @@ jobs:
           for dir in backend tests; do
             if [ -d "$dir" ]; then git add -N -- "$dir/"; fi
           done
-          git diff --binary -- backend/ tests/ > proposed.patch
-          git diff --stat -- backend/ tests/
+          git diff --binary -- backend tests > proposed.patch
+          git diff --stat -- backend tests
           test -s proposed.patch || { echo "::error::No reviewable patch generated"; exit 1; }
       - name: Generate intent_DNA audit manifest
         if: always()
@@ -117,6 +117,7 @@ jobs:
             echo "Human approval required before merge or deployment."
           } >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: codex-proposed-patch-${{ github.run_id }}
           path: |
