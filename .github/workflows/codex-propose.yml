@@ -78,6 +78,15 @@ jobs:
           git diff --binary -- backend/ tests/ > proposed.patch
           git diff --stat -- backend/ tests/
           test -s proposed.patch || { echo "::error::No reviewable patch generated"; exit 1; }
+      - name: Generate intent_DNA audit manifest
+        if: always()
+        shell: bash
+        env:
+          APPROVED_TASK: ${{ inputs.task }}
+        run: |
+          decision=HOLD
+          if [ -s proposed.patch ]; then decision=ALLOW_PROPOSAL; fi
+          python scripts/intent_dna_audit.py --task "$APPROVED_TASK" --decision "$decision" --commit "$GITHUB_SHA" --patch proposed.patch --output intent-dna-audit.json
       - name: Write audit summary
         if: always()
         shell: bash
@@ -95,5 +104,8 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: codex-proposed-patch-${{ github.run_id }}
-          path: proposed.patch
+          path: |
+            proposed.patch
+            intent-dna-audit.json
+          if-no-files-found: warn
           retention-days: 3
