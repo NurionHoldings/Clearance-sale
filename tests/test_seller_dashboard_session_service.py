@@ -4,7 +4,6 @@ import unittest
 from backend.seller_access_policy import SellerMembership, SellerPrincipal
 from backend.seller_dashboard_service import SellerAccessDenied
 from backend.seller_dashboard_session_service import get_session_seller_dashboard
-from backend.seller_inventory_scope import InventoryScopeError
 from backend.seller_inventory_view import InventoryItem
 
 
@@ -134,8 +133,10 @@ class SellerDashboardSessionTests(unittest.TestCase):
 
     def test_cross_tenant_row_fails_entire_response(self):
         foreign = [("seller-B", InventoryItem("sku-2", "Foreign", 3, 0, True))]
-        with self.assertRaises(InventoryScopeError):
+        with self.assertRaises(SellerAccessDenied) as caught:
             self.fetch(records=foreign)
+        self.assertEqual(str(caught.exception), "Seller dashboard unavailable")
+        self.assertIsNone(caught.exception.__cause__)
 
 
 if __name__ == "__main__":
