@@ -93,14 +93,19 @@ function render(){
  }));
  const warnings=[...data.out.map(r=>({row:r,type:"품절"})),...data.low.sort((a,b)=>a.available-b.available).map(r=>({row:r,type:"재고 부족"}))];
  $("alerts").replaceChildren(...(warnings.length?warnings.map(({row,type})=>{
-  const li=document.createElement("li");li.textContent=type+" · "+row.name+" ("+row.sku+") — 판매 가능 "+row.available+"개";return li;
+  const li=document.createElement("li");li.textContent=(type==="품절"?"긴급 · ":"주의 · ")+type+" · "+row.name+" ("+row.sku+") — 판매 가능 "+row.available+"개";li.className=type==="품절"?"danger":"warning";return li;
  }):[Object.assign(document.createElement("li"),{textContent:"현재 경고 대상이 없습니다."})]));
  $("products").replaceChildren(...rows.map(row=>{
   const tr=document.createElement("tr");
   const statusText=!row.active?"판매 중지":row.available===0?"품절":row.available<=threshold?"재고 부족":"판매 중";
   for(const [column,value] of [row.sku,row.name,row.onHand,row.reserved,row.available,statusText].entries()){
    const td=document.createElement("td");td.textContent=String(value);
-   if(column===1&&draftPreviewItem&&row.sku===draftPreviewItem.sku){td.textContent=String(value)+" (미등록 시연)";}
+   if(column===1){
+    const details=document.createElement("details");
+    const summary=document.createElement("summary");summary.textContent=String(value)+(draftPreviewItem&&row.sku===draftPreviewItem.sku?" (미등록 시연)":"");
+    const info=document.createElement("p");info.textContent="상품 코드: "+row.sku+" · 보유: "+row.onHand+"개 · 예약: "+row.reserved+"개 · 판매 가능: "+row.available+"개 · 상태: "+statusText+(draftPreviewItem&&row.sku===draftPreviewItem.sku?" · 임시 시연 데이터":" · 가상 샘플 데이터");
+    details.append(summary,info);td.replaceChildren(details);
+   }
    if(column===5){const tag=document.createElement("span");tag.className="tag"+(statusText==="품절"?" danger":statusText==="재고 부족"?" warning":"");tag.textContent=statusText;td.replaceChildren(tag);}
    tr.append(td);
   }return tr;
