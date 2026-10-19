@@ -116,6 +116,22 @@ class SellerDashboardSessionTests(unittest.TestCase):
             )
         self.assertEqual(str(caught.exception), "Seller dashboard unavailable")
 
+    def test_scope_violation_uses_allowlisted_diagnostic_stage(self):
+        events = []
+        with self.assertRaises(SellerAccessDenied):
+            get_session_seller_dashboard(
+                session_token="trusted-session", seller_id="seller-A",
+                load_session=lambda token: self.principal,
+                load_membership=lambda user, seller: self.membership,
+                query_inventory_by_seller=lambda seller: [
+                    ("seller-B", InventoryItem("foreign", "Foreign", 1, 0, True))
+                ],
+                report_error=lambda code, stage: events.append((code, stage)),
+            )
+        self.assertEqual(events, [
+            ("seller_dashboard_dependency_failed", "inventory_scope")
+        ])
+
     def test_cross_tenant_row_fails_entire_response(self):
         foreign = [("seller-B", InventoryItem("sku-2", "Foreign", 3, 0, True))]
         with self.assertRaises(InventoryScopeError):
