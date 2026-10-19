@@ -153,6 +153,23 @@ class SellerDashboardBrowserE2E(unittest.TestCase):
             self.page.evaluate("window.innerWidth"),
         )
 
+    def test_mobile_filters_and_active_filter_summary(self):
+        self.page.set_viewport_size({"width": 375, "height": 812})
+        self.assertIn("전체", self.page.locator("#active-filters").inner_text())
+        self.page.locator("#product-search").fill("의류")
+        self.page.locator("#sort-order").select_option("available_asc")
+        summary = self.page.locator("#active-filters").inner_text()
+        self.assertIn("검색어: 의류", summary)
+        self.assertIn("판매 가능 적은 순", summary)
+        self.assertEqual(self.page.locator("#products tr").count(), 1)
+        self.page.locator("#show-low-stock").click()
+        self.assertNotIn("검색어:", self.page.locator("#active-filters").inner_text())
+        self.assertIn("재고 부족", self.page.locator("#active-filters").inner_text())
+        self.assertLessEqual(
+            self.page.evaluate("document.documentElement.scrollWidth"),
+            self.page.evaluate("window.innerWidth"),
+        )
+
     def test_filters_include_ephemeral_item_without_storage(self):
         self.page.locator("#draft-stock").fill("0")
         self.page.locator("#draft-preview").click()
