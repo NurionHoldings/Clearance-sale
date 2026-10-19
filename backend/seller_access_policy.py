@@ -32,7 +32,7 @@ def can_access_seller_inventory(principal, membership, *, seller_id, action="rea
         return AccessDecision.DENY
     if not isinstance(seller_id, str) or not seller_id.strip():
         return AccessDecision.DENY
-    if not principal.authenticated or not principal.user_id.strip():
+    if not principal.authenticated or not isinstance(principal.user_id, str) or not principal.user_id.strip():
         return AccessDecision.DENY
     if membership.user_id != principal.user_id or membership.seller_id != seller_id:
         return AccessDecision.DENY
