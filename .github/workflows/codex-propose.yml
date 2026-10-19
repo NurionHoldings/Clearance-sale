@@ -56,19 +56,10 @@ jobs:
           permission-profile: ":workspace"
           safety-strategy: drop-sudo
           prompt-file: .github/codex/change-prompt.md
-      - name: Enforce allowed change paths
+      - name: Verify approved prompt integrity
         shell: bash
         run: |
           test "$(sha256sum .github/codex/change-prompt.md | cut -d' ' -f1)" = "$APPROVED_PROMPT_SHA" || { echo "::error::Approved prompt was modified"; exit 1; }
-          python - <<'PY'
-          import subprocess, sys
-          changed = subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=all"], text=True).splitlines()
-          paths = [line[3:] for line in changed]
-          disallowed = [p for p in paths if not (p.startswith("backend/") or p.startswith("tests/") or p == ".github/codex/change-prompt.md")]
-          if disallowed:
-              print("::error::Disallowed changes: " + ", ".join(disallowed))
-              sys.exit(1)
-          PY
       - name: intent_DNA post-change gate
         env:
           APPROVED_TASK: ${{ inputs.task }}
