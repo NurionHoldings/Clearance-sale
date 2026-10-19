@@ -22,3 +22,14 @@ def release(on_hand: int, reserved: int, quantity: int) -> int:
     if type(quantity) is not int or quantity <= 0 or quantity > reserved:
         raise ValueError("Invalid release quantity")
     return reserved - quantity
+
+
+def validate_inventory_adjustment(on_hand: int, reserved: int, delta: int) -> int:
+    """Validate a proposed stock adjustment without changing stored inventory."""
+    available_quantity(on_hand, reserved)
+    if type(delta) is not int:
+        raise TypeError("Stock adjustment must be an integer")
+    new_on_hand = on_hand + delta
+    if new_on_hand < reserved:
+        raise ValueError("Adjustment cannot reduce stock below reservations")
+    return new_on_hand
