@@ -104,7 +104,7 @@ render();
 function previewDraft(){
  const sku=$("draft-sku").value.trim(),name=$("draft-name").value.trim();
  const priceRaw=$("draft-price").value,stockRaw=$("draft-stock").value,reservedRaw=$("draft-reserved").value;
- const validNumber=(raw,max)=>raw.trim()!==""&&/^\\d+$/.test(raw)&&Number.isSafeInteger(Number(raw))&&Number(raw)<=max;
+ const validNumber=(raw,max)=>raw.trim()!==""&&/^\d+$/.test(raw)&&Number.isSafeInteger(Number(raw))&&Number(raw)<=max;
  const errors=[];
  if(!sku||sku.length>64)errors.push("상품 코드는 1~64자로 입력하세요.");
  if(source.some(item=>item.sku.trim()===sku))errors.push("이미 등록된 상품 코드입니다.");
