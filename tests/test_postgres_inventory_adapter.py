@@ -68,6 +68,19 @@ class PostgresInventoryAdapterTests(unittest.TestCase):
         self.adapter.save_receipt(receipt)
         self.assertEqual(self.connection.statements[-1][1][:2], ("seller-A", "key-1"))
 
+    def test_idempotency_lock_is_parameterized_and_transaction_scoped(self):
+        self.adapter.acquire_idempotency_lock("seller-A", "key-1")
+        query, params = self.connection.statements[-1]
+        self.assertIn("pg_advisory_xact_lock", query)
+        self.assertIn("%s", query)
+        self.assertEqual(params, ("seller-A:key-1",))
+        self.assertEqual(self.connection.commits, 0)
+
+    def test_lock_rejected_after_transaction_closed(self):
+        self.adapter.rollback()
+        with self.assertRaises(RuntimeError):
+            self.adapter.acquire_idempotency_lock("seller-A", "key-1")
+
     def test_transaction_lifecycle_and_autocommit_guard(self):
         self.adapter.rollback()
         self.assertEqual(self.connection.rollbacks, 1)
