@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import unittest
 from uuid import uuid4
+from urllib.parse import urlparse
 
 URL = os.environ.get("INVENTORY_TEST_DATABASE_URL")
 try:
@@ -26,6 +27,11 @@ SCHEMA = Path(__file__).resolve().parents[1] / "db/migrations/001_inventory_cont
 class PostgresInventoryIntegrationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        parsed = urlparse(URL)
+        if parsed.scheme not in ("postgresql", "postgres") or parsed.hostname not in ("localhost", "127.0.0.1", "::1"):
+            raise RuntimeError("Integration tests require a loopback PostgreSQL host")
+        if not any(word in (parsed.path or "").lower() for word in ("test", "ci", "scratch")):
+            raise RuntimeError("Integration tests require an explicitly named test database")
         cls.connection = psycopg.connect(URL, autocommit=False)
         with cls.connection.cursor() as cur:
             cur.execute("SELECT current_database()")
