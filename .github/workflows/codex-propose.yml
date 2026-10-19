@@ -61,6 +61,7 @@ jobs:
           safety-strategy: drop-sudo
           prompt-file: .github/codex/change-prompt.md
       - name: Verify policy and gate integrity
+        id: verify_integrity
         shell: bash
         run: sha256sum --check "$RUNNER_TEMP/intent-dna-protected.sha256"
       - name: Verify approved prompt integrity
@@ -68,6 +69,7 @@ jobs:
         run: |
           test "$(sha256sum .github/codex/change-prompt.md | cut -d' ' -f1)" = "$APPROVED_PROMPT_SHA" || { echo "::error::Approved prompt was modified"; exit 1; }
       - name: intent_DNA post-change gate
+        id: verify_scope
         env:
           APPROVED_TASK: ${{ inputs.task }}
         run: |
@@ -94,7 +96,7 @@ jobs:
           APPROVED_TASK: ${{ inputs.task }}
         run: |
           decision=HOLD
-          if [ "${{ steps.verify_changes.outcome }}" = success ] && [ "${{ steps.export_patch.outcome }}" = success ] && [ -s proposed.patch ]; then decision=ALLOW_PROPOSAL; fi
+          if [ "${{ steps.verify_integrity.outcome }}" = success ] && [ "${{ steps.verify_scope.outcome }}" = success ] && [ "${{ steps.verify_changes.outcome }}" = success ] && [ "${{ steps.export_patch.outcome }}" = success ] && [ -s proposed.patch ]; then decision=ALLOW_PROPOSAL; fi
           python scripts/intent_dna_audit.py --task "$APPROVED_TASK" --decision "$decision" --commit "$GITHUB_SHA" --patch proposed.patch --output intent-dna-audit.json
       - name: Verify audit evidence for human review
         if: steps.export_patch.outcome == 'success'
