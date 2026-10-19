@@ -15,7 +15,7 @@ class SellerDashboardHttpSessionBridgeTests(unittest.TestCase):
             self.tokens.append(token)
             return SellerPrincipal("user-1", True) if token == "verified" else None
         self.args = dict(
-            method="GET", cookie_header="seller_session=verified",
+            method="GET", cookie_header="__Host-seller_session=verified",
             seller_id="seller-A", load_session=load_session,
             load_membership=lambda user, seller: SellerMembership(
                 "user-1", "seller-A", "viewer", "active"
@@ -41,7 +41,7 @@ class SellerDashboardHttpSessionBridgeTests(unittest.TestCase):
 
     def test_invalid_session_is_denied(self):
         code, body = handle_cookie_authenticated_dashboard(
-            **dict(self.args, cookie_header="seller_session=unverified")
+            **dict(self.args, cookie_header="__Host-seller_session=unverified")
         )
         self.assertEqual(code, 403)
         self.assertEqual(body, {"error": "seller_dashboard_unavailable"})
@@ -55,8 +55,8 @@ class SellerDashboardHttpSessionBridgeTests(unittest.TestCase):
 
     def test_duplicate_session_cookies_are_rejected(self):
         for header in (
-            "seller_session=verified; seller_session=unverified",
-            "seller_session=unverified; seller_session=verified",
+            "__Host-seller_session=verified; __Host-seller_session=unverified",
+            "__Host-seller_session=unverified; __Host-seller_session=verified",
         ):
             with self.subTest(header=header):
                 self.assertIsNone(extract_seller_session(header))
@@ -68,7 +68,7 @@ class SellerDashboardHttpSessionBridgeTests(unittest.TestCase):
         self.assertEqual(self.tokens, [])
 
     def test_malformed_cookie_is_rejected(self):
-        for value in (None, "", "seller_session=", "x" * 8193):
+        for value in (None, "", "__Host-seller_session=", "x" * 8193):
             with self.subTest(value=str(value)[:12]):
                 self.assertIsNone(extract_seller_session(value))
 
