@@ -20,6 +20,10 @@ def get_session_seller_dashboard(
         raise SellerAccessDenied("Missing authenticated session")
     if not isinstance(seller_id, str) or not seller_id.strip():
         raise SellerAccessDenied("Missing seller identity")
+    if not all(callable(loader) for loader in (
+        load_session, load_membership, query_inventory_by_seller,
+    )):
+        raise SellerAccessDenied("Trusted server loaders required")
     principal = load_session(session_token)
     if not isinstance(principal, SellerPrincipal) or not principal.authenticated:
         raise SellerAccessDenied("Unauthenticated principal")
