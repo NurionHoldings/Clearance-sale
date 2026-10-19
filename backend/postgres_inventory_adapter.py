@@ -33,7 +33,7 @@ class PostgresInventoryTransaction:
         fingerprint, product_id, on_hand, reserved, version = row
         return StoredInventoryReceipt(
             seller_id, key, fingerprint,
-            InventoryVersion(product_id, on_hand, reserved, version),
+            InventoryVersion(str(product_id), on_hand, reserved, version),
         )
 
     def get_balance(self, seller_id, product_id):
@@ -44,7 +44,7 @@ class PostgresInventoryTransaction:
                 (seller_id, product_id),
             )
             row = cursor.fetchone()
-        return InventoryVersion(*row) if row is not None else None
+        return InventoryVersion(str(row[0]), *row[1:]) if row is not None else None
 
     def compare_and_swap(self, seller_id, old, new):
         with self._cursor() as cursor:
