@@ -58,8 +58,9 @@ const source=Object.freeze([
 {sku:"E-505",name:"생활용품 박스",onHand:8,reserved:4,active:true}
 ].map(item=>Object.freeze(item)));
 const $=id=>document.getElementById(id);
+let draftPreviewItem=null;
 function snapshot(threshold){
- const rows=source.map(item=>({...item,available:item.active?item.onHand-item.reserved:0}));
+ const rows=[...source,...(draftPreviewItem?[draftPreviewItem]:[])].map(item=>({...item,available:item.active?item.onHand-item.reserved:0}));
  const active=rows.filter(row=>row.active);
  const low=active.filter(row=>row.available>0&&row.available<=threshold);
  const out=active.filter(row=>row.available===0);
@@ -102,6 +103,7 @@ $("status").addEventListener("change",render);
 $("threshold").addEventListener("change",render);
 render();
 function previewDraft(){
+ draftPreviewItem=null;
  const sku=$("draft-sku").value.trim(),name=$("draft-name").value.trim();
  const priceRaw=$("draft-price").value,stockRaw=$("draft-stock").value,reservedRaw=$("draft-reserved").value;
  const validNumber=(raw,max)=>raw.trim()!==""&&/^\d+$/.test(raw)&&Number.isSafeInteger(Number(raw))&&Number(raw)<=max;
@@ -115,6 +117,8 @@ function previewDraft(){
  if(validNumber(stockRaw,1000000)&&validNumber(reservedRaw,1000000)&&Number(reservedRaw)>Number(stockRaw))errors.push("예약 수량은 보유 수량을 초과할 수 없습니다.");
  $("draft-errors").replaceChildren(...errors.map(message=>{const li=document.createElement("li");li.textContent=message;return li;}));
  $("draft-message").textContent=errors.length?"입력값을 확인하세요. 오류 "+errors.length+"건":"사전검사 통과 — 실제 상품 등록은 진행되지 않았습니다.";
+ if(!errors.length){draftPreviewItem=Object.freeze({sku,name,onHand:Number(stockRaw),reserved:Number(reservedRaw),active:true});}
+ render();
  $("draft-result").textContent=errors.length?"":"미리보기: "+sku+" · "+name+" · "+Number(priceRaw).toLocaleString("ko-KR")+"원 · 판매 가능 "+(Number(stockRaw)-Number(reservedRaw))+"개";
 }
 $("draft-preview").addEventListener("click",previewDraft);
