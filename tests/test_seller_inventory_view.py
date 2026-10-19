@@ -4,7 +4,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "backend"))
-from seller_inventory_view import InventoryItem, seller_inventory_summary, filter_inventory_rows
+from seller_inventory_view import InventoryItem, seller_inventory_summary, filter_inventory_rows, seller_dashboard_metrics
 
 
 class SellerInventoryViewTests(unittest.TestCase):
@@ -58,6 +58,29 @@ class SellerInventoryViewTests(unittest.TestCase):
         rows = filter_inventory_rows(snapshot)
         rows[0]["available"] = 999
         self.assertEqual(snapshot["items"][0]["available"], 2)
+
+    def test_dashboard_metrics_and_alert_priority(self):
+        snapshot = seller_inventory_summary([
+            InventoryItem("A", "Healthy", 10, 1),
+            InventoryItem("B", "Low", 3, 1),
+            InventoryItem("C", "Sold out", 2, 2),
+            InventoryItem("D", "Paused", 10, 0, False),
+        ])
+        metrics = seller_dashboard_metrics(snapshot, low_stock_threshold=2)
+        self.assertEqual(metrics["product_count"], 4)
+        self.assertEqual(metrics["active_count"], 3)
+        self.assertEqual(metrics["inactive_count"], 1)
+        self.assertEqual(metrics["available_units"], 11)
+        self.assertEqual(metrics["low_stock_count"], 1)
+        self.assertEqual(metrics["out_of_stock_count"], 1)
+        self.assertEqual([alert["sku"] for alert in metrics["alerts"]], ["C", "B"])
+
+    def test_dashboard_zero_threshold_and_invalid_values(self):
+        snapshot = seller_inventory_summary([InventoryItem("A", "Low", 1, 0)])
+        self.assertEqual(seller_dashboard_metrics(snapshot, 0)["low_stock_count"], 0)
+        for threshold in (-1, True, 1.5):
+            with self.subTest(threshold=threshold), self.assertRaises(ValueError):
+                seller_dashboard_metrics(snapshot, threshold)
 
     def test_input_unchanged(self):
         items = [InventoryItem("A", "Item", 4, 1)]
