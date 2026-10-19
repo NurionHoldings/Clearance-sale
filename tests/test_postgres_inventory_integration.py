@@ -136,6 +136,50 @@ class PostgresInventoryIntegrationTests(unittest.TestCase):
             second.save_receipt(receipt)
         second.rollback()
 
+    def test_two_connections_compete_for_same_version(self):
+        """Two independent connections must not both commit a stale version."""
+        import threading
+        first_started = threading.Event()
+        second_started = threading.Event()
+        results = []
+        failures = []
+
+        def worker(request_key, ready, other_ready):
+            connection = psycopg.connect(URL, autocommit=False)
+            try:
+                ready.set()
+                if not other_ready.wait(timeout=10):
+                    raise TimeoutError("Second transaction did not start")
+                command = InventoryCommand(
+                    self.seller, self.product, request_key, 3, delta_reserved=1
+                )
+                try:
+                    outcome = execute_inventory_transaction(
+                        command, transaction=PostgresInventoryTransaction(connection)
+                    )
+                    results.append(outcome)
+                except InventoryConflict:
+                    failures.append("stale")
+            finally:
+                connection.close()
+
+        left = threading.Thread(target=worker, args=("left-" + self.key, first_started, second_started))
+        right = threading.Thread(target=worker, args=("right-" + self.key, second_started, first_started))
+        left.start()
+        right.start()
+        left.join(timeout=15)
+        right.join(timeout=15)
+        self.assertFalse(left.is_alive() or right.is_alive(), "Database contention timed out")
+        self.assertEqual(len(results), 1)
+        self.assertEqual(failures, ["stale"])
+        with self.connection.cursor() as cur:
+            cur.execute(
+                "SELECT reserved, version FROM inventory_balances "
+                "WHERE seller_id=%s AND product_id=%s", (self.seller, self.product)
+            )
+            self.assertEqual(cur.fetchone(), (2, 4))
+        self.connection.rollback()
+
     def test_database_rejects_invalid_balance(self):
         with self.assertRaises(psycopg.errors.CheckViolation):
             with self.connection.cursor() as cur:
