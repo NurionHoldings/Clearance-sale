@@ -31,5 +31,20 @@ class SellerDashboardFlowTests(unittest.TestCase):
         self.assertEqual(calls, ["seller-A"])
 
 
+    def test_wrong_seller_is_denied(self):
+        token, record = issue_session(user_id="user-1", now=datetime.now(timezone.utc))
+        class Store:
+            def load_session_record(self, value):
+                return record if value == token else None
+            def load_membership(self, user, seller):
+                return SellerMembership(user, "seller-B", "viewer", "active")
+        calls = []
+        code, _ = authenticated_dashboard_flow(
+            auth_store=Store(), seller_id="seller-A",
+            cookie_header="__Host-seller_session=" + token,
+            query_inventory_by_seller=lambda seller: calls.append(seller) or [])
+        self.assertEqual(code, 403)
+        self.assertEqual(calls, [])
+
 if __name__ == "__main__":
     unittest.main()
