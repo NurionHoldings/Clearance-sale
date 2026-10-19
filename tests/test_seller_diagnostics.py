@@ -18,6 +18,9 @@ class SellerDiagnosticsTests(unittest.TestCase):
             ("database-password", "session"),
             (EVENT_CODE, "private-token"),
             (EVENT_CODE, None),
+            (EVENT_CODE, []),
+            (EVENT_CODE, {}),
+            ([], "session"),
         ):
             with self.assertRaises(ValueError):
                 make_seller_diagnostic_event(code, stage)
