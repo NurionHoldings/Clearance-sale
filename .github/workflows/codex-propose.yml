@@ -39,7 +39,7 @@ jobs:
             *) echo "::error::Unsupported task"; exit 1 ;;
           esac
           case "$APPROVED_TASK" in
-            seller-dashboard-tests) printf "\\nApproved task: improve seller dashboard tests only.\\n" >> .github/codex/change-prompt.md ;;
+            seller-dashboard-tests) printf "\nApproved task: improve seller dashboard tests only.\n" >> .github/codex/change-prompt.md ;;
             inventory-invariant-tests) printf "\\nApproved task: improve inventory invariant tests only.\\n" >> .github/codex/change-prompt.md ;;
           esac
       - name: Codex proposes isolated changes
@@ -68,9 +68,10 @@ jobs:
       - name: Export diff for human review
         shell: bash
         run: |
+          git add -N -- backend/ tests/
           git diff --binary -- backend/ tests/ > proposed.patch
-          git diff --stat
-          test -s proposed.patch || echo "::warning::No tracked changes were proposed"
+          git diff --stat -- backend/ tests/
+          test -s proposed.patch || echo "::warning::No changes were proposed"
       - uses: actions/upload-artifact@v4
         with:
           name: codex-proposed-patch-${{ github.run_id }}
