@@ -32,6 +32,11 @@ class SellerDashboardDemoTests(unittest.TestCase):
         self.assertIn('replaceChildren(', self.page)
         self.assertNotIn('innerHTML', self.page)
 
+    def test_status_badge_only_in_status_column(self):
+        self.assertIn('for(const [column,value] of', self.page)
+        self.assertIn('if(column===5)', self.page)
+        self.assertNotIn('if(value===statusText)', self.page)
+
     def test_inventory_statuses(self):
         for status in ("active", "inactive", "low_stock", "out_of_stock"):
             self.assertIn('value="' + status + '"', self.page)
