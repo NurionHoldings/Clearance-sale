@@ -53,6 +53,20 @@ class SellerDashboardHttpSessionBridgeTests(unittest.TestCase):
         self.assertEqual(code, 405)
         self.assertEqual(self.tokens, [])
 
+    def test_duplicate_session_cookies_are_rejected(self):
+        for header in (
+            "seller_session=verified; seller_session=unverified",
+            "seller_session=unverified; seller_session=verified",
+        ):
+            with self.subTest(header=header):
+                self.assertIsNone(extract_seller_session(header))
+                code, body = handle_cookie_authenticated_dashboard(
+                    **dict(self.args, cookie_header=header)
+                )
+                self.assertEqual(code, 403)
+                self.assertEqual(body, {"error": "seller_dashboard_unavailable"})
+        self.assertEqual(self.tokens, [])
+
     def test_malformed_cookie_is_rejected(self):
         for value in (None, "", "seller_session=", "x" * 8193):
             with self.subTest(value=str(value)[:12]):
