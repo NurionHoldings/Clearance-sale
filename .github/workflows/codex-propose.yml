@@ -89,6 +89,10 @@ jobs:
           decision=HOLD
           if [ "${{ steps.verify_changes.outcome }}" = success ] && [ "${{ steps.export_patch.outcome }}" = success ] && [ -s proposed.patch ]; then decision=ALLOW_PROPOSAL; fi
           python scripts/intent_dna_audit.py --task "$APPROVED_TASK" --decision "$decision" --commit "$GITHUB_SHA" --patch proposed.patch --output intent-dna-audit.json
+      - name: Verify audit evidence for human review
+        if: steps.export_patch.outcome == 'success'
+        shell: bash
+        run: python scripts/intent_dna_review_gate.py --audit intent-dna-audit.json --patch proposed.patch --commit "$GITHUB_SHA"
       - name: Write audit summary
         if: always()
         shell: bash
