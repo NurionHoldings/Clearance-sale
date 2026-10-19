@@ -54,3 +54,40 @@ def validate_product_registration_draft(*, sku, name, price_won, on_hand, reserv
         "active": active,
         "available": on_hand - reserved if active else 0,
     }
+
+
+def preview_product_registration(existing_items, **draft_fields):
+    """Fail-closed, read-only registration preview with field-level error codes.
+
+    existing_items must be a complete, authorized snapshot for the relevant seller.
+    It does not guarantee uniqueness at commit time; persistence must enforce it.
+    """
+    if not isinstance(existing_items, (list, tuple)):
+        return {"schema_version": 1, "read_only": True, "valid": False,
+                "errors": [{"field": "existing_items", "code": "invalid_snapshot"}],
+                "product": None}
+    try:
+        existing = seller_inventory_summary(existing_items)
+    except (TypeError, ValueError, AttributeError):
+        return {"schema_version": 1, "read_only": True, "valid": False,
+                "errors": [{"field": "existing_items", "code": "invalid_snapshot"}],
+                "product": None}
+    try:
+        draft = validate_product_registration_draft(**draft_fields)
+    except (TypeError, ValueError) as exc:
+        message = str(exc)
+        field = ("sku" if "SKU" in message else
+                 "name" if "name" in message else
+                 "price_won" if "Price" in message else
+                 "on_hand" if "On-hand" in message else
+                 "reserved" if "Reserved" in message else
+                 "active" if "Active" in message else "request")
+        return {"schema_version": 1, "read_only": True, "valid": False,
+                "errors": [{"field": field, "code": "invalid_value"}],
+                "product": None}
+    if draft["sku"] in {row["sku"] for row in existing["items"]}:
+        return {"schema_version": 1, "read_only": True, "valid": False,
+                "errors": [{"field": "sku", "code": "duplicate_sku"}],
+                "product": None}
+    return {"schema_version": 1, "read_only": True, "valid": True,
+            "errors": [], "product": draft}
