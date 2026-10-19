@@ -42,6 +42,8 @@ jobs:
           if not all(required.values()):
               raise SystemExit("Offline guard failed")
           PY
+      - name: intent_DNA policy unit tests
+        run: python -m unittest discover -s tests -p "test_intent_dna_gate.py" -v
       - name: Python syntax check
         run: |
           if [ -d backend ]; then python -m compileall -q backend; fi
