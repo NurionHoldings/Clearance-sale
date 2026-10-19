@@ -86,8 +86,13 @@ jobs:
           for dir in backend tests; do
             if [ -d "$dir" ]; then git add -N -- "$dir/"; fi
           done
-          git diff --binary -- backend tests > proposed.patch
-          git diff --stat -- backend tests
+          paths=()
+          for dir in backend tests; do
+            if [ -d "$dir" ]; then paths+=("$dir"); fi
+          done
+          if [ "${#paths[@]}" -eq 0 ]; then echo "::error::No approved source directories"; exit 1; fi
+          git diff --binary -- "${paths[@]}" > proposed.patch
+          git diff --stat -- "${paths[@]}"
           test -s proposed.patch || { echo "::error::No reviewable patch generated"; exit 1; }
       - name: Generate intent_DNA audit manifest
         if: always()
