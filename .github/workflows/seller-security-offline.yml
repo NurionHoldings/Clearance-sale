@@ -33,6 +33,7 @@ jobs:
               "test_seller_diagnostics",
               "test_seller_diagnostic_throttle",
               "test_seller_dashboard_diagnostic_wiring",
+              "test_seller_dashboard_read_response",
           )
           suite = unittest.TestSuite()
           for name in modules:
