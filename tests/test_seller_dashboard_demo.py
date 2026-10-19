@@ -60,6 +60,12 @@ class SellerDashboardDemoTests(unittest.TestCase):
         self.assertIn(chr(92) + "d+", line)
         self.assertNotIn(chr(92) * 2 + "d+", line)
 
+    def test_draft_to_inventory_anchor_is_local_and_read_only(self):
+        self.assertIn('id="inventory-overview"', self.page)
+        self.assertIn('href="#inventory-overview"', self.page)
+        self.assertIn('id="draft-inventory-link"', self.page)
+        self.assertIn("재고 현황 보기 (가상 상품)", self.page)
+
     def test_inventory_statuses(self):
         for status in ("active", "inactive", "low_stock", "out_of_stock"):
             self.assertIn('value="' + status + '"', self.page)
