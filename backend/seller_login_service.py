@@ -32,7 +32,10 @@ def authenticate_seller(*, user_id, password, store, now=None):
         return token, record.expires_at
     except Exception:
         if callable(getattr(connection, "rollback", None)):
-            connection.rollback()
+            try:
+                connection.rollback()
+            except Exception:
+                pass
         raise SellerLoginDenied("Authentication unavailable") from None
 
 
@@ -50,12 +53,16 @@ def resolve_seller_session(*, token, store, now=None):
 def logout_seller(*, token, store):
     """Revoke and commit before reporting logout success."""
     connection = getattr(store, "connection", None)
-    if connection is None or not callable(getattr(connection, "commit", None)):
+    if (connection is None or not callable(getattr(connection, "commit", None))
+            or not callable(getattr(store, "revoke_token", None))):
         raise SellerLoginDenied("Logout unavailable")
     try:
         store.revoke_token(token)
         connection.commit()
     except Exception:
         if callable(getattr(connection, "rollback", None)):
-            connection.rollback()
+            try:
+                connection.rollback()
+            except Exception:
+                pass
         raise SellerLoginDenied("Logout unavailable") from None
