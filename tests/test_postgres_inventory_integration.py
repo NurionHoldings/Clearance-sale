@@ -190,6 +190,43 @@ class PostgresInventoryIntegrationTests(unittest.TestCase):
             self.assertEqual(cur.fetchone(), (2, 4))
         self.connection.rollback()
 
+    def test_concurrent_identical_request_replays_once(self):
+        import threading
+        ready = threading.Barrier(2)
+        outcomes = []
+        errors = []
+
+        def worker():
+            connection = psycopg.connect(URL, autocommit=False)
+            try:
+                ready.wait(timeout=10)
+                command = InventoryCommand(
+                    self.seller, self.product, self.key, 3, delta_reserved=1
+                )
+                outcomes.append(execute_inventory_transaction(
+                    command, transaction=PostgresInventoryTransaction(connection)
+                ))
+            except Exception as exc:
+                errors.append(repr(exc))
+            finally:
+                connection.close()
+
+        threads = [threading.Thread(target=worker) for _ in range(2)]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join(timeout=15)
+        self.assertFalse(any(thread.is_alive() for thread in threads))
+        self.assertEqual(errors, [])
+        self.assertEqual(sorted(result["replayed"] for result in outcomes), [False, True])
+        with self.connection.cursor() as cur:
+            cur.execute(
+                "SELECT reserved,version FROM inventory_balances "
+                "WHERE seller_id=%s AND product_id=%s", (self.seller, self.product)
+            )
+            self.assertEqual(cur.fetchone(), (2, 4))
+        self.connection.rollback()
+
     def test_database_rejects_invalid_balance(self):
         with self.assertRaises(psycopg.errors.CheckViolation):
             with self.connection.cursor() as cur:
