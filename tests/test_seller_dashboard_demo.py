@@ -84,6 +84,14 @@ class SellerDashboardDemoTests(unittest.TestCase):
         self.assertIn('시연 상품이 제거되었습니다.', self.page)
         self.assertIn('실제 등록 또는 저장되지 않습니다.', self.page)
 
+    def test_draft_edit_invalidates_stale_preview(self):
+        for control in ("draft-sku", "draft-name", "draft-price", "draft-stock", "draft-reserved"):
+            self.assertIn('"' + control + '"', self.page)
+        self.assertIn('addEventListener("input"', self.page)
+        self.assertIn('입력값이 변경되었습니다. 다시 사전검사하세요.', self.page)
+        self.assertIn('draftPreviewItem=null;', self.page)
+        self.assertIn('$("draft-errors").replaceChildren()', self.page)
+
     def test_inventory_statuses(self):
         for status in ("active", "inactive", "low_stock", "out_of_stock"):
             self.assertIn('value="' + status + '"', self.page)
