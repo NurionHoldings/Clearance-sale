@@ -25,6 +25,13 @@ class SellerDashboardDemoTests(unittest.TestCase):
             with self.subTest(forbidden=forbidden):
                 self.assertNotIn(forbidden, self.page)
 
+    def test_dashboard_navigation_and_safe_dom_updates(self):
+        self.assertIn('id="metrics"', self.page)
+        self.assertIn('id="alerts"', self.page)
+        self.assertIn('id="products"', self.page)
+        self.assertIn('replaceChildren(', self.page)
+        self.assertNotIn('innerHTML', self.page)
+
     def test_inventory_statuses(self):
         for status in ("active", "inactive", "low_stock", "out_of_stock"):
             self.assertIn('value="' + status + '"', self.page)
