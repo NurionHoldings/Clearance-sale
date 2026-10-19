@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "backend"))
-from seller_dashboard_contract import build_seller_dashboard, validate_product_registration_draft
+from seller_dashboard_contract import build_seller_dashboard, validate_product_registration_draft, preview_product_registration
 from seller_inventory_view import InventoryItem
 
 
@@ -35,6 +35,25 @@ class SellerDashboardContractTests(unittest.TestCase):
         for on_hand, reserved in ((-1, 0), (2, 3), (True, 0), (1, True), (1_000_001, 0)):
             with self.subTest(on_hand=on_hand, reserved=reserved), self.assertRaises(ValueError):
                 validate_product_registration_draft(sku="A", name="Sample", price_won=0, on_hand=on_hand, reserved=reserved)
+
+    def test_registration_preview_rejects_duplicate_sku(self):
+        result = preview_product_registration(self.items, sku=" A ", name="New", price_won=5000, on_hand=2)
+        self.assertFalse(result["valid"])
+        self.assertEqual(result["errors"], [{"field": "sku", "code": "duplicate_sku"}])
+        self.assertIsNone(result["product"])
+
+    def test_registration_preview_accepts_unique_sku_without_mutation(self):
+        result = preview_product_registration(self.items, sku=" E ", name="New", price_won=5000, on_hand=2)
+        self.assertTrue(result["valid"])
+        self.assertTrue(result["read_only"])
+        self.assertEqual(result["product"]["sku"], "E")
+        self.assertEqual(len(self.items), 4)
+
+    def test_registration_preview_invalid_fields_and_snapshot_fail_closed(self):
+        invalid = preview_product_registration(self.items, sku="E", name="New", price_won=-1, on_hand=2)
+        self.assertEqual(invalid["errors"][0]["field"], "price_won")
+        invalid_snapshot = preview_product_registration(None, sku="E", name="New", price_won=1, on_hand=2)
+        self.assertEqual(invalid_snapshot["errors"][0]["code"], "invalid_snapshot")
 
     def test_json_compatible_response(self):
         result = build_seller_dashboard(self.items, low_stock_threshold=2)
