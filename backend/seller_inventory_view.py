@@ -72,3 +72,29 @@ def filter_inventory_rows(summary, status="all", low_stock_threshold=5):
     else:
         selected = [row for row in rows if row["active"] and row["available"] == 0]
     return [row.copy() for row in selected]
+
+
+def seller_dashboard_metrics(summary, low_stock_threshold=5):
+    """Read-only dashboard counters and sorted actionable inventory alerts."""
+    if type(low_stock_threshold) is not int or low_stock_threshold < 0:
+        raise ValueError("Low stock threshold must be a nonnegative integer")
+    low = filter_inventory_rows(summary, "low_stock", low_stock_threshold)
+    sold_out = filter_inventory_rows(summary, "out_of_stock", low_stock_threshold)
+    inactive = filter_inventory_rows(summary, "inactive", low_stock_threshold)
+    alerts = [
+        {"sku": row["sku"], "name": row["name"], "type": "out_of_stock", "available": 0}
+        for row in sold_out
+    ] + [
+        {"sku": row["sku"], "name": row["name"], "type": "low_stock", "available": row["available"]}
+        for row in low
+    ]
+    alerts.sort(key=lambda row: (0 if row["type"] == "out_of_stock" else 1, row["available"], row["sku"]))
+    return {
+        "product_count": summary["product_count"],
+        "active_count": summary["active_count"],
+        "inactive_count": len(inactive),
+        "available_units": summary["available_units"],
+        "low_stock_count": len(low),
+        "out_of_stock_count": len(sold_out),
+        "alerts": alerts,
+    }
