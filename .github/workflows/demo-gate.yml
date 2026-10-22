@@ -1,0 +1,22 @@
+name: demo-gate
+on:
+  push:
+  pull_request:
+jobs:
+  production-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Block live-trade UI and invalid catalog
+        run: node scripts/production-gate.mjs
+      - name: Reject production release flag
+        env:
+          CLEARANCE_PRODUCTION_RELEASE: '1'
+        run: |
+          if node scripts/production-gate.mjs; then
+            echo "Production release must fail while commerce is unimplemented"
+            exit 1
+          fi

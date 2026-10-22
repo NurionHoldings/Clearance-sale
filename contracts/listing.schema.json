@@ -1,0 +1,23 @@
+{
+  "$id": "https://clearance.demo/contracts/listing.schema.json",
+  "title": "Listing",
+  "description": "시제품 상품 계약. 주문·결제 실행 필드가 없다.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "title", "category", "condition", "region", "qtyOnHand", "qtyReserved", "price", "listPrice", "channel", "sellerId", "sellerOfRecord", "status"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "category": { "type": "string" },
+    "condition": { "type": "string" },
+    "region": { "type": "string" },
+    "qtyOnHand": { "type": "integer", "minimum": 0 },
+    "qtyReserved": { "type": "integer", "minimum": 0 },
+    "price": { "type": "number", "exclusiveMinimum": 0 },
+    "listPrice": { "type": "number", "minimum": 0 },
+    "channel": { "enum": ["direct", "marketplace"] },
+    "sellerId": { "type": "string", "minLength": 1 },
+    "sellerOfRecord": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["draft", "approved"] }
+  }
+}

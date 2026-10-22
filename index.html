@@ -1,27 +1,184 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827"><title>땡처리 | 전국 재고·특가 거래</title><style>
-:root{font-family:system-ui,'Malgun Gothic',sans-serif;color:#192235;background:#f5f7fb}*{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit}button{cursor:pointer}header{background:#101827;color:white;padding:18px max(20px,calc((100vw - 1160px)/2));display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}.brand{font-size:27px;font-weight:900;letter-spacing:-1px}.brand b{color:#ffcc47}header nav{display:flex;gap:8px;flex-wrap:wrap}button{border:0;border-radius:10px;padding:10px 15px;background:#e9eef7;color:#142035}button.primary{background:#f7bd35;color:#141b28;font-weight:800}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #3d87d6;outline-offset:2px}main{max-width:1160px;margin:auto;padding:24px 18px 70px}.hero{background:linear-gradient(115deg,#162841,#345e83);border-radius:22px;color:white;padding:48px 36px}.hero h1{font-size:clamp(28px,4vw,46px);margin:0 0 12px}.hero p{color:#e1eaf3;line-height:1.7}.search{display:flex;gap:10px;margin-top:24px;max-width:740px}.search input{flex:1;min-width:0}.search input,input,select,textarea{padding:12px;border:1px solid #c8d1df;border-radius:10px;background:white;color:#182235}h2{margin-top:35px}#categories{display:flex;gap:9px;flex-wrap:wrap}.chip.active{background:#233c5b;color:white}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:17px;margin-top:18px}.card{background:white;border:1px solid #e2e7ef;border-radius:17px;overflow:hidden}.art{height:145px;background:linear-gradient(140deg,#e9eef5,#d5e1ed);display:grid;place-items:center;font-size:60px}.details{padding:17px}.details h3{margin:9px 0}.tag{font-size:12px;background:#e8f2ff;color:#23517a;padding:5px 8px;border-radius:6px}.price{font-size:23px;font-weight:900}.old{text-decoration:line-through;color:#798498}.muted{color:#6b7789;font-size:14px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.panel{background:white;padding:24px;border:1px solid #e2e7ef;border-radius:16px;margin-top:18px}.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.fields label{display:grid;gap:7px;font-weight:700}.fields input,.fields select,.fields textarea{width:100%}.hidden{display:none!important}.notice{border-left:4px solid #d58828;padding:12px 16px;background:#fff5e5;color:#6b4410;margin-top:18px}footer{text-align:center;padding:26px;color:#728096}.dark{background:#131b29;color:#edf2fa}.dark .card,.dark .panel{background:#202d40;border-color:#35445a}.dark .muted{color:#b0bfd1}.dark .notice{background:#3d3120;color:#ffdcaa}.dark .chip{background:#34445c;color:#f1f4f9}.dark .chip.active{background:#f7bd35;color:#142035}@media(max-width:600px){.hero{padding:30px 20px}.search{flex-direction:column}header{padding:16px 20px}}
-</style></head><body><header><div class="brand">⚡ <b>땡처리</b> 마켓</div><nav><button onclick="show('market')">상품보기</button><button onclick="show('seller')">입점신청</button><button onclick="show('manage')">관리 체험</button><button onclick="toggleTheme()" aria-label="화면 테마 전환">◐ 화면모드</button></nav></header>
-<main><section class="hero"><h1>재고는 기회가 되고<br>가격은 놀라워집니다.</h1><p>제조사·도매상·폐업정리·리퍼브·사업장 재고까지.<br>판매자와 구매자를 잇는 전국 땡처리 통합 마켓.</p><div class="search"><input id="query" placeholder="상품명, 카테고리, 판매자를 검색하세요" aria-label="상품 검색"><button class="primary" onclick="show('market');render()">상품 검색</button></div></section>
-<div class="notice">현재는 서비스 구조를 검증하는 데모입니다. 표시된 상품은 예시이며 실제 주문·결제·입점 승인이 이루어지지 않습니다. 입력한 체험 데이터는 이 브라우저에만 저장됩니다. 실제 개인정보나 사업자등록번호를 입력하지 마세요.</div>
-<section id="market"><h2>오늘의 땡처리 상품</h2><div id="categories"></div><div id="products" class="grid"></div></section>
-<section id="seller" class="hidden"><h2>입점업체 신청 체험</h2><div class="panel"><p class="muted">실제 접수 전 단계입니다. 업체명은 가명으로 입력하세요.</p><form id="sellerForm"><div class="fields"><label>업체명 (체험용)<input name="name" maxlength="60" required placeholder="예: 샘플유통"></label><label>판매 유형<select name="type"><option>재고정리</option><option>폐업정리</option><option>제조사</option><option>도매상</option></select></label></div><p><button class="primary" type="submit">체험 신청 저장</button></p></form><p id="sellerStatus" role="status"></p></div></section>
-<section id="manage" class="hidden"><h2>관리자 업무흐름 체험</h2><div class="notice">관리자 인증·권한 검증이 없는 로컬 시연 화면입니다. 실제 입점 승인이나 상품 공개에 사용하지 마세요.</div><div class="panel"><h3>입점신청 현황 (이 브라우저)</h3><div id="applications"></div><button onclick="clearDemo()">체험 데이터 초기화</button></div><div class="panel"><h3>판매 방식 구분</h3><p>🏢 플랫폼 직접판매: 운영사가 판매자 · 🏪 입점업체 중개판매: 제휴 판매자가 판매자</p><p class="muted">실서비스에서는 주문·결제·반품·정산·세금계산서 책임주체를 판매 방식별로 분리합니다.</p></div></section>
-</main><footer>© 땡처리 마켓 · Clearance-sale · 시범 화면</footer>
-<script>
-'use strict';
-const samples=[
-{name:'전시 가전 특가 세트',category:'가전',seller:'입점업체 중개',price:189000,old:320000,emoji:'📺'},
-{name:'시즌오프 의류 묶음',category:'패션',seller:'플랫폼 직접판매',price:49000,old:120000,emoji:'👕'},
-{name:'사무용 의자 재고정리',category:'가구',seller:'입점업체 중개',price:39000,old:89000,emoji:'🪑'},
-{name:'식당 주방집기 패키지',category:'산업·사업용',seller:'입점업체 중개',price:550000,old:900000,emoji:'🍳'},
-{name:'생활용품 재고 박스',category:'생활',seller:'플랫폼 직접판매',price:29000,old:65000,emoji:'📦'},
-{name:'공구 세트 창고정리',category:'산업·사업용',seller:'입점업체 중개',price:75000,old:150000,emoji:'🧰'}];
-let category='전체';const won=n=>n.toLocaleString('ko-KR')+'원';const getApps=()=>{try{return JSON.parse(localStorage.getItem('clearance-demo-apps')||'[]')}catch{return []}};
-function show(id){for(const name of ['market','seller','manage'])document.getElementById(name).classList.toggle('hidden',name!==id);if(id==='manage')renderApps();document.getElementById(id).scrollIntoView({behavior:'smooth'})}
-function render(){const cats=['전체',...new Set(samples.map(x=>x.category))];const holder=document.getElementById('categories');holder.replaceChildren();cats.forEach(c=>{const b=document.createElement('button');b.className='chip'+(c===category?' active':'');b.textContent=c;b.onclick=()=>{category=c;render()};holder.append(b)});const q=document.getElementById('query').value.trim().toLowerCase();const items=samples.filter(x=>(category==='전체'||x.category===category)&&[x.name,x.category,x.seller].some(v=>v.toLowerCase().includes(q)));const root=document.getElementById('products');root.replaceChildren();for(const p of items){const article=document.createElement('article');article.className='card';const art=document.createElement('div');art.className='art';art.textContent=p.emoji;const detail=document.createElement('div');detail.className='details';const tag=document.createElement('span');tag.className='tag';tag.textContent=p.seller;const h=document.createElement('h3');h.textContent=p.name;const old=document.createElement('div');old.className='old';old.textContent=won(p.old);const row=document.createElement('div');row.className='row';const price=document.createElement('span');price.className='price';price.textContent=won(p.price);const discount=document.createElement('strong');discount.textContent=Math.round((1-p.price/p.old)*100)+'% 할인';row.append(price,discount);const btn=document.createElement('button');btn.textContent='상세 미리보기';btn.onclick=()=>alert(p.name+'\n'+p.seller+'\n예시 가격: '+won(p.price)+'\n실제 구매는 아직 지원하지 않습니다.');detail.append(tag,h,old,row,document.createElement('br'),btn);article.append(art,detail);root.append(article)}if(!items.length)root.textContent='검색 결과가 없습니다.'}
-function renderApps(){const el=document.getElementById('applications');el.replaceChildren();const apps=getApps();if(!apps.length){el.textContent='체험 신청 내역이 없습니다.';return}apps.forEach(a=>{const p=document.createElement('p');p.textContent=a.name+' · '+a.type+' · 검토 대기(체험)';el.append(p)})}
-document.getElementById('sellerForm').addEventListener('submit',e=>{e.preventDefault();const f=new FormData(e.target);const apps=getApps();apps.push({name:String(f.get('name')).trim().slice(0,60),type:String(f.get('type')).slice(0,30)});localStorage.setItem('clearance-demo-apps',JSON.stringify(apps));document.getElementById('sellerStatus').textContent='체험 신청을 브라우저에 저장했습니다. 실제 접수는 아닙니다.';e.target.reset()});
-function clearDemo(){localStorage.removeItem('clearance-demo-apps');renderApps()}function toggleTheme(){document.body.classList.toggle('dark');localStorage.setItem('clearance-theme',document.body.classList.contains('dark')?'dark':'light')}
-if(localStorage.getItem('clearance-theme')==='dark')document.body.classList.add('dark');document.getElementById('query').addEventListener('input',render);render();
-</script></body></html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#101827" id="themeColor">
+  <title>땡처리 | 전국 재고·특가 거래 (데모)</title>
+  <style>
+    :root { font-family: system-ui, "Malgun Gothic", sans-serif; color: #192235; background: #f5f7fb; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; border: 0; border-radius: 10px; padding: 10px 15px; background: #e9eef7; color: #142035; }
+    button.primary { background: #f7bd35; color: #141b28; font-weight: 800; }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid #3d87d6; outline-offset: 2px; }
+    header { background: #101827; color: white; padding: 18px max(20px, calc((100vw - 1160px) / 2)); display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+    .brand { font-size: 27px; font-weight: 900; letter-spacing: -1px; }
+    .brand b { color: #ffcc47; }
+    header nav { display: flex; gap: 8px; flex-wrap: wrap; }
+    header nav [aria-current="page"] { outline: 2px solid #ffcc47; outline-offset: 2px; }
+    main { max-width: 1160px; margin: auto; padding: 24px 18px 70px; }
+    .hero { background: #162841; border-radius: 22px; color: white; padding: 48px 36px; }
+    .hero h1 { font-size: clamp(28px, 4vw, 46px); margin: 0 0 12px; }
+    .hero p { color: #e1eaf3; line-height: 1.7; }
+    .search { display: flex; gap: 10px; margin-top: 24px; max-width: 740px; }
+    .search input { flex: 1; min-width: 0; }
+    input, select, textarea { padding: 12px; border: 1px solid #c8d1df; border-radius: 10px; background: white; color: #182235; }
+    h2 { margin-top: 35px; }
+    #categories { display: flex; gap: 9px; flex-wrap: wrap; }
+    .chip.active { background: #233c5b; color: white; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 17px; margin-top: 18px; }
+    .card { background: white; border: 1px solid #e2e7ef; border-radius: 17px; overflow: hidden; }
+    .art { height: 145px; background: #d5e1ed; display: grid; place-items: center; font-size: 28px; font-weight: 800; color: #3a516c; }
+    .details { padding: 17px; display: grid; gap: 8px; }
+    .details h3 { margin: 0; }
+    .tag { font-size: 12px; background: #e8f2ff; color: #23517a; padding: 5px 8px; border-radius: 6px; width: fit-content; }
+    .price { font-size: 23px; font-weight: 900; }
+    .old { text-decoration: line-through; color: #798498; }
+    .muted { color: #6b7789; font-size: 14px; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .panel { background: white; padding: 24px; border: 1px solid #e2e7ef; border-radius: 16px; margin-top: 18px; }
+    .fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .fields label { display: grid; gap: 7px; font-weight: 700; }
+    .fields input, .fields select, .fields textarea { width: 100%; }
+    .hidden { display: none !important; }
+    .notice { border-left: 4px solid #d58828; padding: 12px 16px; background: #fff5e5; color: #6b4410; margin-top: 18px; }
+    footer { text-align: center; padding: 26px; color: #728096; }
+    .app-item { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: center; padding: 14px 0; border-bottom: 1px solid #e2e7ef; }
+    .app-item:last-child { border-bottom: 0; }
+    .app-actions { display: flex; gap: 8px; }
+    dialog { border: 1px solid #e2e7ef; border-radius: 16px; padding: 0; max-width: 560px; width: calc(100% - 32px); background: white; color: inherit; }
+    dialog::backdrop { background: rgba(16, 24, 39, .55); }
+    .dialog-body { padding: 24px; display: grid; gap: 10px; }
+    .dialog-head { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
+    dl { display: grid; grid-template-columns: 120px 1fr; gap: 8px 12px; margin: 8px 0 0; }
+    dt { color: #6b7789; font-size: 14px; }
+    dd { margin: 0; }
+    pre.snapshot { margin: 0; padding: 12px; overflow: auto; background: #f3f6fb; border-radius: 10px; font-size: 12px; }
+    .journey { width: 100%; border-collapse: collapse; }
+    .journey th, .journey td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #e2e7ef; font-size: 14px; }
+    html.dark, html.dark body { background: #131b29; color: #edf2fa; }
+    html.dark .card, html.dark .panel, html.dark dialog { background: #202d40; border-color: #35445a; }
+    html.dark .muted, html.dark dt, html.dark footer { color: #b0bfd1; }
+    html.dark .notice { background: #3d3120; color: #ffdcaa; }
+    html.dark .chip { background: #34445c; color: #f1f4f9; }
+    html.dark .chip.active { background: #f7bd35; color: #142035; }
+    html.dark input, html.dark select, html.dark textarea { background: #182433; border-color: #3d4f66; color: #edf2fa; }
+    html.dark .old { color: #9aabc0; }
+    html.dark .tag { background: #2a415c; color: #c5ddf5; }
+    html.dark .price { color: #edf2fa; }
+    html.dark .art { background: #2a3a50; color: #d5e4f3; }
+    html.dark .app-item, html.dark .journey th, html.dark .journey td { border-color: #35445a; }
+    html.dark pre.snapshot { background: #182433; color: #edf2fa; }
+    html.dark header nav button { background: #2a3a50; color: #edf2fa; }
+    @media (max-width: 600px) {
+      .hero { padding: 30px 20px; }
+      .search { flex-direction: column; }
+      header { padding: 16px 20px; }
+      dl { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">⚡ <b>땡처리</b> 마켓</div>
+    <nav aria-label="주요 메뉴">
+      <button type="button" data-view="market">상품보기</button>
+      <button type="button" data-view="seller">입점신청</button>
+      <button type="button" data-view="manage">데모 관리 시뮬</button>
+      <button type="button" id="themeBtn" aria-label="화면 테마 전환" aria-pressed="false">◐ 화면모드</button>
+    </nav>
+  </header>
+  <main>
+    <section class="hero">
+      <h1>재고는 기회가 되고<br>가격은 놀라워집니다.</h1>
+      <p>제조사·도매상·폐업정리·리퍼브·사업장 재고까지.<br>판매자와 구매자를 잇는 전국 땡처리 통합 마켓.</p>
+      <form class="search" id="searchForm">
+        <input id="query" name="q" placeholder="상품명, 카테고리, 판매자를 검색하세요" aria-label="상품 검색">
+        <button class="primary" type="submit">상품 검색</button>
+      </form>
+    </section>
+    <div class="notice">현재는 서비스 구조를 검증하는 데모입니다. 표시된 상품은 예시이며 실제 주문·결제·입점 승인이 이루어지지 않습니다. 입력한 체험 데이터는 이 브라우저에만 저장됩니다. 실제 개인정보나 사업자등록번호를 입력하지 마세요. 검색엔진 색인을 막기 위해 noindex가 설정되어 있습니다.</div>
+    <section id="market">
+      <h2>오늘의 땡처리 상품</h2>
+      <div id="categories"></div>
+      <p id="resultStatus" class="muted" role="status"></p>
+      <div id="products" class="grid"></div>
+    </section>
+    <section id="seller" class="hidden">
+      <h2>입점업체 신청 체험</h2>
+      <div class="panel">
+        <p class="muted">실제 접수 전 단계입니다. 업체명은 가명으로 입력하세요. 이 브라우저에 최대 20건까지 저장됩니다.</p>
+        <form id="sellerForm">
+          <div class="fields">
+            <label>업체명 (체험용)<input name="name" maxlength="60" required placeholder="예: 샘플유통"></label>
+            <label>판매 유형
+              <select name="type">
+                <option>재고정리</option>
+                <option>폐업정리</option>
+                <option>제조사</option>
+                <option>도매상</option>
+              </select>
+            </label>
+          </div>
+          <p><button class="primary" type="submit">체험 신청 저장</button></p>
+        </form>
+        <p id="sellerStatus" role="status"></p>
+      </div>
+    </section>
+    <section id="manage" class="hidden">
+      <h2>데모 관리 시뮬</h2>
+      <div class="notice">인증·권한 검증이 없는 로컬 시연 화면입니다. 여기서 승인해도 실제 입점이나 상품 공개가 되지 않으며, 이 데모의 상품 목록에도 반영되지 않습니다.</div>
+      <div class="panel">
+        <h3>입점신청 현황 (이 브라우저)</h3>
+        <div id="applications"></div>
+        <button type="button" id="clearDemo">체험 데이터 초기화</button>
+      </div>
+      <div class="panel">
+        <h3>판매 방식 구분</h3>
+        <p>플랫폼 직접판매: 운영사가 법적 판매자 · 입점업체 중개판매: 제휴 판매자가 법적 판매자</p>
+        <p class="muted">이후 주문이 생기면 법적 판매자·채널·세금계산서 주체를 주문 행에 고정합니다. 이 화면은 주문을 만들지 않습니다.</p>
+      </div>
+      <div class="panel">
+        <h3>여정 설계 (실행 아님)</h3>
+        <table class="journey">
+          <thead><tr><th>단계</th><th>시제품</th><th>운영 전환 조건</th></tr></thead>
+          <tbody>
+            <tr><td>입점</td><td>로컬 신청 시뮬</td><td>인증된 심사 서버</td></tr>
+            <tr><td>리스팅 검수</td><td>샘플만 approved</td><td>미승인 판매자 공개 금지</td></tr>
+            <tr><td>탐색</td><td>검색·상세·재고 표시</td><td>실재고와 일치</td></tr>
+            <tr><td>주문</td><td>스냅샷 초안만 표시</td><td>판매가능 수량 예약</td></tr>
+            <tr><td>결제</td><td>미구현</td><td>PG 웹훅 증거 후에만 paid</td></tr>
+            <tr><td>이행</td><td>미구현</td><td>채널별 책임 주체</td></tr>
+            <tr><td>반품·분쟁</td><td>미구현</td><td>법적 판매자 기준 처리</td></tr>
+            <tr><td>정산·감사</td><td>미구현</td><td>원장·감사로그</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <p>© 땡처리 마켓 · Clearance-sale · 시제품</p>
+    <p>대표 브랜드 땡처리 · 대표 도메인(예정) 땡처리.shop</p>
+    <p>통신판매중개 고지·약관·개인정보처리방침·사업자 정보는 공개 운영 전에 게시합니다. 현재는 거래를 중개하거나 체결하지 않습니다.</p>
+  </footer>
+  <dialog id="productDialog" aria-labelledby="productTitle">
+    <div class="dialog-body">
+      <div class="dialog-head">
+        <h2 id="productTitle" style="margin:0"></h2>
+        <button type="button" id="closeProduct">닫기</button>
+      </div>
+      <p id="productChannel" class="tag"></p>
+      <dl id="productFacts"></dl>
+      <p id="productLiability" class="muted"></p>
+      <p class="muted">아래는 향후 주문 행에 고정할 스냅샷 초안입니다. 실행되지 않으며 재고를 예약·차감하지 않습니다.</p>
+      <pre class="snapshot" id="productSnapshot"></pre>
+      <p class="notice">실제 구매·결제는 지원하지 않습니다. 재고·가격은 예시입니다.</p>
+    </div>
+  </dialog>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

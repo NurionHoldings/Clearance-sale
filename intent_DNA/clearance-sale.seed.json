@@ -13,7 +13,7 @@
     "JOURNEY": ["Seller onboarding", "listing verification", "discovery", "order", "payment", "fulfillment", "returns or disputes", "settlement"],
     "OBJECT": ["Seller", "Listing", "Inventory", "Order", "Payment", "Shipment", "Refund", "SettlementLedger", "AuditEvent"],
     "OWNER": ["Every listing and order must identify its legal seller of record; payment and settlement amounts require authoritative ledger sources."],
-    "INVARIANT": ["Distinguish platform direct sales from third-party marketplace sales.", "Never allow unapproved sellers to publish live listings.", "Never mark an order paid without verified payment-provider evidence.", "Never pay out twice for the same settlement obligation."],
+    "INVARIANT": ["Distinguish platform direct sales from third-party marketplace sales.", "Never allow unapproved sellers to publish live listings.", "Never mark an order paid without verified payment-provider evidence.", "Never pay out twice for the same settlement obligation.", "qtyReserved must not exceed qtyOnHand; sellable quantity is on-hand minus reserved.", "Orders snapshot sellerOfRecord and channel at creation and never mutate those fields.", "Do not deduct inventory without a reservation; do not present unimplemented checkout as completed."],
     "CONSTRAINT": ["Korean consumer, e-commerce and privacy requirements", "least-privilege access", "production secrets excluded from Foundry ingestion"],
     "RISK": ["False seller identity", "overselling", "fraudulent payment", "incorrect refunds", "settlement duplication", "personal-data exposure"],
     "SIGNAL": ["Verified seller rate", "inventory consistency", "payment reconciliation", "refund turnaround", "incident rate"],

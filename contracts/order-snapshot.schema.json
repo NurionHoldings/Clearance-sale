@@ -1,0 +1,27 @@
+{
+  "$id": "https://clearance.demo/contracts/order-snapshot.schema.json",
+  "title": "OrderSnapshotDraft",
+  "description": "향후 주문 행에 법적 판매자와 채널을 고정하기 위한 초안. executable은 항상 false여야 하며 paymentState는 paid가 될 수 없다.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "executable", "listingId", "channel", "sellerId", "sellerOfRecord", "fulfillmentLiability", "taxInvoiceIssuer", "paymentState", "inventoryEffect"],
+  "properties": {
+    "kind": { "const": "order-snapshot-draft" },
+    "executable": { "const": false },
+    "listingId": { "type": "string" },
+    "qtyRequested": { "type": "integer", "minimum": 1 },
+    "qtyOnHand": { "type": "integer", "minimum": 0 },
+    "qtyReserved": { "type": "integer", "minimum": 0 },
+    "qtyAvailableAtDraft": { "type": "integer", "minimum": 0 },
+    "wouldOversell": { "type": "boolean" },
+    "channel": { "enum": ["direct", "marketplace"] },
+    "sellerId": { "type": "string" },
+    "sellerOfRecord": { "type": "string" },
+    "price": { "type": "number" },
+    "fulfillmentLiability": { "enum": ["platform", "seller"] },
+    "taxInvoiceIssuer": { "enum": ["platform", "seller"] },
+    "settlementMode": { "enum": ["platform-revenue", "marketplace-payable"] },
+    "paymentState": { "enum": ["not-started"] },
+    "inventoryEffect": { "const": "none" }
+  }
+}
