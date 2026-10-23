@@ -14,11 +14,19 @@ h1{font-size:clamp(20px,3vw,30px);margin:10px 0 6px}p{color:#c5d4e7;line-height:
 .glint{animation:shine 4s ease-in-out infinite}
 .wordmark{animation:appear 2s 1s both}
 .particle{animation:twinkle var(--duration,3s) ease-in-out infinite alternate}
+.stage:after{content:"";position:absolute;inset:-60%;z-index:-1;background:conic-gradient(from 0deg,transparent 0 20%,#d4a95a19 27%,transparent 34% 64%,#67b6ff21 72%,transparent 80%);animation:ambient 22s linear infinite;pointer-events:none}
+.logo{transform-style:preserve-3d}
+.stage[data-intensity="5"] .logo{filter:drop-shadow(0 0 28px #e1b96699) drop-shadow(0 0 25px #3185f488)}
+.stage[data-intensity="1"] .orbit{opacity:.08}
+.stage[data-intensity="2"] .orbit{opacity:.3}
+.stage[data-intensity="4"] .orbit{opacity:.8}
+.stage[data-intensity="5"] .orbit{opacity:1}
+@keyframes ambient{to{transform:rotate(360deg)}}
 .controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:18px}
 button,a.action{border:1px solid #7996b7;background:#152c4e;color:#fff;border-radius:12px;padding:11px 17px;font:inherit;cursor:pointer;text-decoration:none}
 button:hover,a.action:hover{background:#29476b}button:focus-visible,a:focus-visible{outline:3px solid #ffcb67;outline-offset:3px}
 small{display:block;color:#9fb3cf;margin-top:15px}
-.paused .logo,.paused .orbit,.paused .globe,.paused .glint,.paused .wordmark,.paused .particle{animation-play-state:paused!important}
+.paused .logo,.paused .orbit,.paused .globe,.paused .glint,.paused .wordmark,.paused .particle,.paused.stage:after{animation-play-state:paused!important}
 [data-intensity="1"] .particle,[data-intensity="1"] .glint{opacity:.1}
 [data-intensity="2"] .particle{opacity:.25}
 [data-intensity="3"] .particle{opacity:.5}
@@ -52,14 +60,29 @@ small{display:block;color:#9fb3cf;margin-top:15px}
 </g>
 <g fill="#e5c789"><circle class="particle" style="--duration:2s" cx="98" cy="160" r="3"/><circle class="particle" style="--duration:4s" cx="596" cy="92" r="4"/><circle class="particle" style="--duration:3s" cx="648" cy="332" r="3"/><circle class="particle" style="--duration:5s" cx="150" cy="90" r="2"/></g>
 </svg></div>
-<div class="controls"><button id="play" type="button" aria-pressed="false">일시정지</button><button id="replay" type="button">처음부터</button><button id="level" type="button">효과 강도 3 / 5</button><a class="action" href="index.html">땡처리 홈으로</a></div>
-<small>시제품 전용 · 실제 거래·결제 기능 없음 · OS 움직임 최소화 설정 지원</small>
+<div class="controls"><button id="play" type="button" aria-pressed="false">일시정지</button><button id="replay" type="button">처음부터</button><button id="level" type="button">효과 강도 3 / 5</button><button id="intro" type="button" aria-pressed="false">인트로 모드</button><a class="action" href="index.html">땡처리 홈으로</a></div>
+<p id="introStatus" role="status" aria-live="polite"></p><small>시제품 전용 · 실제 거래·결제 기능 없음 · OS 움직임 최소화 설정 지원</small>
 </main><script>
 const stage=document.getElementById('stage'),play=document.getElementById('play'),level=document.getElementById('level');
-let paused=window.matchMedia('(prefers-reduced-motion: reduce)').matches,intensity=3;
+let introTimer=null;let paused=window.matchMedia('(prefers-reduced-motion: reduce)').matches,intensity=3;
 function sync(){stage.classList.toggle('paused',paused);play.textContent=paused?'재생':'일시정지';play.setAttribute('aria-pressed',String(paused))}
 play.addEventListener('click',()=>{paused=!paused;sync()});
 document.getElementById('replay').addEventListener('click',()=>{stage.querySelector('.logo').style.animation='none';void stage.offsetWidth;stage.querySelector('.logo').style.animation='';paused=false;sync()});
 level.addEventListener('click',()=>{intensity=intensity%5+1;stage.dataset.intensity=String(intensity);level.textContent='효과 강도 '+intensity+' / 5'});
+document.getElementById('intro').addEventListener('click',()=>{
+  const btn=document.getElementById('intro'),active=btn.getAttribute('aria-pressed')==='true';
+  if(introTimer!==null){clearTimeout(introTimer);introTimer=null}
+  btn.setAttribute('aria-pressed',String(!active));
+  btn.textContent=active?'인트로 모드':'인트로 중지';
+  if(active){document.getElementById('introStatus').textContent='인트로가 중지되었습니다.';return}
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    document.getElementById('introStatus').textContent='움직임 최소화 설정에 따라 자동 전환 없이 정적 로고를 표시합니다.';
+    btn.setAttribute('aria-pressed','false');btn.textContent='인트로 모드';return
+  }
+  document.getElementById('introStatus').textContent='인트로 재생 중 · 6초 후 자동 종료 · 홈 이동은 직접 선택';
+  paused=false;sync();
+  const logo=stage.querySelector('.logo');logo.style.animation='none';void logo.offsetWidth;logo.style.animation='';
+  introTimer=setTimeout(()=>{introTimer=null;btn.setAttribute('aria-pressed','false');btn.textContent='인트로 모드';document.getElementById('introStatus').textContent='인트로가 종료되었습니다. 홈으로 이동할 수 있습니다.'},6000);
+});
 window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',e=>{paused=e.matches;sync()});sync();
 </script></body></html>
