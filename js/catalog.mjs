@@ -3,13 +3,27 @@ export const CHANNEL_LABEL = {
   marketplace: '입점업체 중개판매'
 };
 
+export const CATEGORY_GROUPS = ["이월의류","신발류","모자","귀금속","농식품","공산품","가전제품"];
+
 export const listings = [
-  { id: 'p-appliance', title: '전시 가전 특가 세트', category: '가전', condition: '전시', region: '경기', qtyOnHand: 4, qtyReserved: 1, price: 189000, listPrice: 320000, channel: 'marketplace', sellerId: 's-home', sellerOfRecord: '샘플가전 정리', status: 'approved' },
-  { id: 'p-fashion', title: '시즌오프 의류 묶음', category: '패션', condition: '시즌오프', region: '서울', qtyOnHand: 20, qtyReserved: 0, price: 49000, listPrice: 120000, channel: 'direct', sellerId: 'platform', sellerOfRecord: '땡처리 마켓(데모 운영사)', status: 'approved' },
-  { id: 'p-chair', title: '사무용 의자 재고정리', category: '가구', condition: '신품', region: '인천', qtyOnHand: 12, qtyReserved: 3, price: 39000, listPrice: 89000, channel: 'marketplace', sellerId: 's-office', sellerOfRecord: '샘플오피스', status: 'approved' },
-  { id: 'p-kitchen', title: '식당 주방집기 패키지', category: '산업·사업용', condition: '중고', region: '부산', qtyOnHand: 2, qtyReserved: 2, price: 550000, listPrice: 900000, channel: 'marketplace', sellerId: 's-food', sellerOfRecord: '샘플외식자재', status: 'approved' },
-  { id: 'p-living', title: '생활용품 재고 박스', category: '생활', condition: '리퍼브', region: '대전', qtyOnHand: 8, qtyReserved: 0, price: 29000, listPrice: 65000, channel: 'direct', sellerId: 'platform', sellerOfRecord: '땡처리 마켓(데모 운영사)', status: 'approved' },
-  { id: 'p-tool', title: '공구 세트 창고정리', category: '산업·사업용', condition: '신품', region: '대구', qtyOnHand: 6, qtyReserved: 1, price: 75000, listPrice: 150000, channel: 'marketplace', sellerId: 's-tool', sellerOfRecord: '샘플공구', status: 'approved' }
+  { id: "p-menswear", title: "남성 이월 경량 패딩", category: "이월의류", subcategory: "남성복", condition: "이월 신품", region: "서울", qtyOnHand: 35, qtyReserved: 4, price: 39000, listPrice: 99000, channel: 'marketplace', sellerId: 's-fashion', sellerOfRecord: "샘플패션유통", status: 'approved' },
+  { id: "p-womenswear", title: "여성 시즌오프 니트", category: "이월의류", subcategory: "여성복", condition: "이월 신품", region: "경기", qtyOnHand: 48, qtyReserved: 6, price: 19000, listPrice: 59000, channel: 'marketplace', sellerId: 's-fashion', sellerOfRecord: "샘플패션유통", status: 'approved' },
+  { id: "p-sportswear", title: "운동복 트레이닝 세트", category: "이월의류", subcategory: "운동복", condition: "이월 신품", region: "대구", qtyOnHand: 30, qtyReserved: 2, price: 29000, listPrice: 79000, channel: 'direct', sellerId: 'platform', sellerOfRecord: "땡처리 마켓(데모 운영사)", status: 'approved' },
+  { id: "p-hikingwear", title: "등산용 방풍 재킷", category: "이월의류", subcategory: "등산복", condition: "이월 신품", region: "부산", qtyOnHand: 22, qtyReserved: 3, price: 45000, listPrice: 119000, channel: 'marketplace', sellerId: 's-outdoor', sellerOfRecord: "샘플아웃도어", status: 'approved' },
+  { id: "p-sneakers", title: "이월 운동화", category: "신발류", subcategory: "운동화", condition: "이월 신품", region: "경기", qtyOnHand: 55, qtyReserved: 5, price: 39000, listPrice: 89000, channel: 'marketplace', sellerId: 's-shoes', sellerOfRecord: "샘플슈즈", status: 'approved' },
+  { id: "p-dress-shoes", title: "남성 정장 구두", category: "신발류", subcategory: "구두", condition: "이월 신품", region: "서울", qtyOnHand: 24, qtyReserved: 1, price: 49000, listPrice: 129000, channel: 'marketplace', sellerId: 's-shoes', sellerOfRecord: "샘플슈즈", status: 'approved' },
+  { id: "p-hikingboots", title: "방수 등산화", category: "신발류", subcategory: "등산화", condition: "이월 신품", region: "강원", qtyOnHand: 18, qtyReserved: 2, price: 59000, listPrice: 149000, channel: 'marketplace', sellerId: 's-outdoor', sellerOfRecord: "샘플아웃도어", status: 'approved' },
+  { id: "p-cap", title: "야구모자 재고정리", category: "모자", subcategory: "야구모자", condition: "신품 재고", region: "인천", qtyOnHand: 80, qtyReserved: 8, price: 9000, listPrice: 29000, channel: 'marketplace', sellerId: 's-accessories', sellerOfRecord: "샘플잡화", status: 'approved' },
+  { id: "p-hikinghat", title: "등산용 챙모자", category: "모자", subcategory: "등산모자", condition: "이월 신품", region: "강원", qtyOnHand: 42, qtyReserved: 3, price: 14000, listPrice: 39000, channel: 'marketplace', sellerId: 's-accessories', sellerOfRecord: "샘플잡화", status: 'approved' },
+  { id: "p-silver-necklace", title: "실버 목걸이 재고정리", category: "귀금속", subcategory: "목걸이", condition: "신품 재고", region: "서울", qtyOnHand: 12, qtyReserved: 1, price: 39000, listPrice: 79000, channel: 'marketplace', sellerId: 's-jewelry', sellerOfRecord: "샘플주얼리", status: 'approved' },
+  { id: "p-gold-ring", title: "14K 반지 이월 디자인", category: "귀금속", subcategory: "반지", condition: "이월 신품", region: "서울", qtyOnHand: 5, qtyReserved: 0, price: 179000, listPrice: 299000, channel: 'marketplace', sellerId: 's-jewelry', sellerOfRecord: "샘플주얼리", status: 'approved' },
+  { id: "p-rice", title: "국내산 쌀 10kg 재고정리", category: "농식품", subcategory: "쌀·곡물", condition: "포장 신품", region: "충북", qtyOnHand: 40, qtyReserved: 4, price: 25000, listPrice: 35000, channel: 'marketplace', sellerId: 's-farm', sellerOfRecord: "샘플농산유통", status: 'approved' },
+  { id: "p-apples", title: "사과 3kg 산지 재고정리", category: "농식품", subcategory: "과일", condition: "신선식품 예시", region: "경북", qtyOnHand: 32, qtyReserved: 2, price: 19000, listPrice: 29000, channel: 'marketplace', sellerId: 's-farm', sellerOfRecord: "샘플농산유통", status: 'approved' },
+  { id: "p-kitchenware", title: "스테인리스 주방용품 세트", category: "공산품", subcategory: "주방용품", condition: "신품 재고", region: "대전", qtyOnHand: 60, qtyReserved: 6, price: 22000, listPrice: 49000, channel: 'direct', sellerId: 'platform', sellerOfRecord: "땡처리 마켓(데모 운영사)", status: 'approved' },
+  { id: "p-tools", title: "가정용 공구 세트", category: "공산품", subcategory: "공구", condition: "신품 재고", region: "대구", qtyOnHand: 25, qtyReserved: 3, price: 29000, listPrice: 69000, channel: 'marketplace', sellerId: 's-industry', sellerOfRecord: "샘플공산품", status: 'approved' },
+  { id: "p-refurb-tv", title: "리퍼 43인치 TV", category: "가전제품", subcategory: "리퍼 가전", condition: "리퍼브", region: "경기", qtyOnHand: 8, qtyReserved: 2, price: 189000, listPrice: 329000, channel: 'marketplace', sellerId: 's-appliances', sellerOfRecord: "샘플리퍼가전", status: 'approved' },
+  { id: "p-refurb-vacuum", title: "리퍼 무선청소기", category: "가전제품", subcategory: "리퍼 가전", condition: "리퍼브", region: "인천", qtyOnHand: 10, qtyReserved: 1, price: 79000, listPrice: 189000, channel: 'marketplace', sellerId: 's-appliances', sellerOfRecord: "샘플리퍼가전", status: 'approved' },
+  { id: "p-display-microwave", title: "전시 전자레인지", category: "가전제품", subcategory: "전시상품", condition: "전시", region: "부산", qtyOnHand: 4, qtyReserved: 4, price: 59000, listPrice: 129000, channel: 'marketplace', sellerId: 's-appliances', sellerOfRecord: "샘플리퍼가전", status: 'approved' }
 ];
 
 export function discountPct(price, listPrice) {
