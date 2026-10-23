@@ -116,7 +116,7 @@ function renderProducts() {
   const q = document.getElementById('query').value.trim().toLowerCase();
   const items = liveListings().filter((x) => {
     if (category !== '전체' && x.category !== category) return false;
-    const hay = [x.title, x.category, x.sellerOfRecord, channelLabel(x), x.region, x.condition].join(' ').toLowerCase();
+    const hay = [x.title, x.category, x.subcategory || '', x.sellerOfRecord, channelLabel(x), x.region, x.condition].join(' ').toLowerCase();
     return hay.includes(q);
   });
   const root = document.getElementById('products');
@@ -129,12 +129,12 @@ function renderProducts() {
     const art = document.createElement('div');
     art.className = 'art';
     art.setAttribute('aria-hidden', 'true');
-    art.textContent = p.category.slice(0, 2);
+    art.textContent = p.subcategory || p.category;
     const detail = document.createElement('div');
     detail.className = 'details';
     const tag = document.createElement('span');
     tag.className = 'tag';
-    tag.textContent = channelLabel(p);
+    tag.textContent = p.category + ' · ' + (p.subcategory || '기타') + ' · ' + channelLabel(p);
     const h = document.createElement('h3');
     h.textContent = p.title;
     const seller = document.createElement('p');
@@ -194,6 +194,7 @@ function fillDialog(p) {
   fact(dl, '법적 판매자', p.sellerOfRecord);
   fact(dl, '판매 채널', channelLabel(p));
   fact(dl, '카테고리', p.category);
+  fact(dl, '세부 품목', p.subcategory || '기타');
   fact(dl, '상태', p.condition);
   fact(dl, '지역', p.region);
   fact(dl, '보유 재고', String(p.qtyOnHand));
