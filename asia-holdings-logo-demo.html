@@ -4,13 +4,13 @@
 <style>
 :root{color-scheme:dark;font-family:system-ui,'Malgun Gothic',sans-serif;background:#06162f;color:#f5f7fb}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 42%,#1c4780 0,#071a38 48%,#030b1a 100%);display:grid;place-items:center}
-main{width:min(100%,1100px);padding:28px 18px 42px;text-align:center}
+main{width:min(100%,1100px);padding:28px 18px 42px;text-align:center;min-width:0}
 h1{font-size:clamp(20px,3vw,30px);margin:10px 0 6px}p{color:#c5d4e7;line-height:1.7}
-.stage{position:relative;isolation:isolate;overflow:hidden;aspect-ratio:16/10;max-height:660px;border:1px solid #385478;border-radius:24px;background:radial-gradient(ellipse at 50% 55%,#23558b 0%,#071832 66%,#040a18);display:grid;place-items:center}
+.stage{min-width:0;position:relative;isolation:isolate;overflow:hidden;aspect-ratio:16/10;max-height:660px;border:1px solid #385478;border-radius:24px;background:radial-gradient(ellipse at 50% 55%,#23558b 0%,#071832 66%,#040a18);display:grid;place-items:center}
 .stage:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 38px,#ffffff08 39px 40px),repeating-linear-gradient(90deg,transparent 0 38px,#ffffff07 39px 40px);mask-image:linear-gradient(transparent,#000);pointer-events:none}
 .logo{width:100%;height:auto;max-height:100%;overflow:visible;filter:drop-shadow(0 0 18px #328be355)}
 .logo-wrap{animation:appear 2.2s ease both,hover 7s ease-in-out 2.2s infinite}
-.logo-wrap{position:relative;width:min(78%,670px);display:grid;place-items:center}
+.logo-wrap{position:relative;width:min(78%,670px);max-width:100%;min-width:0;display:grid;place-items:center}
 .logo-wrap .logo{width:100%;max-height:none}
 .motion-halo{position:absolute;inset:18% 8%;border:2px solid #efc77d66;border-radius:50%;transform:rotate(-22deg) scaleY(.35);box-shadow:0 0 20px #d9b87955;pointer-events:none;animation:halo 9s ease-in-out infinite}
 @keyframes halo{50%{opacity:.25;transform:rotate(-22deg) scaleY(.4) scale(1.04)}}
