@@ -9,13 +9,11 @@ h1{font-size:clamp(20px,3vw,30px);margin:10px 0 6px}p{color:#c5d4e7;line-height:
 .stage{min-width:0;position:relative;isolation:isolate;overflow:hidden;aspect-ratio:16/10;max-height:660px;border:1px solid #385478;border-radius:24px;background:radial-gradient(ellipse at 50% 55%,#23558b 0%,#071832 66%,#040a18);display:grid;place-items:center}
 .stage:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 38px,#ffffff08 39px 40px),repeating-linear-gradient(90deg,transparent 0 38px,#ffffff07 39px 40px);mask-image:linear-gradient(transparent,#000);pointer-events:none}
 .logo{width:100%;height:auto;max-height:100%;overflow:visible;filter:drop-shadow(0 0 18px #328be355)}
-.logo-wrap{animation:appear 2.2s ease both,hover 7s ease-in-out 2.2s infinite}
-.logo-wrap{position:relative;width:min(78%,670px);max-width:100%;min-width:0;display:grid;place-items:center}
+.logo-wrap{animation:appear 2.2s ease both,hover 7s ease-in-out 2.2s infinite;position:relative;width:min(78%,670px);max-width:100%;min-width:0;display:grid;place-items:center}
 .logo-wrap .logo{width:100%;max-height:none}
 .motion-halo{position:absolute;inset:18% 8%;border:2px solid #efc77d66;border-radius:50%;transform:rotate(-22deg) scaleY(.35);box-shadow:0 0 20px #d9b87955;pointer-events:none;animation:halo 9s ease-in-out infinite}
 @keyframes halo{50%{opacity:.25;transform:rotate(-22deg) scaleY(.4) scale(1.04)}}
 .stage:after{content:"";position:absolute;inset:-60%;z-index:-1;background:conic-gradient(from 0deg,transparent 0 20%,#d4a95a19 27%,transparent 34% 64%,#67b6ff21 72%,transparent 80%);animation:ambient 22s linear infinite;pointer-events:none}
-.logo{transform-style:preserve-3d}
 .stage[data-intensity="5"] .logo{filter:drop-shadow(0 0 28px #e1b96699) drop-shadow(0 0 25px #3185f488)}
 .stage[data-intensity="1"] .motion-halo{opacity:.08}
 .stage[data-intensity="2"] .motion-halo{opacity:.3}
@@ -27,33 +25,53 @@ button,a.action{border:1px solid #7996b7;background:#152c4e;color:#fff;border-ra
 button:hover,a.action:hover{background:#29476b}button:focus-visible,a:focus-visible{outline:3px solid #ffcb67;outline-offset:3px}
 small{display:block;color:#9fb3cf;margin-top:15px}
 .paused .logo,.paused .logo-wrap,.paused .motion-halo,.paused.stage:after{animation-play-state:paused!important}
-[data-intensity="1"] .particle,[data-intensity="1"] .glint{opacity:.1}
-[data-intensity="2"] .particle{opacity:.25}
-[data-intensity="3"] .particle{opacity:.5}
-[data-intensity="4"] .particle{opacity:.75}
 @keyframes appear{from{opacity:0;transform:translateY(28px) scale(.92)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes hover{50%{transform:translateY(-9px)}}
-@keyframes pulse{50%{filter:drop-shadow(0 0 17px #8bc8ff)}}
-@keyframes shine{50%{opacity:.25}}
-@keyframes twinkle{to{opacity:.1;transform:scale(.55)}}
 .entry-screen{position:fixed;inset:0;z-index:9999;background:#030810;display:flex;flex-direction:column;overflow:hidden;height:100svh;height:100dvh;max-height:-webkit-fill-available;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
 .entry-screen[hidden]{display:none!important}
-.entry-stage{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;padding:clamp(8px,2vh,20px) clamp(12px,3vw,28px);background:radial-gradient(circle at 50% 42%,#1c4780 0,#071a38 48%,#030b1a 100%)}
-.entry-stage .logo-wrap{width:min(82%,720px);animation:appear 2.2s ease both,hover 7s ease-in-out 2.2s infinite}
-.entry-controls{flex:0 0 auto;position:relative;display:flex;justify-content:space-between;align-items:center;gap:10px 14px;padding:16px clamp(16px,4vw,28px) max(16px,env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,#030810e6 28%,#030810)}
+.entry-stage{flex:1 1 auto;min-height:0;position:relative;overflow:hidden;background:#030810}
+.entry-bg,.entry-hero{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:0}
+.entry-vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 38%,#02070fcc 100%)}
+.entry-sweep{position:absolute;inset:-10%;pointer-events:none;background:linear-gradient(105deg,transparent 42%,#ffe7a855 50%,transparent 58%);opacity:0}
+.entry-caption{position:absolute;left:0;right:0;bottom:clamp(18px,8vh,72px);text-align:center;z-index:2;opacity:0;padding:0 16px}
+.entry-wordmark{margin:0;font-size:clamp(18px,3.2vw,34px);letter-spacing:.28em;font-weight:750;color:#f6e2b0}
+.entry-tag{margin:8px 0 0;color:#d7e6f6;font-size:clamp(13px,2vw,18px)}
+.is-playing .entry-bg{animation:entryBg 11s ease both}
+.is-playing .entry-hero{animation:entryHero 11s ease both}
+.is-playing .entry-sweep{animation:entrySweep 2.8s 3.1s ease-out both}
+.is-playing .entry-caption{animation:entryCap 11s ease both}
+@keyframes entryBg{
+  0%{opacity:0;transform:scale(1.22)}
+  10%{opacity:1}
+  42%{opacity:1;transform:scale(1.08)}
+  62%{opacity:.28;transform:scale(1.03)}
+  100%{opacity:.18;transform:scale(1)}
+}
+@keyframes entryHero{
+  0%,16%{opacity:0;transform:scale(.78) translateY(30px)}
+  38%{opacity:1;transform:scale(1.03) translateY(0)}
+  100%{opacity:1;transform:scale(1)}
+}
+@keyframes entrySweep{0%{opacity:0;transform:translateX(-18%)}35%{opacity:.85}100%{opacity:0;transform:translateX(22%)}}
+@keyframes entryCap{0%,52%{opacity:0;transform:translateY(18px)}66%,100%{opacity:1;transform:none}}
+.entry-controls{flex:0 0 auto;position:relative;display:flex;justify-content:space-between;align-items:center;gap:10px 14px;padding:16px clamp(16px,4vw,28px) max(16px,env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,#030810e6 28%,#030810);z-index:3}
 .entry-controls button{font:600 15px inherit;font-family:inherit;background:#10263d;color:#eef8ff;border:1px solid #739cbd;border-radius:24px;padding:11px 20px;cursor:pointer;white-space:nowrap}
 .entry-controls button:focus-visible{outline:3px solid #9ee6ff;outline-offset:3px}
 .entry-brand{font-size:clamp(14px,2.5vw,22px);font-weight:800;letter-spacing:.12em;color:#e8f6ff;flex-shrink:0}
 body.entry-active{overflow:hidden;touch-action:none}
 body.entry-active main{visibility:hidden}
-@media(max-width:600px){main{padding:16px 12px 28px}.stage{aspect-ratio:4/5;border-radius:16px}.logo-wrap{width:96%}.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.controls button,.controls a{min-height:48px;display:grid;place-items:center}h1{font-size:22px}.entry-stage{padding:8px 10px 4px}.entry-controls{flex-wrap:wrap;justify-content:center;text-align:center;padding-top:12px;padding-bottom:max(14px,env(safe-area-inset-bottom,14px))}.entry-controls button{width:100%;max-width:320px;padding:13px 18px;font-size:16px}.entry-brand{width:100%;text-align:center;letter-spacing:.18em}}
+@media(max-width:600px){main{padding:16px 12px 28px}.stage{aspect-ratio:4/5;border-radius:16px}.logo-wrap{width:96%}.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.controls button,.controls a{min-height:48px;display:grid;place-items:center}h1{font-size:22px}.entry-controls{flex-wrap:wrap;justify-content:center;text-align:center;padding-top:12px;padding-bottom:max(14px,env(safe-area-inset-bottom,14px))}.entry-controls button{width:100%;max-width:320px;padding:13px 18px;font-size:16px}.entry-brand{width:100%;text-align:center;letter-spacing:.18em}.entry-wordmark{letter-spacing:.16em}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.entry-screen{display:none!important}}
 </style></head><body>
-<div id="entryScreen" class="entry-screen" role="dialog" aria-modal="true" aria-label="아시아홀딩스 진입 로고">
-  <div class="entry-stage">
-    <div class="logo-wrap" id="entryLogo">
-      <img class="logo" src="assets/asia-holdings-logo.svg" width="700" height="580" alt="" decoding="async">
-      <div class="motion-halo" aria-hidden="true"></div>
+<div id="entryScreen" class="entry-screen" role="dialog" aria-modal="true" aria-label="아시아홀딩스 진입 영상">
+  <div class="entry-stage" id="entryStage">
+    <img class="entry-bg" src="assets/asia-holdings-logo-cinematic.png" alt="" decoding="async">
+    <img class="entry-hero" src="assets/asia-holdings-logo-hero.png" alt="" decoding="async">
+    <div class="entry-vignette" aria-hidden="true"></div>
+    <div class="entry-sweep" aria-hidden="true"></div>
+    <div class="entry-caption">
+      <p class="entry-wordmark">ASIA HOLDINGS</p>
+      <p class="entry-tag">세상을 연결하는 가치, 더 큰 내일을 만듭니다</p>
     </div>
   </div>
   <div class="entry-controls"><span class="entry-brand">ASIA HOLDINGS</span><button type="button" id="skipEntry">시제품으로 들어가기 <span aria-hidden="true">→</span></button></div>
@@ -65,67 +83,78 @@ body.entry-active main{visibility:hidden}
 <p id="introStatus" role="status" aria-live="polite"></p><small>시제품 전용 · 실제 거래·결제 기능 없음 · OS 움직임 최소화 설정 지원</small>
 </main><script>
 const stage=document.getElementById('stage'),play=document.getElementById('play'),level=document.getElementById('level');
-let introTimer=null;let paused=window.matchMedia('(prefers-reduced-motion: reduce)').matches,intensity=3;
+const screen=document.getElementById('entryScreen'),skip=document.getElementById('skipEntry'),entryStage=document.getElementById('entryStage');
+const ENTRY_MS=11000;
+let introTimer=null,entryTimer=null,entryFallback=null,dismissed=true;
+let paused=window.matchMedia('(prefers-reduced-motion: reduce)').matches,intensity=3;
 function restartWrap(el){el.style.animation='none';void el.offsetWidth;el.style.animation=''}
+function reducedMotion(){return window.matchMedia('(prefers-reduced-motion: reduce)').matches}
 function sync(){stage.classList.toggle('paused',paused);play.textContent=paused?'재생':'일시정지';play.setAttribute('aria-pressed',String(paused))}
+function stopEntryTimers(){
+  if(entryTimer!==null){clearTimeout(entryTimer);entryTimer=null}
+  if(entryFallback!==null){clearTimeout(entryFallback);entryFallback=null}
+}
+function closeEntry(){
+  if(dismissed)return;
+  dismissed=true;
+  stopEntryTimers();
+  screen.hidden=true;
+  document.body.classList.remove('entry-active');
+  entryStage.classList.remove('is-playing');
+  skip.blur();
+  const btn=document.getElementById('intro');
+  btn.setAttribute('aria-pressed','false');
+  btn.textContent='인트로 모드';
+  if(!reducedMotion()) restartWrap(document.getElementById('stageLogo'));
+}
+function playEntry(){
+  if(reducedMotion()){
+    screen.hidden=true;
+    document.getElementById('introStatus').textContent='움직임 최소화 설정에 따라 정적 로고를 표시합니다.';
+    return;
+  }
+  dismissed=false;
+  screen.hidden=false;
+  document.body.classList.add('entry-active');
+  entryStage.classList.remove('is-playing');
+  void entryStage.offsetWidth;
+  entryStage.classList.add('is-playing');
+  stopEntryTimers();
+  entryFallback=setTimeout(closeEntry,120000);
+  entryTimer=setTimeout(closeEntry,ENTRY_MS);
+  document.getElementById('introStatus').textContent='진입 영상 재생 중 · 지구본 원경에서 로고가 드러납니다.';
+}
 play.addEventListener('click',()=>{paused=!paused;sync()});
 document.getElementById('replay').addEventListener('click',()=>{
   if(introTimer!==null){clearTimeout(introTimer);introTimer=null}
   const introButton=document.getElementById('intro');introButton.setAttribute('aria-pressed','false');introButton.textContent='인트로 모드';
   restartWrap(document.getElementById('stageLogo'));
-  paused=window.matchMedia('(prefers-reduced-motion: reduce)').matches;sync();
+  paused=reducedMotion();sync();
   document.getElementById('introStatus').textContent=paused?'움직임 최소화 설정에 따라 정적 로고를 표시합니다.':'로고 애니메이션을 처음부터 재생합니다.';
 });
 level.addEventListener('click',()=>{intensity=intensity%5+1;stage.dataset.intensity=String(intensity);level.textContent='효과 강도 '+intensity+' / 5'});
 document.getElementById('intro').addEventListener('click',()=>{
   const btn=document.getElementById('intro'),active=btn.getAttribute('aria-pressed')==='true';
-  if(introTimer!==null){clearTimeout(introTimer);introTimer=null}
-  btn.setAttribute('aria-pressed',String(!active));
-  btn.textContent=active?'인트로 모드':'인트로 중지';
-  if(active){document.getElementById('introStatus').textContent='인트로가 중지되었습니다.';return}
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    document.getElementById('introStatus').textContent='움직임 최소화 설정에 따라 자동 전환 없이 정적 로고를 표시합니다.';
-    btn.setAttribute('aria-pressed','false');btn.textContent='인트로 모드';return
-  }
-  document.getElementById('introStatus').textContent='인트로 재생 중 · 6초 후 자동 종료 · 홈 이동은 직접 선택';
-  paused=false;sync();
-  restartWrap(document.getElementById('stageLogo'));
-  introTimer=setTimeout(()=>{introTimer=null;btn.setAttribute('aria-pressed','false');btn.textContent='인트로 모드';document.getElementById('introStatus').textContent='인트로가 종료되었습니다. 홈으로 이동할 수 있습니다.'},6000);
-});
-window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',e=>{
-  if(e.matches && introTimer!==null){clearTimeout(introTimer);introTimer=null}
-  if(e.matches){const btn=document.getElementById('intro');btn.setAttribute('aria-pressed','false');btn.textContent='인트로 모드';document.getElementById('introStatus').textContent='움직임 최소화 설정에 따라 정적 로고를 표시합니다.'}
-  paused=e.matches;sync()
-});sync();
-
-(()=>{
-  const ENTRY_MS=8000;
-  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const screen=document.getElementById('entryScreen');
-  const skip=document.getElementById('skipEntry');
-  const entryLogo=document.getElementById('entryLogo');
-  const stageLogo=document.getElementById('stageLogo');
-  let dismissed=false;
-  const close=()=>{
-    if(dismissed)return;
-    dismissed=true;
-    screen.hidden=true;
-    document.body.classList.remove('entry-active');
-    skip.blur();
-    if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches) restartWrap(stageLogo);
-  };
-  skip.addEventListener('click',close);
-  window.addEventListener('keydown',e=>{if(!screen.hidden&&e.key==='Escape')close();});
-  if(reduced){
-    screen.hidden=true;
+  if(active){
+    closeEntry();
+    document.getElementById('introStatus').textContent='인트로가 중지되었습니다.';
     return;
   }
-  document.body.classList.add('entry-active');
-  restartWrap(entryLogo);
-  const fallback=setTimeout(close,120000);
-  const end=()=>clearTimeout(fallback);
-  skip.addEventListener('click',end,{once:true});
-  window.addEventListener('keydown',e=>{if(e.key==='Escape')end();},{once:true});
-  setTimeout(close,ENTRY_MS);
-})();
+  if(reducedMotion()){
+    document.getElementById('introStatus').textContent='움직임 최소화 설정에 따라 자동 전환 없이 정적 로고를 표시합니다.';
+    btn.setAttribute('aria-pressed','false');btn.textContent='인트로 모드';return;
+  }
+  btn.setAttribute('aria-pressed','true');
+  btn.textContent='인트로 중지';
+  paused=false;sync();
+  playEntry();
+});
+window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',e=>{
+  if(e.matches){closeEntry();document.getElementById('introStatus').textContent='움직임 최소화 설정에 따라 정적 로고를 표시합니다.';}
+  paused=e.matches;sync();
+});
+skip.addEventListener('click',closeEntry);
+window.addEventListener('keydown',e=>{if(!screen.hidden&&e.key==='Escape')closeEntry();});
+sync();
+playEntry();
 </script></body></html>

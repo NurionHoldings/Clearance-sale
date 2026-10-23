@@ -10,6 +10,8 @@ for (const viewport of [
   test(`Asia Holdings logo layout: ${viewport.name}`, async ({ page }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await page.goto('/asia-holdings-logo-demo.html');
+    const skip = page.locator('#skipEntry');
+    if (await skip.isVisible()) await skip.click();
     await expect(page.locator('.logo')).toBeVisible();
     await expect(page.locator('.logo')).toHaveJSProperty('naturalWidth', 700);
     const metrics = await page.evaluate(() => ({
@@ -31,6 +33,8 @@ for (const viewport of [
 
 test('replay, pause, intensity and intro controls', async ({ page }) => {
   await page.goto('/asia-holdings-logo-demo.html');
+  const skip = page.locator('#skipEntry');
+  if (await skip.isVisible()) await skip.click();
   await page.locator('#play').click();
   await expect(page.locator('#play')).toHaveAttribute('aria-pressed', 'true');
   await page.locator('#replay').click();
