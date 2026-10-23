@@ -46,7 +46,7 @@ ok(discountPct(100, 200) === 50, '할인율 정상 계산 실패');
 ok(discountPct(0, 100) === null, '할인율 가드(0원) 실패');
 ok(discountPct(200, 100) === null, '할인율 가드(역전) 실패');
 
-const oversell = freezeOrderSnapshot(listings.find((x) => x.id === 'p-kitchen'), 1);
+const oversell = freezeOrderSnapshot(listings.find((x) => x.id === 'p-display-microwave'), 1);
 ok(oversell.wouldOversell === true, '판매가능 0인 상품의 초과판매 감지가 실패했습니다.');
 
 if (process.env.CLEARANCE_PRODUCTION_RELEASE === '1') {
