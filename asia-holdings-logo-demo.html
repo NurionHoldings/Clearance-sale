@@ -8,8 +8,11 @@ main{width:min(100%,1100px);padding:28px 18px 42px;text-align:center}
 h1{font-size:clamp(20px,3vw,30px);margin:10px 0 6px}p{color:#c5d4e7;line-height:1.7}
 .stage{position:relative;isolation:isolate;overflow:hidden;aspect-ratio:16/10;max-height:660px;border:1px solid #385478;border-radius:24px;background:radial-gradient(ellipse at 50% 55%,#23558b 0%,#071832 66%,#040a18);display:grid;place-items:center}
 .stage:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 38px,#ffffff08 39px 40px),repeating-linear-gradient(90deg,transparent 0 38px,#ffffff07 39px 40px);mask-image:linear-gradient(transparent,#000);pointer-events:none}
-.logo{width:min(78%,670px);height:auto;max-height:100%;overflow:visible;filter:drop-shadow(0 0 18px #328be355);animation:appear 2.2s ease both,hover 7s ease-in-out 2.2s infinite}
-.orbit{transform-origin:350px 280px;animation:orbit 10s linear infinite}
+.logo{width:100%;height:auto;max-height:100%;overflow:visible;filter:drop-shadow(0 0 18px #328be355);animation:appear 2.2s ease both,hover 7s ease-in-out 2.2s infinite}
+.logo-wrap{position:relative;width:min(78%,670px);display:grid;place-items:center}
+.logo-wrap .logo{width:100%;max-height:none}
+.motion-halo{position:absolute;inset:18% 8%;border:2px solid #efc77d66;border-radius:50%;transform:rotate(-22deg) scaleY(.35);box-shadow:0 0 20px #d9b87955;pointer-events:none;animation:halo 9s ease-in-out infinite}
+@keyframes halo{50%{opacity:.25;transform:rotate(-22deg) scaleY(.4) scale(1.04)}}
 .globe{transform-origin:350px 335px;animation:pulse 5s ease-in-out infinite}
 .glint{animation:shine 4s ease-in-out infinite}
 .wordmark{animation:appear 2s 1s both}
@@ -17,16 +20,16 @@ h1{font-size:clamp(20px,3vw,30px);margin:10px 0 6px}p{color:#c5d4e7;line-height:
 .stage:after{content:"";position:absolute;inset:-60%;z-index:-1;background:conic-gradient(from 0deg,transparent 0 20%,#d4a95a19 27%,transparent 34% 64%,#67b6ff21 72%,transparent 80%);animation:ambient 22s linear infinite;pointer-events:none}
 .logo{transform-style:preserve-3d}
 .stage[data-intensity="5"] .logo{filter:drop-shadow(0 0 28px #e1b96699) drop-shadow(0 0 25px #3185f488)}
-.stage[data-intensity="1"] .orbit{opacity:.08}
-.stage[data-intensity="2"] .orbit{opacity:.3}
-.stage[data-intensity="4"] .orbit{opacity:.8}
-.stage[data-intensity="5"] .orbit{opacity:1}
+.stage[data-intensity="1"] .motion-halo{opacity:.08}
+.stage[data-intensity="2"] .motion-halo{opacity:.3}
+.stage[data-intensity="4"] .motion-halo{opacity:.8}
+.stage[data-intensity="5"] .motion-halo{opacity:1}
 @keyframes ambient{to{transform:rotate(360deg)}}
 .controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:18px}
 button,a.action{border:1px solid #7996b7;background:#152c4e;color:#fff;border-radius:12px;padding:11px 17px;font:inherit;cursor:pointer;text-decoration:none}
 button:hover,a.action:hover{background:#29476b}button:focus-visible,a:focus-visible{outline:3px solid #ffcb67;outline-offset:3px}
 small{display:block;color:#9fb3cf;margin-top:15px}
-.paused .logo,.paused .orbit,.paused .globe,.paused .glint,.paused .wordmark,.paused .particle,.paused.stage:after{animation-play-state:paused!important}
+.paused .logo,.paused .logo-wrap,.paused .motion-halo,.paused.stage:after{animation-play-state:paused!important}
 [data-intensity="1"] .particle,[data-intensity="1"] .glint{opacity:.1}
 [data-intensity="2"] .particle{opacity:.25}
 [data-intensity="3"] .particle{opacity:.5}
@@ -37,30 +40,12 @@ small{display:block;color:#9fb3cf;margin-top:15px}
 @keyframes pulse{50%{filter:drop-shadow(0 0 17px #8bc8ff)}}
 @keyframes shine{50%{opacity:.25}}
 @keyframes twinkle{to{opacity:.1;transform:scale(.55)}}
-@media(max-width:600px){main{padding:16px 12px 28px}.stage{aspect-ratio:4/5;border-radius:16px}.logo{width:96%}.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.controls button,.controls a{min-height:48px;display:grid;place-items:center}h1{font-size:22px}}
+@media(max-width:600px){main{padding:16px 12px 28px}.stage{aspect-ratio:4/5;border-radius:16px}.logo-wrap{width:96%}.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.controls button,.controls a{min-height:48px;display:grid;place-items:center}h1{font-size:22px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 </style></head><body>
 <main><h1>(주)아시아홀딩스</h1><p>땡처리 플랫폼 운영사 · 로고 모션 시제품</p>
 <div class="stage" id="stage" data-intensity="3" role="img" aria-label="남색 A 심벌, 지구본과 금빛 궤도가 움직이는 아시아홀딩스 로고">
-<svg class="logo" viewBox="0 0 700 580" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-<defs>
-<linearGradient id="navy" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#54759e"/><stop offset=".4" stop-color="#13294f"/><stop offset="1" stop-color="#071229"/></linearGradient>
-<linearGradient id="gold" x1="0" x2="1" y1="0" y2=".5"><stop stop-color="#9b6427"/><stop offset=".35" stop-color="#f5d99d"/><stop offset=".6" stop-color="#b7813b"/><stop offset="1" stop-color="#f6ce7b"/></linearGradient>
-<radialGradient id="earth"><stop stop-color="#286ca7"/><stop offset=".8" stop-color="#102f5b"/><stop offset="1" stop-color="#06142f"/></radialGradient>
-</defs>
-<g class="globe"><circle cx="390" cy="340" r="111" fill="url(#earth)" stroke="#a9c6dc" stroke-width="3"/>
-<path d="M339 253l30-5 18 11 25-8 13 14 29-3 14 22-13 12 22 15-15 15-20-8-14 22-25-9-17 13-12-15-22 6-14-20 12-16-22-15zM390 363l24-7 22 13 12 21-17 26-29 15-22-16-13-26z" fill="#c9d6dc" opacity=".85"/>
-<path d="M302 340h176M390 229v222" stroke="#d9e7f1" opacity=".22" stroke-width="2"/></g>
-<path d="M351 64L103 453h120l129-219 131 219h123L351 64z" fill="url(#navy)" stroke="#d6dbe0" stroke-width="4"/>
-<g class="orbit"><ellipse cx="350" cy="280" rx="312" ry="70" transform="rotate(-25 350 280)" fill="none" stroke="#ffdc92" stroke-width="3" opacity=".42"/></g>
-<path d="M72 419C146 322 303 279 459 228S609 157 550 157C604 140 660 173 624 222 587 273 425 312 282 363 170 403 112 444 72 419z" fill="url(#gold)" stroke="#ffe4a7" stroke-width="2"/>
-<path class="glint" d="M130 382C273 286 472 259 604 199" fill="none" stroke="#fff6da" stroke-width="5" opacity=".75"/>
-<g class="wordmark" fill="#f4d39a" text-anchor="middle">
-<text x="350" y="522" font-family="Georgia,serif" font-size="49" letter-spacing="4">ASIA HOLDINGS</text>
-<path d="M58 506h70M572 506h70" stroke="#cf9a54" stroke-width="4"/>
-</g>
-<g fill="#e5c789"><circle class="particle" style="--duration:2s" cx="98" cy="160" r="3"/><circle class="particle" style="--duration:4s" cx="596" cy="92" r="4"/><circle class="particle" style="--duration:3s" cx="648" cy="332" r="3"/><circle class="particle" style="--duration:5s" cx="150" cy="90" r="2"/></g>
-</svg></div>
+<div class="logo-wrap"><img class="logo" src="assets/asia-holdings-logo.svg" width="700" height="580" alt="" decoding="async"><div class="motion-halo" aria-hidden="true"></div></div></div>
 <div class="controls"><button id="play" type="button" aria-pressed="false">일시정지</button><button id="replay" type="button">처음부터</button><button id="level" type="button">효과 강도 3 / 5</button><button id="intro" type="button" aria-pressed="false">인트로 모드</button><a class="action" href="index.html">땡처리 홈으로</a></div>
 <p id="introStatus" role="status" aria-live="polite"></p><small>시제품 전용 · 실제 거래·결제 기능 없음 · OS 움직임 최소화 설정 지원</small>
 </main><script>
@@ -71,7 +56,7 @@ play.addEventListener('click',()=>{paused=!paused;sync()});
 document.getElementById('replay').addEventListener('click',()=>{
   if(introTimer!==null){clearTimeout(introTimer);introTimer=null}
   const introButton=document.getElementById('intro');introButton.setAttribute('aria-pressed','false');introButton.textContent='인트로 모드';
-  const logo=stage.querySelector('.logo');logo.style.animation='none';void stage.offsetWidth;logo.style.animation='';
+  const logo=stage.querySelector('.logo-wrap');logo.style.animation='none';void stage.offsetWidth;logo.style.animation='';
   paused=window.matchMedia('(prefers-reduced-motion: reduce)').matches;sync();
   document.getElementById('introStatus').textContent=paused?'움직임 최소화 설정에 따라 정적 로고를 표시합니다.':'로고 애니메이션을 처음부터 재생합니다.';
 });
@@ -88,7 +73,7 @@ document.getElementById('intro').addEventListener('click',()=>{
   }
   document.getElementById('introStatus').textContent='인트로 재생 중 · 6초 후 자동 종료 · 홈 이동은 직접 선택';
   paused=false;sync();
-  const logo=stage.querySelector('.logo');logo.style.animation='none';void logo.offsetWidth;logo.style.animation='';
+  const logo=stage.querySelector('.logo-wrap');logo.style.animation='none';void logo.offsetWidth;logo.style.animation='';
   introTimer=setTimeout(()=>{introTimer=null;btn.setAttribute('aria-pressed','false');btn.textContent='인트로 모드';document.getElementById('introStatus').textContent='인트로가 종료되었습니다. 홈으로 이동할 수 있습니다.'},6000);
 });
 window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',e=>{
