@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow"><title>(주)아시아홀딩스 | 움직이는 로고 시제품</title>
 <style>
 :root{color-scheme:dark;font-family:system-ui,'Malgun Gothic',sans-serif;background:#06162f;color:#f5f7fb}
@@ -14,10 +14,6 @@ h1{font-size:clamp(20px,3vw,30px);margin:10px 0 6px}p{color:#c5d4e7;line-height:
 .logo-wrap .logo{width:100%;max-height:none}
 .motion-halo{position:absolute;inset:18% 8%;border:2px solid #efc77d66;border-radius:50%;transform:rotate(-22deg) scaleY(.35);box-shadow:0 0 20px #d9b87955;pointer-events:none;animation:halo 9s ease-in-out infinite}
 @keyframes halo{50%{opacity:.25;transform:rotate(-22deg) scaleY(.4) scale(1.04)}}
-.globe{transform-origin:350px 335px;animation:pulse 5s ease-in-out infinite}
-.glint{animation:shine 4s ease-in-out infinite}
-.wordmark{animation:appear 2s 1s both}
-.particle{animation:twinkle var(--duration,3s) ease-in-out infinite alternate}
 .stage:after{content:"";position:absolute;inset:-60%;z-index:-1;background:conic-gradient(from 0deg,transparent 0 20%,#d4a95a19 27%,transparent 34% 64%,#67b6ff21 72%,transparent 80%);animation:ambient 22s linear infinite;pointer-events:none}
 .logo{transform-style:preserve-3d}
 .stage[data-intensity="5"] .logo{filter:drop-shadow(0 0 28px #e1b96699) drop-shadow(0 0 25px #3185f488)}
@@ -37,27 +33,46 @@ small{display:block;color:#9fb3cf;margin-top:15px}
 [data-intensity="4"] .particle{opacity:.75}
 @keyframes appear{from{opacity:0;transform:translateY(28px) scale(.92)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes hover{50%{transform:translateY(-9px)}}
-@keyframes orbit{to{transform:rotate(360deg)}}
 @keyframes pulse{50%{filter:drop-shadow(0 0 17px #8bc8ff)}}
 @keyframes shine{50%{opacity:.25}}
 @keyframes twinkle{to{opacity:.1;transform:scale(.55)}}
-@media(max-width:600px){main{padding:16px 12px 28px}.stage{aspect-ratio:4/5;border-radius:16px}.logo-wrap{width:96%}.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.controls button,.controls a{min-height:48px;display:grid;place-items:center}h1{font-size:22px}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+.entry-screen{position:fixed;inset:0;z-index:9999;background:#030810;display:flex;flex-direction:column;overflow:hidden;height:100svh;height:100dvh;max-height:-webkit-fill-available;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.entry-screen[hidden]{display:none!important}
+.entry-stage{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;padding:clamp(8px,2vh,20px) clamp(12px,3vw,28px);background:radial-gradient(circle at 50% 42%,#1c4780 0,#071a38 48%,#030b1a 100%)}
+.entry-stage .logo-wrap{width:min(82%,720px);animation:appear 2.2s ease both,hover 7s ease-in-out 2.2s infinite}
+.entry-controls{flex:0 0 auto;position:relative;display:flex;justify-content:space-between;align-items:center;gap:10px 14px;padding:16px clamp(16px,4vw,28px) max(16px,env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,#030810e6 28%,#030810)}
+.entry-controls button{font:600 15px inherit;font-family:inherit;background:#10263d;color:#eef8ff;border:1px solid #739cbd;border-radius:24px;padding:11px 20px;cursor:pointer;white-space:nowrap}
+.entry-controls button:focus-visible{outline:3px solid #9ee6ff;outline-offset:3px}
+.entry-brand{font-size:clamp(14px,2.5vw,22px);font-weight:800;letter-spacing:.12em;color:#e8f6ff;flex-shrink:0}
+body.entry-active{overflow:hidden;touch-action:none}
+body.entry-active main{visibility:hidden}
+@media(max-width:600px){main{padding:16px 12px 28px}.stage{aspect-ratio:4/5;border-radius:16px}.logo-wrap{width:96%}.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.controls button,.controls a{min-height:48px;display:grid;place-items:center}h1{font-size:22px}.entry-stage{padding:8px 10px 4px}.entry-controls{flex-wrap:wrap;justify-content:center;text-align:center;padding-top:12px;padding-bottom:max(14px,env(safe-area-inset-bottom,14px))}.entry-controls button{width:100%;max-width:320px;padding:13px 18px;font-size:16px}.entry-brand{width:100%;text-align:center;letter-spacing:.18em}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.entry-screen{display:none!important}}
 </style></head><body>
+<div id="entryScreen" class="entry-screen" role="dialog" aria-modal="true" aria-label="아시아홀딩스 진입 로고">
+  <div class="entry-stage">
+    <div class="logo-wrap" id="entryLogo">
+      <img class="logo" src="assets/asia-holdings-logo.svg" width="700" height="580" alt="" decoding="async">
+      <div class="motion-halo" aria-hidden="true"></div>
+    </div>
+  </div>
+  <div class="entry-controls"><span class="entry-brand">ASIA HOLDINGS</span><button type="button" id="skipEntry">시제품으로 들어가기 <span aria-hidden="true">→</span></button></div>
+</div>
 <main><h1>(주)아시아홀딩스</h1><p>땡처리 플랫폼 운영사 · 로고 모션 시제품</p>
 <div class="stage" id="stage" data-intensity="3" role="img" aria-label="남색 A 심벌, 지구본과 금빛 궤도가 움직이는 아시아홀딩스 로고">
-<div class="logo-wrap"><img class="logo" src="assets/asia-holdings-logo.svg" width="700" height="580" alt="" decoding="async"><div class="motion-halo" aria-hidden="true"></div></div></div>
+<div class="logo-wrap" id="stageLogo"><img class="logo" src="assets/asia-holdings-logo.svg" width="700" height="580" alt="" decoding="async"><div class="motion-halo" aria-hidden="true"></div></div></div>
 <div class="controls"><button id="play" type="button" aria-pressed="false">일시정지</button><button id="replay" type="button">처음부터</button><button id="level" type="button">효과 강도 3 / 5</button><button id="intro" type="button" aria-pressed="false">인트로 모드</button><a class="action" href="index.html">땡처리 홈으로</a></div>
 <p id="introStatus" role="status" aria-live="polite"></p><small>시제품 전용 · 실제 거래·결제 기능 없음 · OS 움직임 최소화 설정 지원</small>
 </main><script>
 const stage=document.getElementById('stage'),play=document.getElementById('play'),level=document.getElementById('level');
 let introTimer=null;let paused=window.matchMedia('(prefers-reduced-motion: reduce)').matches,intensity=3;
+function restartWrap(el){el.style.animation='none';void el.offsetWidth;el.style.animation=''}
 function sync(){stage.classList.toggle('paused',paused);play.textContent=paused?'재생':'일시정지';play.setAttribute('aria-pressed',String(paused))}
 play.addEventListener('click',()=>{paused=!paused;sync()});
 document.getElementById('replay').addEventListener('click',()=>{
   if(introTimer!==null){clearTimeout(introTimer);introTimer=null}
   const introButton=document.getElementById('intro');introButton.setAttribute('aria-pressed','false');introButton.textContent='인트로 모드';
-  const logo=stage.querySelector('.logo-wrap');logo.style.animation='none';void stage.offsetWidth;logo.style.animation='';
+  restartWrap(document.getElementById('stageLogo'));
   paused=window.matchMedia('(prefers-reduced-motion: reduce)').matches;sync();
   document.getElementById('introStatus').textContent=paused?'움직임 최소화 설정에 따라 정적 로고를 표시합니다.':'로고 애니메이션을 처음부터 재생합니다.';
 });
@@ -74,7 +89,7 @@ document.getElementById('intro').addEventListener('click',()=>{
   }
   document.getElementById('introStatus').textContent='인트로 재생 중 · 6초 후 자동 종료 · 홈 이동은 직접 선택';
   paused=false;sync();
-  const logo=stage.querySelector('.logo-wrap');logo.style.animation='none';void logo.offsetWidth;logo.style.animation='';
+  restartWrap(document.getElementById('stageLogo'));
   introTimer=setTimeout(()=>{introTimer=null;btn.setAttribute('aria-pressed','false');btn.textContent='인트로 모드';document.getElementById('introStatus').textContent='인트로가 종료되었습니다. 홈으로 이동할 수 있습니다.'},6000);
 });
 window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',e=>{
@@ -82,4 +97,35 @@ window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',
   if(e.matches){const btn=document.getElementById('intro');btn.setAttribute('aria-pressed','false');btn.textContent='인트로 모드';document.getElementById('introStatus').textContent='움직임 최소화 설정에 따라 정적 로고를 표시합니다.'}
   paused=e.matches;sync()
 });sync();
+
+(()=>{
+  const ENTRY_MS=8000;
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const screen=document.getElementById('entryScreen');
+  const skip=document.getElementById('skipEntry');
+  const entryLogo=document.getElementById('entryLogo');
+  const stageLogo=document.getElementById('stageLogo');
+  let dismissed=false;
+  const close=()=>{
+    if(dismissed)return;
+    dismissed=true;
+    screen.hidden=true;
+    document.body.classList.remove('entry-active');
+    skip.blur();
+    if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches) restartWrap(stageLogo);
+  };
+  skip.addEventListener('click',close);
+  window.addEventListener('keydown',e=>{if(!screen.hidden&&e.key==='Escape')close();});
+  if(reduced){
+    screen.hidden=true;
+    return;
+  }
+  document.body.classList.add('entry-active');
+  restartWrap(entryLogo);
+  const fallback=setTimeout(close,120000);
+  const end=()=>clearTimeout(fallback);
+  skip.addEventListener('click',end,{once:true});
+  window.addEventListener('keydown',e=>{if(e.key==='Escape')end();},{once:true});
+  setTimeout(close,ENTRY_MS);
+})();
 </script></body></html>
