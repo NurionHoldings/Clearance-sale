@@ -1,0 +1,19 @@
+<svg width="700" height="580" viewBox="0 0 700 580" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ASIA HOLDINGS 아시아홀딩스 로고">
+<defs>
+<linearGradient id="navy" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#54759e"/><stop offset=".4" stop-color="#13294f"/><stop offset="1" stop-color="#071229"/></linearGradient>
+<linearGradient id="gold" x1="0" x2="1" y1="0" y2=".5"><stop stop-color="#9b6427"/><stop offset=".35" stop-color="#f5d99d"/><stop offset=".6" stop-color="#b7813b"/><stop offset="1" stop-color="#f6ce7b"/></linearGradient>
+<radialGradient id="earth"><stop stop-color="#286ca7"/><stop offset=".8" stop-color="#102f5b"/><stop offset="1" stop-color="#06142f"/></radialGradient>
+</defs>
+<g><circle cx="390" cy="340" r="111" fill="url(#earth)" stroke="#a9c6dc" stroke-width="3"/>
+<path d="M339 253l30-5 18 11 25-8 13 14 29-3 14 22-13 12 22 15-15 15-20-8-14 22-25-9-17 13-12-15-22 6-14-20 12-16-22-15zM390 363l24-7 22 13 12 21-17 26-29 15-22-16-13-26z" fill="#c9d6dc" opacity=".85"/>
+<path d="M302 340h176M390 229v222" stroke="#d9e7f1" opacity=".22" stroke-width="2"/></g>
+<path d="M351 64L103 453h120l129-219 131 219h123L351 64z" fill="url(#navy)" stroke="#d6dbe0" stroke-width="4"/>
+<g><ellipse cx="350" cy="280" rx="312" ry="70" transform="rotate(-25 350 280)" fill="none" stroke="#ffdc92" stroke-width="3" opacity=".42"/></g>
+<path d="M72 419C146 322 303 279 459 228S609 157 550 157C604 140 660 173 624 222 587 273 425 312 282 363 170 403 112 444 72 419z" fill="url(#gold)" stroke="#ffe4a7" stroke-width="2"/>
+<path d="M130 382C273 286 472 259 604 199" fill="none" stroke="#fff6da" stroke-width="5" opacity=".75"/>
+<g fill="#f4d39a" text-anchor="middle">
+<text x="350" y="522" font-family="Georgia,serif" font-size="49" letter-spacing="4">ASIA HOLDINGS</text>
+<path d="M58 506h70M572 506h70" stroke="#cf9a54" stroke-width="4"/>
+</g>
+<g fill="#e5c789"><circle cx="98" cy="160" r="3"/><circle cx="596" cy="92" r="4"/><circle cx="648" cy="332" r="3"/><circle cx="150" cy="90" r="2"/></g>
+</svg>
