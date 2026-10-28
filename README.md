@@ -77,3 +77,8 @@ node scripts/production-gate.mjs
 - 사업자등록번호: 363-81-03552
 - 플랫폼사업부 주소: 서울 강동구 동남로 885, 2층
 - 대표전화: 1800-6558
+
+### 서체
+- 제목/상품명/상세 제목: Maru Buri SemiBold 600 (NAVER). 본문/가격/버튼/푸터: Pretendard Variable (orioncactus, v1.3.9).
+- WOFF2를 assets/fonts에 자체 제공하며 font-display: swap과 대체 서체를 사용합니다. 설명과 가격은 읽기 편한 산세리프, 스냅샷 JSON은 고정폭 서체를 유지합니다.
+- 출처/라이선스: assets/fonts/README.md 및 각 LICENSE.txt 파일.

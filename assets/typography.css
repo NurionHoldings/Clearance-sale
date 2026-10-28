@@ -1,0 +1,51 @@
+@font-face {
+  font-family: 'Pretendard';
+  src: url('fonts/PretendardVariable.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Maru Buri';
+  src: url('fonts/MaruBuri-SemiBold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+:root {
+  --font-body: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
+  --font-display: 'Maru Buri', 'Batang', 'Noto Serif CJK KR', serif;
+  font-family: var(--font-body);
+  font-synthesis: none;
+}
+body { font-family: var(--font-body); font-weight: 400; line-height: 1.65; letter-spacing: -.012em; }
+button, input, select, textarea { font-family: var(--font-body); }
+button { font-weight: 600; letter-spacing: -.015em; }
+button.primary { font-weight: 650; }
+.hero h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(28px, 3.7vw, 46px); line-height: 1.5; letter-spacing: -.035em; word-break: keep-all; text-wrap: balance; }
+.hero p { font-size: 16px; font-weight: 400; line-height: 1.9; letter-spacing: -.01em; }
+main h2, #productTitle { font-family: var(--font-display); font-weight: 600; letter-spacing: -.025em; line-height: 1.5; word-break: keep-all; overflow-wrap: anywhere; }
+main h2 { font-size: 25px; }
+.details h3 { font-family: var(--font-display); font-weight: 600; font-size: 20px; line-height: 1.6; letter-spacing: -.025em; word-break: keep-all; overflow-wrap: anywhere; }
+.details { line-height: 1.65; }
+.price { font-family: var(--font-body); font-size: 25px; font-weight: 700; letter-spacing: -.04em; font-variant-numeric: tabular-nums lining-nums; }
+.old { font-variant-numeric: tabular-nums; font-weight: 400; }
+.tag { font-weight: 500; letter-spacing: 0; line-height: 1.6; }
+.muted, .notice { line-height: 1.8; }
+#productTitle { font-size: clamp(23px, 3vw, 29px); }
+#productDialog .dialog-head { gap: 18px; }
+#productDialog .dialog-head button { flex-shrink: 0; }
+#productDialog .dialog-body { gap: 14px; }
+#productFacts { line-height: 1.8; }
+#productFacts dt { font-weight: 500; }
+#productFacts dd { font-weight: 500; font-variant-numeric: tabular-nums; }
+pre.snapshot { font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace; letter-spacing: 0; line-height: 1.7; }
+.site-footer h2, .footer-company { font-family: var(--font-body); font-weight: 600; letter-spacing: -.02em; }
+.footer-kicker { font-weight: 500; }
+.footer-business a, .footer-domain strong { font-variant-numeric: tabular-nums; font-weight: 600; }
+@media (max-width: 600px) {
+  .hero h1 { line-height: 1.6; letter-spacing: -.035em; }
+  .hero p { font-size: 15px; }
+  main h2 { font-size: 23px; }
+  .details h3 { font-size: 19px; }
+}
