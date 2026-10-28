@@ -5,6 +5,29 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <meta name="theme-color" content="#101827" id="themeColor">
+  <style>
+    html.intro-pending, html.intro-pending body { background: #07111e; }
+    html.intro-pending body > header,
+    html.intro-pending body > main,
+    html.intro-pending body > footer { visibility: hidden; }
+  </style>
+  <script>
+    // Decide before first paint; a failed module must never leave the page hidden.
+    (() => {
+      const root = document.documentElement;
+      const sessionKey = 'dapanda-intro-seen-v3';
+      let seen = false;
+      try { seen = sessionStorage.getItem(sessionKey) === '1'; } catch {}
+      let timer;
+      let timedOut = false;
+      const release = () => { clearTimeout(timer); root.classList.remove('intro-pending'); };
+      if (!seen && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        root.classList.add('intro-pending');
+        timer = setTimeout(() => { timedOut = true; release(); }, 6000);
+      }
+      globalThis.dapandaEntryBoot = { sessionKey, release, get timedOut() { return timedOut; } };
+    })();
+  </script>
   <title>다판다 | 빠른 판매, 좋은 상품, 합리적인 가격 (데모)</title>
   <meta name="description" content="다판다, 빠른 판매, 좋은 상품, 합리적인 가격. 제조사·도매상·리퍼브·사업장 재고를 연결하는 전국 유통 플랫폼 데모입니다.">
   <link rel="icon" type="image/svg+xml" href="assets/dapanda-symbol.svg">
@@ -125,6 +148,7 @@
     }
   </style>
   <link rel="stylesheet" href="assets/typography.css">
+  <link rel="stylesheet" href="assets/responsive.css">
 </head>
 <body>
   <dialog id="dapandaEntry" class="dapanda-entry" aria-label="다판다 브랜드 소개">
@@ -153,10 +177,10 @@
   </header>
   <main>
     <section class="hero">
-      <h1>판매자는 재고를 빠르게,<br>구매자는 좋은 상품을 알뜰하게.</h1>
-      <p>제조사·도매상·리퍼브·사업장 재고까지.<br>공급자의 신속한 재고 판매와 소비자의 합리적인 구매를 연결하는 온라인 판매 플랫폼, 다판다.</p>
+      <h1><span class="hero-line">판매자는 재고를 빠르게,</span> <span class="hero-line">구매자는 좋은 상품을 알뜰하게.</span></h1>
+      <p>제조사 · 도매상 · 리퍼브 · 사업장 재고까지. 공급자의 신속한 재고 판매와 소비자의 합리적인 구매를 연결하는 온라인 판매 플랫폼, 다판다.</p>
       <form class="search" id="searchForm">
-        <input id="query" name="q" placeholder="상품명, 카테고리, 판매자를 검색하세요" aria-label="상품 검색">
+        <input id="query" name="q" placeholder="상품명, 카테고리, 판매자 검색" aria-label="상품 검색">
         <button class="primary" type="submit">상품 검색</button>
       </form>
     </section>
