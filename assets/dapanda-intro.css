@@ -27,4 +27,6 @@
 .dapanda-entry .intro-stage { position: absolute; top: 50%; transform: translateY(-50%); }
 .dapanda-entry.playing .intro-stage { animation-name: dapanda-fallback-reveal; }
 @keyframes dapanda-fallback-reveal { from { opacity: 0; transform: translateY(-48%) scale(.94); filter: blur(5px); } 28%, to { opacity: 1; transform: translateY(-50%) scale(1); filter: blur(0); } }
-@media (prefers-reduced-motion: reduce) { .dapanda-entry .intro-cinema { display: none !important; } }
+@media (prefers-reduced-motion: reduce) { .dapanda-entry:not(.manual-play) .intro-cinema { display: none !important; } }
+
+.dapanda-entry .intro-controls button[hidden] { display: none !important; }

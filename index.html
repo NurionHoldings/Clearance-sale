@@ -15,7 +15,7 @@
     // Decide before first paint; a failed module must never leave the page hidden.
     (() => {
       const root = document.documentElement;
-      const sessionKey = 'dapanda-intro-seen-v3';
+      const sessionKey = 'dapanda-intro-seen-v4';
       let seen = false;
       try { seen = sessionStorage.getItem(sessionKey) === '1'; } catch {}
       let timer;
@@ -152,13 +152,13 @@
 </head>
 <body>
   <dialog id="dapandaEntry" class="dapanda-entry" aria-label="다판다 브랜드 소개">
-    <video class="intro-cinema" data-src="assets/video/dapanda-entry.mp4" muted playsinline preload="none" aria-label="붐비는 실내 쇼핑 공간에서 다판다 로고로 전환되는 진입 영상"></video>
+    <video class="intro-cinema" data-src="assets/video/dapanda-entry.mp4" data-mobile-src="assets/video/dapanda-entry-mobile.mp4" data-webm-src="assets/video/dapanda-entry-mobile.webm" poster="assets/video/dapanda-entry-poster.jpg" muted playsinline webkit-playsinline preload="none" aria-label="붐비는 실내 쇼핑 공간에서 다판다 로고로 전환되는 진입 영상"></video>
     <div class="intro-stage">
       <div class="intro-glow" aria-hidden="true"></div>
       <img src="assets/dapanda-logo-transparent.png" width="1774" height="887" alt="다판다 — 빠른 판매, 좋은 상품, 합리적인 가격 · www.다판다.shop" fetchpriority="high">
       <div class="intro-shine" aria-hidden="true"></div>
     </div>
-    <div class="intro-controls"><span role="status"></span><button type="button">다판다로 바로가기</button></div>
+    <div class="intro-controls"><span role="status"></span><button id="introPlay" type="button" hidden>영상 재생</button><button id="introSkip" type="button">다판다로 바로가기</button></div>
   </dialog>
   <header id="top">
     <div class="brand-group">

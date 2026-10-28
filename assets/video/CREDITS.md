@@ -18,3 +18,8 @@
 - Approved logo background removed with image generation; original retained. `dapanda-logo-transparent.png` includes real alpha outside the full logo, keeping the iridescent emblem tile intact.
 - Compositing layer: `dapanda-energy-alpha.webm` (VP9 alpha, 8s / 24fps). Decode with libvpx-vp9 when compositing in FFmpeg. MP4 is an opaque final film; use PNG/WebM for transparency.
 - Render alpha: `node scripts/render-dapanda-energy.cjs` before rendering the entrance MP4.
+
+## Mobile playback derivatives
+- `dapanda-entry-mobile.mp4`: same film, 640×360 / 24fps, H.264 Constrained Baseline level 3.0, yuv420p, silent, faststart.
+- `dapanda-entry-poster.jpg`: first frame from the licensed shopping scene.
+- `dapanda-entry-mobile.webm`: VP9 alternative of the same 640×360 film for browsers without H.264 support.
