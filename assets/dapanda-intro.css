@@ -20,7 +20,7 @@
 @media (prefers-reduced-motion: reduce) { .dapanda-entry *, .dapanda-entry *::after { animation: none !important; } .dapanda-entry .intro-glow, .dapanda-entry .intro-shine { display: none; } }
 
 /* The MP4 contains the crowd-to-logo dissolve and animated logo finish. */
-.dapanda-entry .intro-cinema { display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #faf8f2; }
+.dapanda-entry .intro-cinema { display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #07111e; }
 .dapanda-entry.cinema-playing .intro-cinema { display: block; }
 .dapanda-entry.cinema-playing .intro-stage { visibility: hidden; }
 .dapanda-entry .intro-controls { position: relative; z-index: 2; margin-top: auto; background: #faf8f2ed; border-radius: 24px 24px 0 0; }

@@ -6,7 +6,7 @@ const closeButton = dialog.querySelector('button');
 const replay = document.querySelector('#replayDapandaIntro');
 const status = dialog.querySelector('[role="status"]');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-const sessionKey = 'dapanda-intro-seen-v2';
+const sessionKey = 'dapanda-intro-seen-v3';
 let timers = [];
 let previousFocus;
 let fallingBack = false;
@@ -48,7 +48,7 @@ function openIntro() {
   const attempt = video.play();
   if (attempt) attempt.catch(fallbackLogo);
   later(() => { if (!video.currentTime) fallbackLogo(); }, 5000);
-  later(closeIntro, 18000); // Hard bound even on stalls or network interruption.
+  later(closeIntro, 20000); // Hard bound even on stalls or network interruption.
 }
 video.addEventListener('timeupdate', () => {
   if (!dialog.open || fallingBack) return;
