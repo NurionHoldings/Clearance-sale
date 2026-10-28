@@ -1,42 +1,66 @@
-// Approved logo remains an unmodified image; motion is a separate presentation layer.
+// Approved artwork stays intact. MP4: real crowd -> dissolve -> animated logo.
 const dialog = document.querySelector('#dapandaEntry');
+const video = dialog.querySelector('video');
 const logo = dialog.querySelector('img');
 const closeButton = dialog.querySelector('button');
 const replay = document.querySelector('#replayDapandaIntro');
 const status = dialog.querySelector('[role="status"]');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-let timer;
-let fallback;
+const sessionKey = 'dapanda-intro-seen-v2';
+let timers = [];
 let previousFocus;
-const sessionKey = 'dapanda-intro-seen-v1';
+let fallingBack = false;
+let lastProgress = 0;
+const later = (fn, delay) => { const id = setTimeout(fn, delay); timers.push(id); return id; };
+function clearTimers() { timers.forEach(clearTimeout); timers = []; }
 function closeIntro() {
-  clearTimeout(timer);
-  clearTimeout(fallback);
-  dialog.classList.remove('playing');
+  clearTimers();
+  video.pause();
+  dialog.classList.remove('playing', 'cinema-playing');
   if (dialog.open) dialog.close();
   if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true });
 }
-function startMotion() {
-  if (!dialog.open || reduced.matches) return;
-  clearTimeout(fallback);
-  dialog.classList.add('playing');
-  status.textContent = '잠시 후 다판다로 이동합니다.';
-  timer = setTimeout(closeIntro, 5800);
+function fallbackLogo() {
+  if (!dialog.open || fallingBack) return;
+  fallingBack = true;
+  clearTimers();
+  video.pause();
+  dialog.classList.remove('cinema-playing');
+  status.textContent = '다판다에 오신 것을 환영합니다.';
+  if (!reduced.matches) {
+    dialog.classList.add('playing');
+    later(closeIntro, 5800);
+  }
 }
 function openIntro() {
   if (typeof dialog.showModal !== 'function' || dialog.open) return;
   previousFocus = document.activeElement;
-  status.textContent = reduced.matches ? '움직임을 줄인 로고 화면입니다.' : '로고를 불러오는 중입니다.';
+  fallingBack = false;
+  status.textContent = reduced.matches ? '움직임을 줄인 로고 화면입니다.' : '다판다를 만나보세요.';
   dialog.showModal();
   closeButton.focus();
-  if (reduced.matches) return;
-  fallback = setTimeout(closeIntro, 8000); // A failed or slow image never blocks entry.
-  if (logo.complete) {
-    if (logo.naturalWidth) startMotion(); else closeIntro();
-  }
+  if (reduced.matches) return; // Do not even load video for reduced-motion users.
+  dialog.classList.add('cinema-playing');
+  if (!video.getAttribute('src')) video.src = video.dataset.src;
+  video.muted = true;
+  video.currentTime = 0;
+  lastProgress = 0;
+  const attempt = video.play();
+  if (attempt) attempt.catch(fallbackLogo);
+  later(() => { if (!video.currentTime) fallbackLogo(); }, 5000);
+  later(closeIntro, 18000); // Hard bound even on stalls or network interruption.
 }
-logo.addEventListener('load', startMotion);
-logo.addEventListener('error', closeIntro);
+video.addEventListener('timeupdate', () => {
+  if (!dialog.open || fallingBack) return;
+  const time = video.currentTime;
+  if (time > lastProgress) {
+    lastProgress = time;
+    status.textContent = time < 3.2 ? '사람과 상품이 만나는 순간' : '빠른 판매, 좋은 상품, 합리적인 가격';
+  }
+});
+video.addEventListener('ended', closeIntro);
+video.addEventListener('error', fallbackLogo);
+logo.addEventListener('error', () => { if (fallingBack || reduced.matches) closeIntro(); });
 closeButton.addEventListener('click', closeIntro);
 dialog.addEventListener('cancel', (event) => { event.preventDefault(); closeIntro(); });
 replay.addEventListener('click', openIntro);

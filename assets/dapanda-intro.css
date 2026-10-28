@@ -18,3 +18,13 @@
 @keyframes dapanda-shine { to { transform: translateX(100%); } }
 @media (max-width: 600px) { .dapanda-entry .intro-controls { flex-direction: column; } }
 @media (prefers-reduced-motion: reduce) { .dapanda-entry *, .dapanda-entry *::after { animation: none !important; } .dapanda-entry .intro-glow, .dapanda-entry .intro-shine { display: none; } }
+
+/* The MP4 contains the crowd-to-logo dissolve and animated logo finish. */
+.dapanda-entry .intro-cinema { display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #faf8f2; }
+.dapanda-entry.cinema-playing .intro-cinema { display: block; }
+.dapanda-entry.cinema-playing .intro-stage { visibility: hidden; }
+.dapanda-entry .intro-controls { position: relative; z-index: 2; margin-top: auto; background: #faf8f2ed; border-radius: 24px 24px 0 0; }
+.dapanda-entry .intro-stage { position: absolute; top: 50%; transform: translateY(-50%); }
+.dapanda-entry.playing .intro-stage { animation-name: dapanda-fallback-reveal; }
+@keyframes dapanda-fallback-reveal { from { opacity: 0; transform: translateY(-48%) scale(.94); filter: blur(5px); } 28%, to { opacity: 1; transform: translateY(-50%) scale(1); filter: blur(0); } }
+@media (prefers-reduced-motion: reduce) { .dapanda-entry .intro-cinema { display: none !important; } }
