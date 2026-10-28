@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="80" viewBox="0 0 300 80" role="img" aria-labelledby="title desc">
+  <title id="title">다판다 — 가치를 잇는 마켓</title>
+  <desc id="desc">청록색 쇼핑백과 짙은 남색 다판다 워드마크</desc>
+  <g transform="translate(4 8)">
+  <rect width="64" height="64" rx="18" fill="#72dfc4"/>
+  <path d="M17 24h30l3 27H14z" fill="#142b40"/>
+  <path d="M24 25v-5a8 8 0 0 1 16 0v5" fill="none" stroke="#142b40" stroke-width="4" stroke-linecap="round"/>
+  <path d="M24 36c2 8 14 8 16 0" fill="none" stroke="#72dfc4" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <g fill="#142b40" font-family="system-ui, Malgun Gothic, sans-serif">
+    <text x="84" y="43" font-size="36" font-weight="900" letter-spacing="-1">다판다</text>
+    <text x="86" y="65" font-size="13" font-weight="600">가치를 잇는 마켓</text>
+  </g>
+</svg>

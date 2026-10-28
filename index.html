@@ -5,21 +5,27 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <meta name="theme-color" content="#101827" id="themeColor">
-  <title>땡처리 | 전국 재고·특가 거래 (데모)</title>
+  <title>다판다 | 가치를 잇는 마켓 (데모)</title>
+  <meta name="description" content="다판다, 가치를 잇는 마켓. 제조사·도매상·리퍼브·사업장 재고를 연결하는 전국 유통 플랫폼 데모입니다.">
+  <link rel="icon" type="image/svg+xml" href="assets/dapanda-symbol.svg">
   <style>
     :root { font-family: system-ui, "Malgun Gothic", sans-serif; color: #192235; background: #f5f7fb; }
     * { box-sizing: border-box; }
     html, body { margin: 0; min-height: 100%; }
     button, input, select, textarea { font: inherit; }
     button { cursor: pointer; border: 0; border-radius: 10px; padding: 10px 15px; background: #e9eef7; color: #142035; }
-    button.primary { background: #f7bd35; color: #141b28; font-weight: 800; }
+    button.primary { background: #72dfc4; color: #141b28; font-weight: 800; }
     button:disabled { opacity: .55; cursor: not-allowed; }
     button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid #3d87d6; outline-offset: 2px; }
     header { background: #101827; color: white; padding: 18px max(20px, calc((100vw - 1160px) / 2)); display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
-    .brand { font-size: 27px; font-weight: 900; letter-spacing: -1px; }
-    .brand b { color: #ffcc47; }
+    .brand { display: flex; align-items: center; gap: 12px; color: white; text-decoration: none; border-radius: 8px; }
+    .brand img { width: 48px; height: 48px; }
+    .brand-copy { display: grid; gap: 3px; }
+    .brand b { font-size: 29px; font-weight: 900; letter-spacing: -1px; line-height: 1.15; }
+    .brand small { color: #9fe4d7; font-size: 12px; letter-spacing: .04em; }
+    .brand:focus-visible { outline: 3px solid #9fe4d7; outline-offset: 5px; }
     header nav { display: flex; gap: 8px; flex-wrap: wrap; }
-    header nav [aria-current="page"] { outline: 2px solid #ffcc47; outline-offset: 2px; }
+    header nav [aria-current="page"] { outline: 2px solid #72dfc4; outline-offset: 2px; }
     main { max-width: 1160px; margin: auto; padding: 24px 18px 70px; }
     .hero { background: #162841; border-radius: 22px; color: white; padding: 48px 36px; }
     .hero h1 { font-size: clamp(28px, 4vw, 46px); margin: 0 0 12px; }
@@ -65,7 +71,7 @@
     html.dark .muted, html.dark dt, html.dark footer { color: #b0bfd1; }
     html.dark .notice { background: #3d3120; color: #ffdcaa; }
     html.dark .chip { background: #34445c; color: #f1f4f9; }
-    html.dark .chip.active { background: #f7bd35; color: #142035; }
+    html.dark .chip.active { background: #72dfc4; color: #142035; }
     html.dark input, html.dark select, html.dark textarea { background: #182433; border-color: #3d4f66; color: #edf2fa; }
     html.dark .old { color: #9aabc0; }
     html.dark .tag { background: #2a415c; color: #c5ddf5; }
@@ -84,7 +90,10 @@
 </head>
 <body>
   <header>
-    <div class="brand">⚡ <b>땡처리</b> 마켓</div>
+    <a class="brand" href="#market" aria-label="다판다 홈">
+      <img src="assets/dapanda-symbol.svg" width="48" height="48" alt="">
+      <span class="brand-copy"><b>다판다</b><small>가치를 잇는 마켓</small></span>
+    </a>
     <nav aria-label="주요 메뉴">
       <button type="button" data-view="market">상품보기</button>
       <button type="button" data-view="seller">입점신청</button>
@@ -94,8 +103,8 @@
   </header>
   <main>
     <section class="hero">
-      <h1>재고는 기회가 되고<br>가격은 놀라워집니다.</h1>
-      <p>제조사·도매상·폐업정리·리퍼브·사업장 재고까지.<br>판매자와 구매자를 잇는 전국 땡처리 통합 마켓.</p>
+      <h1>다양한 상품, 반가운 발견.<br>새로운 가치를 다판다에서.</h1>
+      <p>제조사·도매상·리퍼브·사업장 재고까지.<br>상품의 가치를 발견하고, 판매자와 구매자를 잇는 다판다.</p>
       <form class="search" id="searchForm">
         <input id="query" name="q" placeholder="상품명, 카테고리, 판매자를 검색하세요" aria-label="상품 검색">
         <button class="primary" type="submit">상품 검색</button>
@@ -103,7 +112,7 @@
     </section>
     <div class="notice">현재는 서비스 구조를 검증하는 데모입니다. 표시된 상품은 예시이며 실제 주문·결제·입점 승인이 이루어지지 않습니다. 입력한 체험 데이터는 이 브라우저에만 저장됩니다. 실제 개인정보나 사업자등록번호를 입력하지 마세요. 검색엔진 색인을 막기 위해 noindex가 설정되어 있습니다.</div>
     <section id="market">
-      <h2>오늘의 땡처리 상품</h2>
+      <h2>오늘의 발견</h2>
       <div id="categories"></div>
       <p id="resultStatus" class="muted" role="status"></p>
       <div id="products" class="grid"></div>
@@ -161,9 +170,9 @@
     </section>
   </main>
   <footer>
-    <p>© 땡처리 마켓 · Clearance-sale · 시제품</p>
+    <p>© 다판다 · 가치를 잇는 마켓 · 시제품</p>
     <p>운영사: (주)아시아홀딩스 · <a href="asia-holdings-logo-demo.html"><img src="assets/asia-holdings-logo.svg" width="90" height="75" loading="lazy" alt="아시아홀딩스 로고" style="vertical-align:middle;object-fit:contain"> 움직이는 로고 보기</a></p>
-    <p>대표 브랜드 땡처리 · 대표 도메인(예정) 땡처리.shop</p>
+    <p>대표 브랜드 다판다 · 대표 주소 www.다판다.store · 추가 주소 www.다판다.shop</p>
     <p>통신판매중개 고지·약관·개인정보처리방침·사업자 정보는 공개 운영 전에 게시합니다. 현재는 거래를 중개하거나 체결하지 않습니다.</p>
   </footer>
   <dialog id="productDialog" aria-labelledby="productTitle">

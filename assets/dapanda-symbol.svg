@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">다판다 심볼</title>
+  <desc id="desc">청록색 쇼핑백 안에 손잡이와 미소를 담아 상품과 사람의 연결을 표현한 로고</desc>
+  <rect width="64" height="64" rx="18" fill="#72dfc4"/>
+  <path d="M17 24h30l3 27H14z" fill="#142b40"/>
+  <path d="M24 25v-5a8 8 0 0 1 16 0v5" fill="none" stroke="#142b40" stroke-width="4" stroke-linecap="round"/>
+  <path d="M24 36c2 8 14 8 16 0" fill="none" stroke="#72dfc4" stroke-width="4" stroke-linecap="round"/>
+</svg>
