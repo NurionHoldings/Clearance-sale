@@ -65,3 +65,9 @@ node scripts/production-gate.mjs
 - 움직임 줄이기 설정에서는 자동 재생이나 영상 다운로드를 하지 않습니다. 다시 보기는 정적인 투명 로고를 표시합니다.
 - 자동 재생 거부/영상 오류 시 로고 연출로 대체. 시작 지연 시 5초 후 대체, 전체 대기 최대 20초.
 - 영상 출처/라이선스: `assets/video/CREDITS.md`. 재현: `node scripts/render-dapanda-energy.cjs` 다음 `bash scripts/render-dapanda-entry.sh /path/to/source.mp4`. Node 의존성 `@napi-rs/canvas`, FFmpeg의 libvpx-vp9/libx264 인코더가 필요합니다.
+
+### 헤더 로고 전용 애니메이션
+- `assets/video/dapanda-header-alpha.webm`: 실사 없이 로고와 빛 효과만 담은 6초/640×260 투명 반복 영상. 전체 에너지 영상의 2–8초 구간을 추출해 등장 페이드 없이 반복합니다.
+- 기본 헤더는 정적 PNG를 먼저 표시하고 재생 성공 후 투명 WebM으로 교체합니다. 지원되지 않거나 재생에 실패하면 정적 로고를 유지합니다.
+- 로고 정지/재생 버튼, 움직임 줄이기, 비활성 탭 및 진입영상 동안 일시정지를 지원합니다.
+- 재현: `ffmpeg -c:v libvpx-vp9 -ss 2 -i assets/video/dapanda-energy-alpha.webm -t 6 -vf 'crop=1280:520:0:100,scale=640:260' -an -c:v libvpx-vp9 -pix_fmt yuva420p -b:v 0 -crf 30 -auto-alt-ref 0 assets/video/dapanda-header-alpha.webm`
