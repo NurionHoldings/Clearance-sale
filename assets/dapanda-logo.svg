@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="300" height="80" viewBox="0 0 300 80" role="img" aria-labelledby="title desc">
-  <title id="title">다판다 — 가치를 잇는 마켓</title>
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="80" viewBox="0 0 390 80" role="img" aria-labelledby="title desc">
+  <title id="title">다판다 — 빠른 판매, 좋은 상품, 합리적인 가격</title>
   <desc id="desc">청록색 쇼핑백과 짙은 남색 다판다 워드마크</desc>
   <g transform="translate(4 8)">
   <rect width="64" height="64" rx="18" fill="#72dfc4"/>
@@ -9,6 +9,6 @@
   </g>
   <g fill="#142b40" font-family="system-ui, Malgun Gothic, sans-serif">
     <text x="84" y="43" font-size="36" font-weight="900" letter-spacing="-1">다판다</text>
-    <text x="86" y="65" font-size="13" font-weight="600">가치를 잇는 마켓</text>
+    <text x="86" y="65" font-size="13" font-weight="600">빠른 판매, 좋은 상품, 합리적인 가격</text>
   </g>
 </svg>
