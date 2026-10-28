@@ -71,3 +71,9 @@ node scripts/production-gate.mjs
 - 기본 헤더는 정적 PNG를 먼저 표시하고 재생 성공 후 투명 WebM으로 교체합니다. 지원되지 않거나 재생에 실패하면 정적 로고를 유지합니다.
 - 로고 정지/재생 버튼, 움직임 줄이기, 비활성 탭 및 진입영상 동안 일시정지를 지원합니다.
 - 재현: `ffmpeg -c:v libvpx-vp9 -ss 2 -i assets/video/dapanda-energy-alpha.webm -t 6 -vf 'crop=1280:520:0:100,scale=640:260' -an -c:v libvpx-vp9 -pix_fmt yuva420p -b:v 0 -crf 30 -auto-alt-ref 0 assets/video/dapanda-header-alpha.webm`
+
+### 운영사 공개 정보 (사용자 제공)
+- 법인: (주)대현산업 / 운영 부서: 플랫폼사업부
+- 사업자등록번호: 363-81-03552
+- 플랫폼사업부 주소: 서울 강동구 동남로 885, 2층
+- 대표전화: 1800-6558
