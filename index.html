@@ -56,7 +56,33 @@
     .fields input, .fields select, .fields textarea { width: 100%; }
     .hidden { display: none !important; }
     .notice { border-left: 4px solid #d58828; padding: 12px 16px; background: #fff5e5; color: #6b4410; margin-top: 18px; }
-    footer { text-align: center; padding: 26px; color: #728096; }
+    .site-footer { position: relative; padding: 48px 20px 22px; background: #101827; color: #b7c3d4; border-top: 1px solid #c8a56c; text-align: left; }
+    .site-footer::before { content: ''; position: absolute; top: 0; left: 15%; right: 15%; height: 1px; background: linear-gradient(90deg, transparent, #f3d499, transparent); }
+    .footer-inner { max-width: 1124px; margin: auto; }
+    .footer-grid { display: grid; grid-template-columns: 1.15fr 1fr .9fr; gap: 40px; padding-bottom: 32px; }
+    .footer-brand img { display: block; width: min(310px, 100%); height: auto; margin: -12px 0 4px -12px; }
+    .footer-brand p { margin: 0 0 16px; font-size: 14px; line-height: 1.8; }
+    .footer-kicker { display: block; color: #d8b87e; font-size: 11px; letter-spacing: .16em; margin-bottom: 10px; }
+    .site-footer h2 { margin: 0 0 18px; color: #f5e7cd; font-size: 16px; }
+    .footer-company { color: #f4f7fb; font-size: 16px; font-weight: 700; line-height: 1.7; margin: 0 0 10px; }
+    .footer-note { margin: 0; font-size: 13px; line-height: 1.85; color: #aebdd1; }
+    .footer-domains { display: grid; gap: 10px; }
+    .footer-domain { padding: 13px 15px; border: 1px solid #354257; border-radius: 12px; background: #182334; }
+    .footer-domain small { display: block; margin-bottom: 5px; color: #b6c7dc; font-size: 11px; }
+    .footer-domain strong { color: #f3f7fb; font-size: 15px; overflow-wrap: anywhere; }
+    .site-footer #replayDapandaIntro { border: 1px solid #a58b61; background: transparent; color: #ecd5ad; padding: 10px 14px; font-size: 12px; min-height: 44px; }
+    .site-footer #replayDapandaIntro:hover { background: #263246; }
+    .site-footer a:focus-visible, .site-footer button:focus-visible { outline: 3px solid #72dfc4; outline-offset: 4px; }
+    .footer-disclosure { display: flex; align-items: flex-start; gap: 12px; padding: 18px 20px; background: #1b2839; border: 1px solid #354257; border-radius: 12px; }
+    .footer-badge { flex-shrink: 0; padding: 5px 9px; border-radius: 6px; color: #f4dbac; background: #423828; font-size: 11px; font-weight: 700; }
+    .footer-disclosure p { margin: 0; font-size: 12px; line-height: 1.85; color: #bac7d9; }
+    .footer-bottom { display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-top: 25px; padding-top: 20px; border-top: 1px solid #2e3b4e; font-size: 11px; color: #aebbd0; }
+    .footer-bottom p { margin: 0; }
+    .footer-bottom a { color: #d8b87e; text-decoration: none; }
+    .footer-bottom a:hover { text-decoration: underline; }
+    @media (max-width: 800px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px; } .footer-brand { grid-column: 1 / -1; } }
+    @media (max-width: 480px) { .site-footer { padding-top: 32px; } .footer-grid { grid-template-columns: 1fr; gap: 28px; } .footer-brand { grid-column: auto; } .footer-disclosure { flex-direction: column; padding: 16px; } }
+
     .app-item { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: center; padding: 14px 0; border-bottom: 1px solid #e2e7ef; }
     .app-item:last-child { border-bottom: 0; }
     .app-actions { display: flex; gap: 8px; }
@@ -185,12 +211,38 @@
       </div>
     </section>
   </main>
-  <footer>
-    <p><button id="replayDapandaIntro" type="button">다판다 로고 애니메이션 다시 보기</button></p>
-    <p>© 다판다 · 빠른 판매, 좋은 상품, 합리적인 가격 · 시제품</p>
-    <p>운영사: (주)대현산업 플랫폼사업부</p>
-    <p>대표 브랜드 다판다 · 대표 주소 www.다판다.store · 추가 주소 www.다판다.shop</p>
-    <p>통신판매중개 고지·약관·개인정보처리방침·사업자 정보는 공개 운영 전에 게시합니다. 현재는 거래를 중개하거나 체결하지 않습니다.</p>
+  <footer class="site-footer" aria-label="다판다 운영 및 서비스 안내">
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#/market" aria-label="다판다 홈"><img src="assets/dapanda-header-still.png" width="640" height="260" loading="lazy" alt="다판다"></a>
+          <p>판매자는 재고를 빠르게,<br>구매자는 좋은 상품을 알뜰하게.</p>
+          <button id="replayDapandaIntro" type="button">다판다 로고 애니메이션 다시 보기</button>
+        </div>
+        <section aria-labelledby="footerCompanyTitle">
+          <span class="footer-kicker" lang="en">PLATFORM OPERATOR</span>
+          <h2 id="footerCompanyTitle">운영 정보</h2>
+          <p class="footer-company">운영사: (주)대현산업 플랫폼사업부</p>
+          <p class="footer-note">공급자의 신속한 재고 판매와<br>소비자의 합리적인 구매를 연결합니다.</p>
+        </section>
+        <section aria-labelledby="footerDomainTitle">
+          <span class="footer-kicker" lang="en">DAPANDA ONLINE</span>
+          <h2 id="footerDomainTitle">공식 도메인 안내</h2>
+          <div class="footer-domains">
+            <div class="footer-domain"><small>대표 주소</small><strong>www.다판다.store</strong></div>
+            <div class="footer-domain"><small>추가 주소</small><strong>www.다판다.shop</strong></div>
+          </div>
+        </section>
+      </div>
+      <div class="footer-disclosure">
+        <span class="footer-badge">서비스 데모</span>
+        <p>현재는 서비스 구조를 검증하는 시제품으로, 실제 거래를 중개하거나 체결하지 않습니다.<br>통신판매중개 고지·이용약관·개인정보처리방침·사업자 정보는 공개 운영 전에 게시합니다.</p>
+      </div>
+      <div class="footer-bottom">
+        <p>© 다판다 · 빠른 판매, 좋은 상품, 합리적인 가격</p>
+        <a href="#/market">상품 둘러보기 ↑</a>
+      </div>
+    </div>
   </footer>
   <dialog id="productDialog" aria-labelledby="productTitle">
     <div class="dialog-body">
