@@ -1,0 +1,32 @@
+.dapanda-entry { border: 0; padding: 0; margin: 0; width: 100%; max-width: none; height: 100dvh; max-height: none; background: #faf8f2; color: #142b40; overflow: hidden; }
+.dapanda-entry::backdrop { background: #faf8f2; }
+.dapanda-entry[open] { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+.dapanda-entry .intro-stage { position: relative; width: min(1200px, 100%); isolation: isolate; }
+.dapanda-entry img { display: block; width: 100%; height: auto; }
+.dapanda-entry .intro-glow { position: absolute; z-index: -1; inset: 20% 64% 22% 10%; border-radius: 30%; background: conic-gradient(#a0e9f2, #dbc3f6, #ffd6bb, #b5f0df, #a0e9f2); filter: blur(36px); opacity: .4; }
+.dapanda-entry .intro-shine { position: absolute; inset: 22% 63% 29% 13%; border-radius: 16%; overflow: hidden; pointer-events: none; }
+.dapanda-entry .intro-shine::after { content: ''; position: absolute; inset: -50%; background: linear-gradient(110deg, transparent 40%, #fff9 50%, transparent 60%); transform: translateX(-100%); }
+.dapanda-entry.playing .intro-stage { animation: dapanda-reveal 5.8s cubic-bezier(.2,.7,.3,1) both; }
+.dapanda-entry.playing .intro-glow { animation: dapanda-rainbow 5.8s ease both; }
+.dapanda-entry.playing .intro-shine::after { animation: dapanda-shine 2s 1.5s ease-in-out both; }
+.dapanda-entry .intro-controls { display: flex; gap: 12px; align-items: center; padding: 24px; }
+.dapanda-entry .intro-controls button { background: #142b40; color: #fff4de; min-height: 44px; padding: 12px 24px; border: 1px solid #b99559; border-radius: 30px; font: inherit; cursor: pointer; }
+.dapanda-entry .intro-controls button:focus-visible { outline: 3px solid #276c80; outline-offset: 4px; }
+.dapanda-entry .intro-controls span { font-size: 13px; color: #526070; }
+@keyframes dapanda-reveal { 0% { opacity: 0; transform: translateY(16px) scale(.94); filter: blur(6px); } 25%, 82% { opacity: 1; filter: blur(0); } 65%, 100% { transform: translateY(0) scale(1); } 100% { opacity: 1; filter: blur(0); } }
+@keyframes dapanda-rainbow { 0% { opacity: 0; transform: scale(.85); } 45% { opacity: .7; filter: blur(32px) hue-rotate(45deg); } 100% { opacity: .25; transform: scale(1.05); } }
+@keyframes dapanda-shine { to { transform: translateX(100%); } }
+@media (max-width: 600px) { .dapanda-entry .intro-controls { flex-direction: column; } }
+@media (prefers-reduced-motion: reduce) { .dapanda-entry *, .dapanda-entry *::after { animation: none !important; } .dapanda-entry .intro-glow, .dapanda-entry .intro-shine { display: none; } }
+
+/* The MP4 contains the crowd-to-logo dissolve and animated logo finish. */
+.dapanda-entry .intro-cinema { display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #07111e; }
+.dapanda-entry.cinema-playing .intro-cinema { display: block; }
+.dapanda-entry.cinema-playing .intro-stage { visibility: hidden; }
+.dapanda-entry .intro-controls { position: relative; z-index: 2; margin-top: auto; background: #faf8f2ed; border-radius: 24px 24px 0 0; }
+.dapanda-entry .intro-stage { position: absolute; top: 50%; transform: translateY(-50%); }
+.dapanda-entry.playing .intro-stage { animation-name: dapanda-fallback-reveal; }
+@keyframes dapanda-fallback-reveal { from { opacity: 0; transform: translateY(-48%) scale(.94); filter: blur(5px); } 28%, to { opacity: 1; transform: translateY(-50%) scale(1); filter: blur(0); } }
+@media (prefers-reduced-motion: reduce) { .dapanda-entry:not(.manual-play) .intro-cinema { display: none !important; } }
+
+.dapanda-entry .intro-controls button[hidden] { display: none !important; }
