@@ -1,3 +1,4 @@
+import { renderMenswearCollection, renderMenswearProduct } from './menswear-page.js';
 import {
   availableQty,
   channelLabel,
@@ -11,7 +12,9 @@ import {
 const MAX_APPS = 20;
 const APP_KEY = 'clearance-demo-apps';
 const THEME_KEY = 'clearance-theme';
-const VIEWS = ['market', 'seller', 'manage'];
+const VIEWS = ['market', 'seller', 'manage', 'menswear', 'menswearDetail'];
+let previousView = null;
+let previousMenswearProduct = null;
 const STATUS_LABEL = { pending: '검토 대기(체험)', approved: '승인(체험)', rejected: '반려(체험)' };
 
 let category = '전체';
@@ -25,7 +28,11 @@ function uid() {
   return crypto.randomUUID ? crypto.randomUUID() : 'id-' + Date.now() + '-' + Math.random().toString(16).slice(2);
 }
 function parseHash() {
-  const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+  const parts = location.hash.split('?')[0].replace(/^#\/?/, '').split('/').filter(Boolean);
+  if (parts[0] === 'menswear') {
+    let id = ''; try { id = decodeURIComponent(parts[2] || ''); } catch {}
+    return { view: parts[1] === 'product' ? 'menswearDetail' : 'menswear', menswearId: id, productId: null };
+  }
   if (parts[0] === 'product' && parts[1]) return { view: 'market', productId: parts[1] };
   if (VIEWS.includes(parts[0])) return { view: parts[0], productId: null };
   return { view: 'market', productId: null };
@@ -80,7 +87,10 @@ function syncNav(view) {
 }
 function showView(id) {
   for (const name of VIEWS) document.getElementById(name).classList.toggle('hidden', name !== id);
-  syncNav(id);
+  const menswear = id === 'menswear' || id === 'menswearDetail';
+  document.getElementById('marketHero').classList.toggle('hidden', menswear);
+  document.getElementById('marketDemoNotice').classList.toggle('hidden', menswear);
+  syncNav(menswear ? 'market' : id);
   if (id === 'manage') renderApps();
 }
 function renderCategories() {
@@ -168,7 +178,8 @@ function renderProducts() {
     btn.textContent = '상세 보기';
     btn.addEventListener('click', () => {
       lastFocus = btn;
-      go('market', p.id);
+      if (p.subcategory === '남성복') location.hash = '#/menswear/product/' + encodeURIComponent(p.id);
+      else go('market', p.id);
     });
     detail.append(row, btn);
     article.append(art, detail);
@@ -212,6 +223,20 @@ function fillDialog(p) {
 function applyRoute() {
   const route = parseHash();
   showView(route.view);
+  if (route.view === 'menswear' || route.view === 'menswearDetail') {
+    if (dialog.open) dialog.close();
+    if (route.view === 'menswear') renderMenswearCollection();
+    else renderMenswearProduct(route.menswearId);
+    document.title = (route.view === 'menswear' ? '남성복 기획관' : '남성복 상품 상세') + ' | 다판다';
+    if (previousView !== route.view || previousMenswearProduct !== route.menswearId) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      document.getElementById(route.view).querySelector('h1')?.focus({ preventScroll: true });
+    }
+    previousView = route.view; previousMenswearProduct = route.menswearId;
+    return;
+  }
+  previousView = route.view; previousMenswearProduct = null;
+  document.title = '다판다 | 빠른 판매, 좋은 상품, 합리적인 가격 (데모)';
   const p = route.productId ? liveListings().find((x) => x.id === route.productId) : null;
   if (p) {
     fillDialog(p);
