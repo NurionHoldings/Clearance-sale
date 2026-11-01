@@ -1,3 +1,4 @@
+import { menswearListings } from './menswear-data.mjs';
 export const CHANNEL_LABEL = {
   direct: '플랫폼 직접판매',
   marketplace: '입점업체 중개판매'
@@ -6,7 +7,7 @@ export const CHANNEL_LABEL = {
 export const CATEGORY_GROUPS = ["이월의류","신발류","모자","귀금속","농식품","공산품","가전제품"];
 
 export const listings = [
-  { id: "p-menswear", title: "남성 이월 경량 패딩", category: "이월의류", subcategory: "남성복", condition: "이월 신품", region: "서울", qtyOnHand: 35, qtyReserved: 4, price: 39000, listPrice: 99000, channel: 'marketplace', sellerId: 's-fashion', sellerOfRecord: "샘플패션유통", status: 'approved' },
+  ...menswearListings,
   { id: "p-womenswear", title: "여성 시즌오프 니트", category: "이월의류", subcategory: "여성복", condition: "이월 신품", region: "경기", qtyOnHand: 48, qtyReserved: 6, price: 19000, listPrice: 59000, channel: 'marketplace', sellerId: 's-fashion', sellerOfRecord: "샘플패션유통", status: 'approved' },
   { id: "p-sportswear", title: "운동복 트레이닝 세트", category: "이월의류", subcategory: "운동복", condition: "이월 신품", region: "대구", qtyOnHand: 30, qtyReserved: 2, price: 29000, listPrice: 79000, channel: 'direct', sellerId: 'platform', sellerOfRecord: "(주)대현산업 플랫폼사업부(데모 운영사)", status: 'approved' },
   { id: "p-hikingwear", title: "등산용 방풍 재킷", category: "이월의류", subcategory: "등산복", condition: "이월 신품", region: "부산", qtyOnHand: 22, qtyReserved: 3, price: 45000, listPrice: 119000, channel: 'marketplace', sellerId: 's-outdoor', sellerOfRecord: "샘플아웃도어", status: 'approved' },
