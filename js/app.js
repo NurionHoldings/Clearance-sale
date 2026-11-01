@@ -1,3 +1,4 @@
+import { renderArirang } from './arirang-page.js';
 import { MAX_VENDORS, MAX_PRODUCTS_PER_VENDOR, vendorSlots, applicationError } from './capacity.mjs';
 import { menswearVendors } from './menswear-data.mjs';
 import { productDraftManager } from './product-drafts.js';
@@ -18,7 +19,7 @@ import {
 const knownVendors = menswearVendors;
 const APP_KEY = 'clearance-demo-apps';
 const THEME_KEY = 'clearance-theme';
-const VIEWS = ['market', 'seller', 'manage', 'menswear', 'menswearDetail'];
+const VIEWS = ['market', 'seller', 'manage', 'menswear', 'menswearDetail', 'arirang'];
 let previousView = null;
 let previousMenswearProduct = null;
 let previousMenswearPath = null;
@@ -40,6 +41,7 @@ function parseHash() {
     const page = menswearRoute(location.hash);
     return { view: page.level === 'product' ? 'menswearDetail' : 'menswear', menswearId: page.productId, menswearRoute: page, productId: null };
   }
+  if(parts[0]==='arirang'||(parts[0]==='market'&&new URLSearchParams(location.hash.split('?')[1]||'').get('major')==='food'))return {view:'arirang',productId:null};
   if (parts[0] === 'product' && parts[1]) return { view: 'market', productId: parts[1] };
   if (['market', 'seller', 'manage'].includes(parts[0])) return { view: parts[0], productId: null };
   return { view: 'market', productId: null };
@@ -95,8 +97,9 @@ function syncNav(view) {
 function showView(id) {
   for (const name of VIEWS) document.getElementById(name).classList.toggle('hidden', name !== id);
   const menswear = id === 'menswear' || id === 'menswearDetail';
-  document.getElementById('marketHero').classList.toggle('hidden', menswear);
-  document.getElementById('marketDemoNotice').classList.toggle('hidden', menswear);
+  const specialized=menswear||id==='arirang';
+  document.getElementById('marketHero').classList.toggle('hidden', specialized);
+  document.getElementById('marketDemoNotice').classList.toggle('hidden', specialized);
   syncNav(menswear ? 'market' : id);
   if (id === 'manage') renderApps();
   if (id === 'seller') renderCapacity();
@@ -159,10 +162,11 @@ function renderProducts() {
     }
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.textContent = p.subcategory === '남성복' ? '남성복 입점업체 보기' : '상세 보기';
+    btn.textContent = p.subcategory === '남성복' ? '남성복 입점업체 보기' : productCategoryPath(p)[0]==='food'?'아리랑 마켓 보기':'상세 보기';
     btn.addEventListener('click', () => {
       lastFocus = btn;
       if (p.subcategory === '남성복') location.hash = '#/menswear/clothing';
+      else if(productCategoryPath(p)[0]==='food')location.hash='#/arirang?middle='+productCategoryPath(p)[1];
       else go('market', p.id);
     });
     detail.append(row, btn);
@@ -209,6 +213,11 @@ function fillDialog(p) {
 function applyRoute() {
   const route = parseHash();
   showView(route.view);
+  if(route.view==='arirang'){
+    if(dialog.open)dialog.close();
+    if(location.hash.startsWith('#/market')){const q=new URLSearchParams(location.hash.split('?')[1]||'');q.delete('major');history.replaceState(null,'','#/arirang'+(q.toString()?'?'+q:''));}
+    renderArirang();previousView='arirang';previousMenswearPath=null;previousMenswearProduct=null;return;
+  }
   if (route.view === 'menswear' || route.view === 'menswearDetail') {
     if (dialog.open) dialog.close();
     if (location.hash !== route.menswearRoute.canonical) history.replaceState(null, '', route.menswearRoute.canonical);
