@@ -4,7 +4,7 @@ import {providerFixture} from './provider-fixture.mjs';
 import {liveService} from '../../netlify/functions/_live/service.mjs';
 import {externalProviders,providerConfiguration} from '../../netlify/functions/_live/providers.mjs';
 async function fixture(mode='test'){
- const f=await setup();for(const file of ['20261101210000_live_studio.sql','20261102010000_live_operations.sql'])await f.db.exec(readFileSync('netlify/database/migrations/'+file,'utf8'));
+ const f=await setup();for(const file of ['20261101210000_live_studio.sql','20261102010000_live_operations.sql','20261102013000_studio_payment_hold.sql'])await f.db.exec(readFileSync('netlify/database/migrations/'+file,'utf8'));
  const now={value:new Date('2026-11-20T00:00:00Z')},gateway=providerFixture({mode}),s=liveService(f.pool,{clock:()=>now.value,gateway}),{k}=await signedFixture(f.s);
  const studio=await s.saveStudio(admin,{name:'검증용 공간',description:'실제 고객 자료 아님',address:'테스트',equipment:['카메라'],bufferMinutes:30,active:true});
  const b=await s.requestBooking(seller,{studioId:studio.id,contractId:k.id,startsAt:'2026-11-21T01:00:00Z',endsAt:'2026-11-21T02:00:00Z',purpose:'검증용 촬영'});await s.quote(admin,b.id,{amountWon:55000,note:'장비 포함 55,000원 (VAT 포함), 이용 전 전액 취소 합의'});await s.accept(seller,b.id,{quoteVersion:1,consent:true});
@@ -69,4 +69,12 @@ test('lost mobile return is recovered by server order lookup without a second or
  assert.equal((await f.s.reconcilePayment(admin,i.id)).status,'created');
  const original=f.gateway.confirm;f.gateway.confirm=async(...args)=>{f.gateway.payments.delete('mobile_return_key');return original(...args);};
  assert.equal((await f.s.reconcilePayment(seller,i.id)).status,'paid');assert.equal(f.gateway.calls.filter(c=>c.kind==='confirm').length,1);
+ }finally{await f.close();}});
+
+
+test('external partial cancellation puts invoice on hold and removes commercial broadcast; admin can finish full refund',async()=>{const f=await fixture('live');try{
+ const i=await f.s.createInvoice(seller,f.b.id);await f.s.confirmPayment(seller,confirm(i));
+ const x=await f.s.saveBroadcast(seller,{bookingId:f.b.id,title:'환불 연동 검증',description:'테스트',youtubeUrl:'https://youtu.be/abcdefghijk',hostName:'진행자',producer:'송출자',products:[],replayAllowed:false});await f.s.review(admin,x.id,{revision:1,checklist:{equipment:true,network:true,rights:true,products:true,staff:true}});await f.s.verifyProvider(admin,x.id,{revision:1});await f.s.transition(admin,x.id,{status:'scheduled',revision:1,confirmed:true,note:'관제 확인'});assert.equal((await f.s.catalog()).broadcasts.length,1);
+ Object.assign(f.gateway.payments.get(confirm(i).paymentKey),{status:'PARTIAL_CANCELED',balanceAmount:50000});assert.equal((await f.s.reconcilePayment(admin,i.id)).status,'review_required');assert.equal((await f.s.operationalStatus(admin)).pendingPayments,1);assert.equal((await f.s.catalog()).broadcasts.length,0);await assert.rejects(f.s.cancelBooking(seller,f.b.id,{reason:'취소 우회'}),/방송/);
+ await f.s.transition(admin,x.id,{status:'cancelled',revision:2,confirmed:true,note:'PG 외부 부분취소로 편성 철회'});await f.s.refundPayment(admin,i.id,{reason:'부분취소 내역 대조 후 잔액까지 전액 취소',consent:true});assert.equal((await f.s.invoiceList(seller)).find(v=>v.id===i.id).status,'refunded');assert.equal((await f.s.account(seller)).bookings.find(v=>v.id===f.b.id).status,'cancelled');
  }finally{await f.close();}});

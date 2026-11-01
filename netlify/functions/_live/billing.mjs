@@ -15,14 +15,14 @@ export function studioBilling({pool,tx,audit,booking,contract,valid,clock,gatewa
  function receipt(p){try{const u=new URL(p.receipt?.url);return u.protocol==='https:'&&(u.hostname==='tosspayments.com'||u.hostname.endsWith('.tosspayments.com'))?u.href:null;}catch{return null;}}
  async function record(a,iid,p){return tx(async c=>{
   const {i,b}=await invoice(c,a,iid);matches(i,p);
-  if(['paid','refund_pending','refunded'].includes(i.status)&&!['DONE','CANCELED','PARTIAL_CANCELED'].includes(p.status))throw new OpsError('PG 상태가 이전 처리 결과보다 오래되었습니다. 다시 대조하세요.',409);
+  if(['paid','refund_pending','refunded','review_required'].includes(i.status)&&!['DONE','CANCELED','PARTIAL_CANCELED'].includes(p.status))throw new OpsError('PG 상태가 이전 처리 결과보다 오래되었습니다. 다시 대조하세요.',409);
   let next=i.status;
   if(p.status==='DONE'){
    if(['refunded','void'].includes(i.status))throw new OpsError('종료한 청구의 PG 상태가 달라 관리자 대조가 필요합니다.',409);
-   next=i.status==='refund_pending'?'refund_pending':'paid';
+   next=['refund_pending','review_required'].includes(i.status)?i.status:'paid';
   }else if(p.status==='CANCELED'&&p.balanceAmount===0){next='refunded';}
   else if(['ABORTED','EXPIRED'].includes(p.status)&&i.status==='confirming'){next='void';}
-  else if(p.status==='PARTIAL_CANCELED')throw new OpsError('PG에서 부분 취소가 감지되었습니다. 전체 환불 처리 전 관리자 대조가 필요합니다.',409);
+  else if(p.status==='PARTIAL_CANCELED'){next='review_required';}
   await c.query('UPDATE live_invoices SET status=$2,provider_status=$3,receipt_url=$4,approved_at=$5,last_checked_at=$6,updated_at=now() WHERE id=$1',[i.id,next,p.status,receipt(p),p.approvedAt||null,clock().toISOString()]);
   if(next==='refunded'&&b.status==='confirmed')await c.query("UPDATE live_bookings SET status='cancelled',decision_note=$2 WHERE id=$1",[b.id,i.refund_reason||'PG 전액 취소 확인']);
   if(next!==i.status||p.status!==i.provider_status)await audit(c,a,'studio.payment.'+next,i.id,{orderId:i.order_id,amountWon:Number(i.amount_won),mode:i.mode,providerStatus:p.status});
@@ -54,9 +54,9 @@ export function studioBilling({pool,tx,audit,booking,contract,valid,clock,gatewa
   },
   async reconcilePayment(a,iid){login(a);const {i,b}=await invoice(pool,a,iid);await checkMode(i);if(!i.payment_key){if(b.owner_id!==a.id)return publicInvoice(i);const found=await gateway.lookupOrder(i.order_id);if(!found)return publicInvoice(i);if(found.orderId!==i.order_id||found.totalAmount!==Number(i.amount_won)||found.currency!=='KRW')throw new OpsError('PG 주문 내역과 견적이 다릅니다.',409);if(['IN_PROGRESS','DONE'].includes(found.status))return this.confirmPayment(a,{orderId:i.order_id,paymentKey:found.paymentKey,amount:Number(i.amount_won)});return publicInvoice(i);}let payment=await gateway.lookup(i.payment_key);matches(i,payment);if(i.status==='confirming'&&payment.status==='IN_PROGRESS'&&b.status==='confirmed'&&+clock()<+new Date(b.starts_at)){await payable(pool,a,b);payment=await gateway.confirm(i.payment_key,i.order_id,Number(i.amount_won),'studio-confirm-'+i.id);}if(i.status==='refund_pending'&&payment.status==='DONE')payment=await gateway.cancel(i.payment_key,i.refund_reason,'studio-refund-'+i.id);return record(a,i.id,payment);},
   async refundPayment(a,iid,v){admin(a);if(v.consent!==true)throw new OpsError('전액 환불과 예약 취소를 확인하세요.');const reason=text(v.reason,'전액 취소 사유',200);
-   const i=await tx(async c=>{const {i,b}=await invoice(c,a,iid);await checkMode(i);if(!['paid','refund_pending'].includes(i.status))throw new OpsError('승인된 결제만 환불할 수 있습니다.',409);
+   const i=await tx(async c=>{const {i,b}=await invoice(c,a,iid);await checkMode(i);if(!['paid','refund_pending','review_required'].includes(i.status))throw new OpsError('승인된 결제만 환불할 수 있습니다.',409);
     if(await one(c,"SELECT id FROM live_broadcasts WHERE booking_id=$1 AND status IN ('scheduled','live')",[b.id]))throw new OpsError('공개 편성·방송을 먼저 종료하거나 취소하세요.',409);
-    if(i.status==='paid'){await c.query("UPDATE live_invoices SET status='refund_pending',refund_reason=$2,updated_at=now() WHERE id=$1",[i.id,reason]);await audit(c,a,'studio.refund.requested',i.id,{reason,amountWon:Number(i.amount_won)});}return {...i,refund_reason:i.refund_reason||reason};});
+    if(['paid','review_required'].includes(i.status)){await c.query("UPDATE live_invoices SET status='refund_pending',refund_reason=$2,updated_at=now() WHERE id=$1",[i.id,reason]);await audit(c,a,'studio.refund.requested',i.id,{reason,amountWon:Number(i.amount_won)});}return {...i,refund_reason:i.refund_reason||reason};});
    // No partial refunds or bank account collection; full cancellation of card/simple-pay only.
    let result;try{result=await gateway.cancel(i.payment_key,i.refund_reason,'studio-refund-'+i.id);}catch(err){try{result=await gateway.lookup(i.payment_key);}catch{throw err;}}
    return record(a,i.id,result);

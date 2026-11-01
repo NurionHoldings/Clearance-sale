@@ -3,7 +3,7 @@ import {setup,signedFixture,admin,seller} from '../operations/helpers.mjs';impor
 import {liveService} from '../../netlify/functions/_live/service.mjs';import {liveHTTP} from '../../netlify/functions/_live/http.mjs';
 const wait=async fn=>{for(let n=0;n<200;n++){if(fn())return;await new Promise(r=>setTimeout(r,10));}assert.fail('UI operation did not complete');};
 test('SQL-backed checkout, provider redirect approval, receipt printing and admin refund are connected in the UI',async()=>{
- const f=await setup();for(const file of ['20261101210000_live_studio.sql','20261102010000_live_operations.sql'])await f.db.exec(readFileSync('netlify/database/migrations/'+file,'utf8'));
+ const f=await setup();for(const file of ['20261101210000_live_studio.sql','20261102010000_live_operations.sql','20261102013000_studio_payment_hold.sql'])await f.db.exec(readFileSync('netlify/database/migrations/'+file,'utf8'));
  const gateway=providerFixture(),service=liveService(f.pool,{clock:()=>new Date('2026-11-20T00:00:00Z'),gateway});const {k}=await signedFixture(f.s);const studio=await service.saveStudio(admin,{name:'검증 스튜디오',description:'테스트',address:'테스트',equipment:['카메라'],bufferMinutes:30,active:true});const b=await service.requestBooking(seller,{studioId:studio.id,contractId:k.id,startsAt:'2026-11-21T01:00:00Z',endsAt:'2026-11-21T02:00:00Z',purpose:'테스트'});await service.quote(admin,b.id,{amountWon:55000,note:'VAT 포함, 전액 취소 가능'});await service.accept(seller,b.id,{quoteVersion:1,consent:true});
  const doms=[],errors=[];let requested;
  async function page(actor,url='https://example.test/live.html'){
