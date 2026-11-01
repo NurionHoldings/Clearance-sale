@@ -30,3 +30,19 @@ test('sample detail selections never reserve inventory or create executable orde
  for(const p of menswearListings){assert(inventoryConsistent(p));const before=structuredClone(p);const snap=freezeOrderSnapshot(p);assert.equal(snap.executable,false);assert.equal(snap.inventoryEffect,'none');assert.deepEqual(p,before);}
  assert.equal(availableQty(menswearListings.find(p=>p.id==='p-men-cardigan')),0);
 });
+
+import { menswearRoute, menswearVendorPath } from '../js/menswear-routing.mjs';
+test('hierarchy routes separate parent, child, vendor and individual product',()=>{
+ assert.equal(menswearRoute('#/menswear').level,'collection');
+ assert.equal(menswearRoute('#/menswear/clothing').level,'category');
+ for(const vendor of menswearVendors){const r=menswearRoute(menswearVendorPath(vendor.id));assert.equal(r.level,'vendor');assert.equal(r.vendorId,vendor.id);assert.equal(r.isSample,undefined);}
+ const detail=menswearRoute('#/menswear/clothing/vendor/top-gun/product/example?q=navy');
+ assert.equal(detail.level,'product');assert.equal(detail.vendorId,'top-gun');assert.equal(detail.productId,'example');assert.equal(detail.base,'#/menswear/clothing/vendor/top-gun');
+ assert.equal(menswearRoute('#/menswear/samples/product/p-menswear').isSample,true);
+});
+test('old shared links migrate without assigning sample products to a real vendor',()=>{
+ assert.equal(menswearRoute('#/menswear?vendor=top-gun&kind=셔츠').canonical,'#/menswear/clothing/vendor/top-gun?kind=%EC%85%94%EC%B8%A0');
+ assert.equal(menswearRoute('#/menswear/product/p-menswear?vendor=top-gun').base,'#/menswear/samples');
+ assert.equal(menswearRoute('#/menswear/product/p-menswear').isSample,true);
+ assert.doesNotThrow(()=>menswearRoute('#/menswear/clothing/vendor/%broken/product/%broken'));
+});
