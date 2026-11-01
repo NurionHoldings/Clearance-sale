@@ -22,6 +22,7 @@ jobs:
           node --check js/arirang-page.js
           node --check js/home-ui.js
           node --check js/navigation.mjs
+          node --check js/showcase.js
       - name: Reject production release flag
         env:
           CLEARANCE_PRODUCTION_RELEASE: '1'
