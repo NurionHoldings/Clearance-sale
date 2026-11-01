@@ -1,4 +1,4 @@
-import { productDetailURL, marketReturnURL } from './navigation.mjs';
+import { productDetailURL, marketReturnURL, detailNavigation } from './navigation.mjs';
 import { homeCategories, catalogArt, initializeHome, updateHomeNavigation } from './home-ui.js';
 import { renderArirang } from './arirang-page.js';
 import { MAX_VENDORS, MAX_PRODUCTS_PER_VENDOR, vendorSlots, applicationError } from './capacity.mjs';
@@ -100,6 +100,7 @@ function syncNav(view) {
 }
 function showView(id) {
   document.body.dataset.view=id;
+  if(['seller','manage'].includes(id)){const section=document.getElementById(id);if(!section.querySelector(':scope > .page-return-nav'))section.insertAdjacentHTML('afterbegin',detailNavigation('#/market'));}
   updateHomeNavigation(id,category,document.getElementById('query').value);
   for (const name of VIEWS) document.getElementById(name).classList.toggle('hidden', name !== id);
   const menswear = id === 'menswear' || id === 'menswearDetail';
@@ -373,6 +374,7 @@ function returnFromProduct(){
  else if(dialog.open)dialog.close();
 }
 document.getElementById('closeProduct').addEventListener('click',returnFromProduct);
+document.getElementById('productPrevious').addEventListener('click',returnFromProduct);
 dialog.addEventListener('cancel',e=>{e.preventDefault();returnFromProduct();});
 dialog.addEventListener('close', () => {
   if(parseHash().productId)returnFromProduct();
