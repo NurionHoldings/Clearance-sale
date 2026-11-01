@@ -1,4 +1,5 @@
-.dapanda-entry { border: 0; padding: 0; margin: 0; width: 100%; max-width: none; height: 100dvh; max-height: none; background: #faf8f2; color: #142b40; overflow: hidden; }
+.dapanda-entry { position: fixed; inset: 0; border: 0; border-radius: 0; padding: 0; margin: 0; width: 100%; max-width: none; height: 100vh; height: 100dvh; max-height: none; background: #faf8f2; color: #142b40; overflow: hidden; }
+html:has(#dapandaEntry[open]), html:has(#dapandaEntry[open]) body { overflow: hidden; }
 .dapanda-entry::backdrop { background: #faf8f2; }
 .dapanda-entry[open] { display: flex; flex-direction: column; justify-content: center; align-items: center; }
 .dapanda-entry .intro-stage { position: relative; width: min(1200px, 100%); isolation: isolate; }
@@ -30,3 +31,17 @@
 @media (prefers-reduced-motion: reduce) { .dapanda-entry:not(.manual-play) .intro-cinema { display: none !important; } }
 
 .dapanda-entry .intro-controls button[hidden] { display: none !important; }
+
+/* Fill phone viewports without stretching, including rotation and browser-bar changes. */
+@media (max-width: 767px), (max-height: 600px) and (pointer: coarse) {
+  .dapanda-entry .intro-cinema { object-fit: cover; object-position: center; }
+  .dapanda-entry.cinema-playing .intro-controls {
+    position: absolute; inset: auto 0 0; margin: 0; width: 100%; max-width: none;
+    box-sizing: border-box; flex-direction: row; flex-wrap: wrap; justify-content: center;
+    gap: 8px; border-radius: 0;
+    padding: 36px max(12px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    background: linear-gradient(transparent, #07111ebf);
+  }
+  .dapanda-entry.cinema-playing .intro-controls span { flex-basis: 100%; text-align: center; color: #fff4de; text-shadow: 0 1px 4px #000; }
+  .dapanda-entry.cinema-playing .intro-controls button { padding: 10px 14px; background: #142b40d9; }
+}
