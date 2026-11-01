@@ -4,3 +4,6 @@ header nav .live-header-link{display:inline-flex;align-items:center;min-height:4
 @media(max-width:760px){header nav .live-header-link{display:none}}
 body[data-market-mode]:not([data-market-mode="home"]) .live-entry{display:none}
 @media(max-width:760px){.live-chat{display:none}}
+
+.billing-panel{margin:1.2rem 0;padding:1.2rem;border:1px solid #c9d8d3;border-radius:14px;background:#f6faf8}.billing-panel h4{margin:0 0 .8rem}.billing-panel form{margin-top:1rem}.billing-panel button:disabled{opacity:.55;cursor:not-allowed}#invoicePrint{display:none}
+@media print{body>*{display:none!important}body>#invoicePrint{display:block!important;padding:1cm;color:#111;background:#fff}#invoicePrint p{line-height:1.8;overflow-wrap:anywhere}}
