@@ -13,6 +13,8 @@ jobs:
       - run: npm ci --ignore-scripts
       - name: Verify contract, settlement and access-control flows
         run: npm run test:operations
+      - name: Verify live studio booking and publication
+        run: npm run test:live
       - name: Build public assets without server source
         run: npm run build
       - name: Block live-trade UI and invalid catalog
@@ -31,6 +33,7 @@ jobs:
           node --check js/navigation.mjs
           node --check js/showcase.js
           node --check js/background-music.js
+          node --check js/live.js
       - name: Reject production release flag
         env:
           CLEARANCE_PRODUCTION_RELEASE: '1'
