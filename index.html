@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-skin="noir" data-appearance="dark">
 <head>
   <script type="module" src="js/identity-callback.js"></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <meta name="theme-color" content="#101827" id="themeColor">
+  <meta name="theme-color" content="#0b0b0a" id="themeColor">
   <style>
     html.intro-pending, html.intro-pending body { background: #07111e; }
     html.intro-pending body > header,
@@ -158,7 +158,7 @@
   <link rel="stylesheet" href="assets/photography.css">
   <link rel="stylesheet" href="assets/live.css">
 <link rel="stylesheet" href="assets/background-music.css">
-</head>
+<link rel="stylesheet" href="assets/market-noir.css"></head>
 <body>
   <dialog id="dapandaEntry" class="dapanda-entry" aria-label="다판다 브랜드 소개">
     <video class="intro-cinema" data-src="assets/video/dapanda-entry.mp4" data-mobile-src="assets/video/dapanda-entry-mobile.mp4" data-webm-src="assets/video/dapanda-entry-mobile.webm" poster="assets/video/dapanda-entry-poster.jpg" muted playsinline webkit-playsinline preload="none" aria-label="붐비는 실내 쇼핑 공간에서 다판다 로고로 전환되는 진입 영상"></video>
@@ -190,17 +190,18 @@
     <section class="hero home-hero" id="marketHero" aria-labelledby="homeTitle">
       <div class="home-hero-copy"><p class="home-kicker">GOOD FINDS, BETTER PRICES.</p>
         <h1 id="homeTitle">좋은 상품을,<br>합리적인 가격에.</h1>
-        <p>판매자는 재고를 빠르게, 구매자는 알뜰하게.<br>좋은 상품의 다음 만남, 다판다.</p>
+        <p>빠른 재고 판매, 품질 있는 선택.<br>판매자와 구매자를 연결하는 다판다.</p><a class="noir-hero-action" href="#/menswear">남성복 컬렉션 둘러보기 <span aria-hidden="true">↗</span></a>
         <div id="homeHeroSearchSlot"><form class="search" id="searchForm"><input id="query" name="q" placeholder="어떤 상품을 찾으세요?" aria-label="상품 검색"><button class="primary" type="submit">검색</button></form></div>
       </div><div id="homeHeroArt" class="home-hero-art" aria-hidden="true"></div>
     </section>
     <details class="home-demo" id="marketDemoNotice"><summary><span>서비스 체험 안내</span> 현재는 예시 상품을 둘러보는 데모입니다. <span class="home-demo-more">자세히 보기</span></summary><p>현재는 서비스 구조를 검증하는 데모입니다. 표시된 상품은 예시이며 실제 주문·결제·입점 승인이 이루어지지 않습니다. 입력한 체험 데이터는 이 브라우저에만 저장됩니다. 실제 개인정보나 사업자등록번호를 입력하지 마세요. 검색엔진 색인을 막기 위해 noindex가 설정되어 있습니다.</p></details>
     <section id="market" aria-label="다판다 상품 탐색">
-      <a class="live-entry" href="live.html"><div><small>DAPANDA LIVE &amp; STUDIO</small><strong>상품을 방송으로 만나다.</strong><p>라이브 편성·다시보기 · 스튜디오 이용 신청</p></div><b aria-hidden="true">↗</b></a>
+
       <div class="home-destinations" aria-label="전문관 바로가기">
         <a class="collection-entry home-destination" href="#/menswear"><div><span class="home-kicker">MEN’S COLLECTION</span><strong>남성복 컬렉션</strong><p>바지·슈트·아우터부터 업체별 상품까지</p><span class="home-destination-link">남성복 둘러보기 ↗</span></div><span id="homeMenswearArt" class="home-destination-art" aria-hidden="true"></span></a>
         <a class="ar-entry home-destination" href="#/arirang"><div><span class="home-kicker">ARIRANG MARKET</span><strong>아리랑 마켓</strong><p>신선한 식재료부터 간편한 한 끼까지</p><span class="home-destination-link">식품 장보기 ↗</span></div><span id="homeFoodArt" class="home-destination-art" aria-hidden="true"></span></a>
       </div>
+      <a class="live-entry" href="live.html"><div><small>DAPANDA LIVE &amp; STUDIO</small><strong>상품을 방송으로 만나다.</strong><p>라이브 편성·다시보기 · 스튜디오 이용 신청</p></div><b aria-hidden="true">↗</b></a>
       <div id="categories"></div>
 
       <div class="home-section-heading home-products-heading"><div><p class="home-kicker">DISCOVER SOMETHING GOOD</p><h2>지금 둘러볼 상품</h2></div><p id="resultStatus" class="muted" role="status"></p></div>
@@ -318,16 +319,15 @@
   <dialog id="productDialog" aria-labelledby="productTitle">
     <div class="dialog-body">
       <div class="dialog-head">
-        <h2 id="productTitle" style="margin:0"></h2>
+        <span class="noir-detail-kicker">DAPANDA · 상품 상세</span>
         <button type="button" data-music-toggle aria-pressed="false">♫ 음악 켜기</button><button type="button" id="closeProduct">닫기</button>
       </div>
-      <p id="productChannel" class="tag"></p>
+      <div class="noir-detail-layout"><figure class="noir-detail-gallery"><div id="productVisual"></div><figcaption>가상 상품 예시 · 사진은 연출 이미지입니다.</figcaption></figure><section class="noir-detail-summary"><p id="productChannel" class="tag"></p><p id="productTrail" class="muted"></p><h2 id="productTitle"></h2><p class="noir-detail-price"><span id="productDisplayDiscount"></span><strong id="productDisplayPrice"></strong><s id="productDisplayOld"></s></p><p class="muted">예시 가격 · 실제 판매 상품 등록 전입니다.</p>
       <nav class="page-return-nav" aria-label="이전 화면 및 홈 이동"><button type="button" id="productPrevious">← 이전</button><a href="#/market" data-page-home>홈가기</a></nav>
       <dl id="productFacts"></dl>
       <p id="productLiability" class="muted"></p>
-      <p class="muted">아래는 향후 주문 행에 고정할 스냅샷 초안입니다. 실행되지 않으며 재고를 예약·차감하지 않습니다.</p>
-      <pre class="snapshot" id="productSnapshot"></pre>
-      <p class="notice">실제 구매·결제는 지원하지 않습니다. 재고·가격은 예시입니다.</p>
+      <pre id="productSnapshot" hidden></pre>
+      <p class="notice">현재는 상품 탐색 체험입니다. 실제 주문·결제는 지원하지 않으며, 재고·가격은 예시입니다.</p></section></div>
     </div>
   </dialog>
   <nav class="mobile-nav" id="mobileNav" aria-label="모바일 주요 탐색">

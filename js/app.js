@@ -59,13 +59,14 @@ function go(view, productId) {
 function preferredTheme() {
   const saved = localStorage.getItem(THEME_KEY);
   if (saved === 'dark' || saved === 'light') return saved;
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return 'dark';
 }
 function applyTheme(theme) {
   const dark = theme === 'dark';
   document.documentElement.classList.toggle('dark', dark);
+  document.documentElement.dataset.appearance = theme;
   document.body.classList.toggle('dark', dark);
-  themeColor.setAttribute('content', dark ? '#131b29' : '#101827');
+  themeColor.setAttribute('content', dark ? '#0b0b0a' : '#f4f0e8');
   themeBtn.setAttribute('aria-pressed', dark ? 'true' : 'false');
 }
 function normalizeApps(raw) {
@@ -204,24 +205,21 @@ function fact(dl, label, value) {
 function fillDialog(p) {
   document.getElementById('productTitle').textContent = p.title;
   document.getElementById('productChannel').textContent = channelLabel(p);
+  document.getElementById('productVisual').innerHTML = catalogArt(p);
+  document.getElementById('productDisplayPrice').textContent = won(p.price);
+  const discount = discountPct(p.price,p.listPrice);
+  document.getElementById('productDisplayDiscount').textContent = discount===null?'':discount+'%';
+  document.getElementById('productDisplayOld').textContent = p.listPrice>p.price?won(p.listPrice):'';
   const dl = document.getElementById('productFacts');
   dl.replaceChildren();
   fact(dl, '법적 판매자', p.sellerOfRecord);
   fact(dl, '판매 채널', channelLabel(p));
   const ids=productCategoryPath(p),trail=categoryTrail({major:ids[0],middle:ids[1],minor:ids[2]});
-  fact(dl, '대분류', trail[0]?.name || '미분류');
-  fact(dl, '중분류', trail[1]?.name || '미분류');
-  fact(dl, '소분류', trail[2]?.name || '미분류');
+  document.getElementById('productTrail').textContent = trail.map(c=>c.name).join(' › ');
   fact(dl, '상태', p.condition);
   fact(dl, '지역', p.region);
-  fact(dl, '보유 재고', String(p.qtyOnHand));
-  fact(dl, '예약 재고', String(p.qtyReserved) + ' (실제 예약 처리 없음)');
-  fact(dl, '판매가능', String(availableQty(p)));
-  fact(dl, '검수', p.status === 'approved' ? '예시 승인(데모 데이터)' : p.status);
-  fact(dl, '판매가', won(p.price));
-  if (p.listPrice > p.price && p.price > 0) fact(dl, '정가(예시)', won(p.listPrice));
-  const off = discountPct(p.price, p.listPrice);
-  if (off !== null) fact(dl, '할인', off + '%');
+  fact(dl, '판매가능 (예시)', String(availableQty(p))+'개');
+  fact(dl, '배송·교환 안내', '실제 상품 등록 후 판매자 조건을 안내합니다.');
   document.getElementById('productLiability').textContent = liabilityCopy(p);
   const snap = freezeOrderSnapshot(p, 1);
   document.getElementById('productSnapshot').textContent = JSON.stringify(snap, null, 2);
@@ -388,7 +386,7 @@ document.addEventListener('click',event=>{const a=event.target.closest?.('[data-
 window.addEventListener('hashchange',event=>{if(event.newURL&&lastAppliedHash===location.hash)return;applyRoute();});
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
   if (localStorage.getItem(THEME_KEY)) return;
-  applyTheme(e.matches ? 'dark' : 'light');
+  applyTheme('dark');
 });
 
 initializeHome();
