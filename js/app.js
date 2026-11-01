@@ -1,3 +1,6 @@
+import { MAX_VENDORS, MAX_PRODUCTS_PER_VENDOR, vendorSlots, applicationError } from './capacity.mjs';
+import { menswearVendors } from './menswear-data.mjs';
+import { productDraftManager } from './product-drafts.js';
 import { categorySelection, categoryTrail, productCategoryPath, productInCategory, categoryURL } from './taxonomy.mjs';
 import { taxonomyPicker } from './taxonomy-ui.js';
 import { menswearRoute } from './menswear-routing.mjs';
@@ -12,7 +15,7 @@ import {
   stockCopy
 } from './catalog.mjs';
 
-const MAX_APPS = 20;
+const knownVendors = menswearVendors;
 const APP_KEY = 'clearance-demo-apps';
 const THEME_KEY = 'clearance-theme';
 const VIEWS = ['market', 'seller', 'manage', 'menswear', 'menswearDetail'];
@@ -60,7 +63,7 @@ function applyTheme(theme) {
 }
 function normalizeApps(raw) {
   if (!Array.isArray(raw)) return [];
-  return raw.slice(0, MAX_APPS).map((a, i) => {
+  return raw.filter(a => a && typeof a === 'object').map((a, i) => {
     const status = ['pending', 'approved', 'rejected'].includes(a.status) ? a.status : 'pending';
     return {
       id: String(a.id || 'legacy-' + i),
@@ -77,7 +80,7 @@ function getApps() {
 }
 function setApps(apps) {
   try {
-    localStorage.setItem(APP_KEY, JSON.stringify(apps.slice(0, MAX_APPS)));
+    localStorage.setItem(APP_KEY, JSON.stringify(apps));
     return true;
   } catch {
     return false;
@@ -96,6 +99,7 @@ function showView(id) {
   document.getElementById('marketDemoNotice').classList.toggle('hidden', menswear);
   syncNav(menswear ? 'market' : id);
   if (id === 'manage') renderApps();
+  if (id === 'seller') renderCapacity();
 }
 function renderCategories() {
   document.getElementById('categories').innerHTML = taxonomyPicker(category);
@@ -233,7 +237,11 @@ function applyRoute() {
     if (route.productId) document.getElementById('resultStatus').textContent = '해당 상품을 찾을 수 없습니다.';
   }
 }
+const draftManager=productDraftManager(()=>getApps().filter(a=>a.status==='approved'));
+function renderCapacity(){const remaining=vendorSlots(knownVendors,getApps());document.querySelectorAll('[data-vendor-capacity]').forEach(el=>{el.textContent=`입점 정원 ${MAX_VENDORS}개 · 등록·심사 대기 ${MAX_VENDORS-remaining}개 · 남은 정원 ${remaining}개 / 업체별 상품 최대 ${MAX_PRODUCTS_PER_VENDOR}개`;});}
 function renderApps() {
+  renderCapacity();
+  draftManager.refresh();
   const el = document.getElementById('applications');
   el.replaceChildren();
   const apps = getApps();
@@ -267,9 +275,12 @@ function renderApps() {
   });
 }
 function setAppStatus(id, status) {
-  const apps = getApps().map((a) => a.id === id ? { ...a, status } : a);
+  const current=getApps(),target=current.find(a=>a.id===id);
+  if(!target)return;
+  if(status==='approved'){const error=applicationError(knownVendors,current,target.name,id);if(error){document.getElementById('manageStatus').textContent=error;return;}}
+  const apps = current.map((a) => a.id === id ? { ...a, status } : a);
   if (!setApps(apps)) {
-    document.getElementById('sellerStatus').textContent = '브라우저 저장 용량을 초과했습니다.';
+    document.getElementById('manageStatus').textContent = '브라우저 저장 용량을 초과했습니다.';
     return;
   }
   renderApps();
@@ -308,20 +319,20 @@ document.getElementById('sellerForm').addEventListener('submit', (e) => {
     return;
   }
   const apps = getApps();
-  if (apps.length >= MAX_APPS) {
-    statusEl.textContent = '체험 저장은 최대 ' + MAX_APPS + '건입니다. 관리 시뮬에서 초기화하세요.';
-    return;
-  }
+  const error=applicationError(knownVendors,apps,name);
+  if(error){statusEl.textContent=error;return;}
   apps.push({ id: uid(), name, type, createdAt: new Date().toISOString(), status: 'pending' });
   if (!setApps(apps)) {
     statusEl.textContent = '브라우저 저장에 실패했습니다. 저장 용량을 확인하세요.';
     return;
   }
   statusEl.textContent = '체험 신청을 브라우저에 저장했습니다. 실제 접수는 아닙니다.';
+  renderCapacity();
   e.target.reset();
 });
 document.getElementById('clearDemo').addEventListener('click', () => {
-  if (!confirm('이 브라우저의 체험 입점 신청을 모두 지울까요?')) return;
+  if (!confirm('이 브라우저의 체험 입점 신청과 상품 초안을 모두 지울까요?')) return;
+  draftManager.clear();
   localStorage.removeItem(APP_KEY);
   renderApps();
 });
