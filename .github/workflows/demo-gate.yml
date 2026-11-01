@@ -13,7 +13,7 @@ jobs:
       - name: Block live-trade UI and invalid catalog
         run: node scripts/production-gate.mjs
       - name: Verify menswear filters and inventory invariants
-        run: node --test tests/menswear-data.test.mjs
+        run: node --test tests/menswear-data.test.mjs tests/taxonomy.test.mjs
       - name: Reject production release flag
         env:
           CLEARANCE_PRODUCTION_RELEASE: '1'
