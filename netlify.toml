@@ -2,3 +2,41 @@
   for = "/*"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
+
+# 구 브랜드 도메인(땡처리) → 대표 다판다.store
+[[redirects]]
+  from = "https://xn--911bl5fg9u.shop/*"
+  to = "https://xn--2j1ba128v.store/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.xn--911bl5fg9u.shop/*"
+  to = "https://www.xn--2j1ba128v.store/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://xn--911bl5fg9u.store/*"
+  to = "https://xn--2j1ba128v.store/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.xn--911bl5fg9u.store/*"
+  to = "https://www.xn--2j1ba128v.store/:splat"
+  status = 301
+  force = true
+
+# www.다판다.shop / 다판다.shop → 대표 www/apex store 정책은 apex store를 기준으로 통일
+[[redirects]]
+  from = "https://xn--2j1ba128v.shop/*"
+  to = "https://xn--2j1ba128v.store/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.xn--2j1ba128v.shop/*"
+  to = "https://www.xn--2j1ba128v.store/:splat"
+  status = 301
+  force = true
