@@ -20,6 +20,7 @@ jobs:
           node --check js/product-drafts.js
           node --check js/menswear-page.js
           node --check js/arirang-page.js
+          node --check js/home-ui.js
       - name: Reject production release flag
         env:
           CLEARANCE_PRODUCTION_RELEASE: '1'
