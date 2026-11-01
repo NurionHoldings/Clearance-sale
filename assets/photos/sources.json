@@ -1,0 +1,118 @@
+{
+  "purpose": "카테고리·시제품 연출 이미지. 실제 판매 상품 또는 입점 브랜드 사진이 아님.",
+  "checkedAt": "2026-11-01",
+  "photos": [
+    {
+      "key": "knit",
+      "id": 14641440,
+      "file": "assets/photos/knit.webp",
+      "source": "https://www.pexels.com/photo/14641440/",
+      "license": "https://www.pexels.com/license/",
+      "bytes": 31268
+    },
+    {
+      "key": "fashion",
+      "id": 996329,
+      "file": "assets/photos/fashion.webp",
+      "source": "https://www.pexels.com/photo/996329/",
+      "license": "https://www.pexels.com/license/",
+      "bytes": 38702
+    },
+    {
+      "key": "shoes",
+      "id": 13611901,
+      "file": "assets/photos/shoes.webp",
+      "source": "https://www.pexels.com/photo/13611901/",
+      "license": "https://www.pexels.com/license/",
+      "bytes": 22048
+    },
+    {
+      "key": "bag",
+      "id": 1152077,
+      "file": "assets/photos/bag.webp",
+      "source": "https://www.pexels.com/photo/1152077/",
+      "license": "https://www.pexels.com/license/",
+      "bytes": 43924
+    },
+    {
+      "key": "watch",
+      "id": 11263089,
+      "file": "assets/photos/watch.webp",
+      "source": "https://www.pexels.com/photo/11263089/",
+      "license": "https://www.pexels.com/license/",
+      "bytes": 31864
+    },
+    {
+      "key": "jewelry",
+      "id": 1454171,
+      "file": "assets/photos/jewelry.webp",
+      "source": "https://www.pexels.com/photo/1454171/",
+      "license": "https://www.pexels.com/license/",
+      "bytes": 25782
+    },
+    {
+      "key": "appliances",
+      "id": 6987720,
+      "file": "assets/photos/appliances.webp",
+      "source": "https://www.pexels.com/photo/6987720/",
+      "license": "https://www.pexels.com/license/",
+      "bytes": 61522
+    },
+    {
+      "key": "furniture",
+      "id": 1866149,
+      "file": "assets/photos/furniture.webp",
+      "source": "https://www.pexels.com/photo/1866149/",
+      "license": "https://www.pexels.com/license/",
+      "bytes": 40116
+    },
+    {
+      "key": "kitchen",
+      "id": 4794875,
+      "file": "assets/photos/kitchen.webp",
+      "source": "https://www.pexels.com/photo/4794875/",
+      "license": "https://www.pexels.com/license/",
+      "bytes": 58012
+    },
+    {
+      "key": "sports",
+      "id": 15442382,
+      "file": "assets/photos/sports.webp",
+      "source": "https://www.pexels.com/photo/15442382/",
+      "license": "https://www.pexels.com/license/",
+      "bytes": 21252
+    },
+    {
+      "key": "food",
+      "id": 3978830,
+      "file": "assets/photos/food.webp",
+      "source": "https://www.pexels.com/photo/3978830/",
+      "license": "https://www.pexels.com/license/",
+      "bytes": 80654
+    },
+    {
+      "key": "shirt",
+      "id": 28576622,
+      "file": "assets/photos/shirt.webp",
+      "source": "https://www.pexels.com/photo/28576622/",
+      "license": "https://www.pexels.com/license/",
+      "bytes": 21202
+    },
+    {
+      "key": "coat",
+      "id": 9776455,
+      "file": "assets/photos/coat.webp",
+      "source": "https://www.pexels.com/photo/9776455/",
+      "license": "https://www.pexels.com/license/",
+      "bytes": 51538
+    },
+    {
+      "key": "tools",
+      "id": 8470252,
+      "file": "assets/photos/tools.webp",
+      "source": "https://www.pexels.com/photo/8470252/",
+      "license": "https://www.pexels.com/license/",
+      "bytes": 61830
+    }
+  ]
+}

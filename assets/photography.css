@@ -1,0 +1,18 @@
+/* Editorial photography is illustrative, not merchant product photography. */
+.market-photo{display:block;width:100%;height:100%;object-fit:cover;background:#e9e5df}
+.home-category-grid a>span{overflow:hidden}
+.home-category-grid .market-photo{border-radius:inherit;transition:transform .3s}
+.home-category-grid a:hover .market-photo{transform:scale(1.06)}
+.home-hero-art{background:#ded7cb;isolation:isolate}
+.home-hero-art>.market-photo{position:absolute;inset:0;object-position:center 45%;filter:brightness(.82)}
+.photo-editorial-label{position:absolute;bottom:24px;left:24px;color:#fff;font-size:10px;letter-spacing:.16em;line-height:1.9;text-shadow:0 2px 8px #0008}
+.photo-editorial-label strong{display:block;font-size:24px;font-weight:500;letter-spacing:-.03em}
+.photo-editorial-label small{display:block;letter-spacing:0;font-size:10px}
+.home-destinations .home-destination-art{width:39%;height:100%;right:0;bottom:0;transform:none;opacity:1;overflow:hidden;mask-image:linear-gradient(to right,transparent,#000 28%)}
+.home-destination>div{position:relative;z-index:1;max-width:76%}
+.mw-hero-art>div:has(.market-photo){height:84%;overflow:hidden;border-radius:10px;box-shadow:0 16px 34px #12233824}
+.mw-card-art .market-photo,.mw-detail-art .market-photo,.mw-showcase-card .market-photo{width:100%;height:100%;object-fit:cover}
+.mw-detail-art>span{padding:7px 10px;background:#fffE;border-radius:5px;color:#283849}
+@media(max-width:760px){.home-destinations .home-destination-art{width:35%;opacity:.65}.photo-editorial-label{display:none}}
+@media(max-width:520px){.home-hero-art{width:145px;height:100%;right:0;top:0;opacity:.22;mask-image:linear-gradient(to right,transparent,#000)}.home-hero-copy{position:relative;z-index:1}.home-destinations .home-destination-art{opacity:.4}.home-category-grid .market-photo{object-position:center}}
+@media(prefers-reduced-motion:reduce){.home-category-grid .market-photo{transition:none}}

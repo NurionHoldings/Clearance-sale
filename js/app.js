@@ -141,7 +141,7 @@ function renderProducts() {
     art.dataset.productId=p.id;
     art.addEventListener('click',()=>{lastFocus=art;lastProductId=p.id;});
     art.innerHTML = catalogArt(p);
-    const sampleLabel=document.createElement('span');sampleLabel.className='home-sample-label';sampleLabel.textContent='예시 이미지';art.append(sampleLabel);
+    const sampleLabel=document.createElement('span');sampleLabel.className='home-sample-label';sampleLabel.textContent='연출 이미지 · 예시';art.append(sampleLabel);
     const detail = document.createElement('div');
     detail.className = 'details';
     const tag = document.createElement('span');

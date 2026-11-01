@@ -10,7 +10,7 @@ const projectRoot=path.resolve(__dirname,'..');
  for(const width of [320,390,768,1440,1920]){
  const context=await browser.newContext({viewport:{width,height:1000},reducedMotion:'reduce'}),page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
  await page.goto(url+'/#/market');await page.locator('#products .card').first().waitFor();await page.evaluate(()=>document.fonts.ready);
- assert.equal(await page.locator('#categories [data-taxonomy-level=major]').count(),12);assert.equal(await page.locator('#categories .taxonomy-prompt').count(),0);assert.equal(await page.locator('#products .card').count(),23);assert.equal(await page.locator('#products .art svg').count(),23);assert.equal(await page.locator('.home-destination').count(),2);assert.equal(await page.locator('.home-manage-link').count(),1);
+ assert.equal(await page.locator('#categories [data-taxonomy-level=major]').count(),12);assert.equal(await page.locator('#categories .taxonomy-prompt').count(),0);assert.equal(await page.locator('#products .card').count(),23);assert.equal(await page.locator('#products .art svg, #products .art img').count(),23);assert.equal(await page.locator('.home-destination').count(),2);await page.locator('#homeHeroArt img').evaluate(img=>img.decode());assert.equal(await page.locator('#categories img').count(),12);await page.locator('#products').scrollIntoViewIfNeeded();await page.locator('#products .art img').evaluateAll(imgs=>Promise.all(imgs.map(img=>img.decode())));assert.equal(await page.locator('.home-manage-link').count(),1);
  if(width<=760){await page.evaluate(()=>document.documentElement.classList.add('intro-pending'));assert.equal(await page.locator('#mobileNav').isVisible(),false);await page.evaluate(()=>document.documentElement.classList.remove('intro-pending'));}
  const header=await page.locator('body>header').boundingBox();assert(header.height<180);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  const a=await page.locator('.home-destination').first().boundingBox(),b=await page.locator('.home-destination').last().boundingBox();assert(Math.abs(a.y-b.y)<2);assert(Math.abs(a.height-b.height)<2);
@@ -24,7 +24,7 @@ const projectRoot=path.resolve(__dirname,'..');
  await page.locator('#mobileNav [data-tab=search]').click();await page.waitForFunction(()=>document.activeElement?.id==='query');assert.equal(await page.locator('#searchForm').evaluate(el=>el.parentElement.id),'homeSearchBar');await page.locator('#mobileNav [data-tab=home]').click();await page.waitForFunction(()=>document.body.dataset.marketMode==='home');assert.equal(await page.locator('.home-destinations').isVisible(),true);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  }
  await page.locator('.home-manage-link').click();await page.locator('#manage').waitFor({state:'visible'});assert.equal(await page.locator('#marketHero').isVisible(),false);
- console.log(width+': compact header, paired destinations, category drilldown, 23 illustrated cards, search/dialog, specialist links, notice, dark theme, management and overflow PASS');await context.close();
+ console.log(width+': compact header, paired destinations, category drilldown, 23 sample cards with photos and illustrations, search/dialog, specialist links, notice, dark theme, management and overflow PASS');await context.close();
  }
  assert.deepEqual(errors,[]);await browser.close();server.close();
 })().catch(e=>{console.error(e);process.exit(1)});
