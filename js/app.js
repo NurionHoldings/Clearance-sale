@@ -1,3 +1,5 @@
+import { categorySelection, categoryTrail, productCategoryPath, productInCategory, categoryURL } from './taxonomy.mjs';
+import { taxonomyPicker } from './taxonomy-ui.js';
 import { menswearRoute } from './menswear-routing.mjs';
 import { renderMenswearCollection, renderMenswearProduct } from './menswear-page.js';
 import {
@@ -19,7 +21,7 @@ let previousMenswearProduct = null;
 let previousMenswearPath = null;
 const STATUS_LABEL = { pending: '검토 대기(체험)', approved: '승인(체험)', rejected: '반려(체험)' };
 
-let category = '전체';
+let category = {major:'',middle:'',minor:''};
 let lastFocus = null;
 const dialog = document.getElementById('productDialog');
 const themeBtn = document.getElementById('themeBtn');
@@ -96,45 +98,20 @@ function showView(id) {
   if (id === 'manage') renderApps();
 }
 function renderCategories() {
-  const cats = ['전체', ...new Set(liveListings().map((x) => x.category))];
-  const holder = document.getElementById('categories');
-  const existing = [...holder.querySelectorAll('[data-cat]')].map((b) => b.dataset.cat);
-  if (existing.join('\0') === cats.join('\0')) {
-    holder.querySelectorAll('[data-cat]').forEach((b) => {
-      const on = b.dataset.cat === category;
-      b.classList.toggle('active', on);
-      b.setAttribute('aria-pressed', on ? 'true' : 'false');
-    });
-    return;
-  }
-  const prev = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.cat : null;
-  holder.replaceChildren();
-  cats.forEach((c) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'chip' + (c === category ? ' active' : '');
-    b.dataset.cat = c;
-    b.textContent = c;
-    b.setAttribute('aria-pressed', c === category ? 'true' : 'false');
-    b.addEventListener('click', () => { category = c; render(); });
-    holder.append(b);
-  });
-  if (prev) {
-    const again = holder.querySelector('[data-cat="' + CSS.escape(prev) + '"]');
-    if (again) again.focus();
-  }
+  document.getElementById('categories').innerHTML = taxonomyPicker(category);
 }
 function renderProducts() {
   const q = document.getElementById('query').value.trim().toLowerCase();
   const items = liveListings().filter((x) => {
-    if (category !== '전체' && x.category !== category) return false;
-    const hay = [x.title, x.category, x.subcategory || '', x.sellerOfRecord, channelLabel(x), x.region, x.condition].join(' ').toLowerCase();
+    if (!productInCategory(x, category)) return false;
+    const ids=productCategoryPath(x),labels=categoryTrail({major:ids[0],middle:ids[1],minor:ids[2]}).map(c=>c.name);
+    const hay = [x.title, ...labels, x.sellerOfRecord, channelLabel(x), x.region, x.condition].join(' ').toLowerCase();
     return hay.includes(q);
   });
   const root = document.getElementById('products');
   const status = document.getElementById('resultStatus');
   root.replaceChildren();
-  status.textContent = items.length ? items.length + '건 표시 (예시 상품, 거래 없음)' : '검색 결과가 없습니다.';
+  status.textContent = items.length ? items.length + '건 표시 (예시 상품, 거래 없음)' : (q ? '검색 결과가 없습니다.' : '선택한 분류에 등록된 예시 상품이 없습니다.');
   for (const p of items) {
     const article = document.createElement('article');
     article.className = 'card';
@@ -146,7 +123,8 @@ function renderProducts() {
     detail.className = 'details';
     const tag = document.createElement('span');
     tag.className = 'tag';
-    tag.textContent = p.category + ' · ' + (p.subcategory || '기타') + ' · ' + channelLabel(p);
+    const ids=productCategoryPath(p);
+    tag.textContent = categoryTrail({major:ids[0],middle:ids[1],minor:ids[2]}).map(c=>c.name).join(' · ');
     const h = document.createElement('h3');
     h.textContent = p.title;
     const seller = document.createElement('p');
@@ -206,8 +184,10 @@ function fillDialog(p) {
   dl.replaceChildren();
   fact(dl, '법적 판매자', p.sellerOfRecord);
   fact(dl, '판매 채널', channelLabel(p));
-  fact(dl, '카테고리', p.category);
-  fact(dl, '세부 품목', p.subcategory || '기타');
+  const ids=productCategoryPath(p),trail=categoryTrail({major:ids[0],middle:ids[1],minor:ids[2]});
+  fact(dl, '대분류', trail[0]?.name || '미분류');
+  fact(dl, '중분류', trail[1]?.name || '미분류');
+  fact(dl, '소분류', trail[2]?.name || '미분류');
   fact(dl, '상태', p.condition);
   fact(dl, '지역', p.region);
   fact(dl, '보유 재고', String(p.qtyOnHand));
@@ -230,7 +210,7 @@ function applyRoute() {
     if (location.hash !== route.menswearRoute.canonical) history.replaceState(null, '', route.menswearRoute.canonical);
     if (route.view === 'menswear') renderMenswearCollection();
     else renderMenswearProduct(route.menswearId);
-    const titles = {collection:'남성복 기획관',category:'남성복 · 입점업체 선택',vendor:'남성복 · 업체별 상품',samples:'남성복 · 화면 예시',product:'남성복 · 개별 상품'};
+    const titles = {collection:'남성복',category:'남성복 · 입점업체 선택',vendor:'남성복 · 업체별 상품',samples:'남성복 · 화면 예시',product:'남성복 · 개별 상품'};
     document.title = titles[route.menswearRoute.level] + ' | 다판다';
     const pagePath = route.menswearRoute.canonical.split('?')[0];
     if (previousView !== route.view || previousMenswearProduct !== route.menswearId || previousMenswearPath !== pagePath) {
@@ -240,6 +220,8 @@ function applyRoute() {
     previousView = route.view; previousMenswearProduct = route.menswearId; previousMenswearPath = pagePath;
     return;
   }
+  category = categorySelection(new URLSearchParams(location.hash.split('?')[1] || ''));
+  render();
   previousView = route.view; previousMenswearProduct = null; previousMenswearPath = null;
   document.title = '다판다 | 빠른 판매, 좋은 상품, 합리적인 가격 (데모)';
   const p = route.productId ? liveListings().find((x) => x.id === route.productId) : null;
@@ -308,7 +290,8 @@ themeBtn.addEventListener('click', () => {
 });
 document.getElementById('searchForm').addEventListener('submit', (e) => {
   e.preventDefault();
-  go('market');
+  const next=categoryURL(category);
+  if(location.hash!==next)location.hash=next;
   render();
 });
 document.getElementById('query').addEventListener('input', () => {

@@ -150,6 +150,7 @@
   <link rel="stylesheet" href="assets/typography.css">
   <link rel="stylesheet" href="assets/responsive.css">
   <link rel="stylesheet" href="assets/menswear.css">
+  <link rel="stylesheet" href="assets/taxonomy.css">
 </head>
 <body>
   <dialog id="dapandaEntry" class="dapanda-entry" aria-label="다판다 브랜드 소개">
@@ -188,8 +189,9 @@
     <div class="notice" id="marketDemoNotice">현재는 서비스 구조를 검증하는 데모입니다. 표시된 상품은 예시이며 실제 주문·결제·입점 승인이 이루어지지 않습니다. 입력한 체험 데이터는 이 브라우저에만 저장됩니다. 실제 개인정보나 사업자등록번호를 입력하지 마세요. 검색엔진 색인을 막기 위해 noindex가 설정되어 있습니다.</div>
     <section id="market">
       <h2>오늘의 알뜰 상품</h2>
-      <a class="collection-entry" href="#/menswear"><strong>남성복 기획관</strong><span>상위 기획관 → 남성복 → 입점업체 → 상품 <span aria-hidden="true">↗</span></span></a>
+      <a class="collection-entry" href="#/menswear"><strong>남성복</strong><span>바지 · 슈트 · 운동복 · 등산복 · 아우터 <span aria-hidden="true">↗</span></span></a>
       <div id="categories"></div>
+      <nav class="taxonomy-shortcuts" aria-label="인기 품목 바로가기"><span>바로가기</span><a href="#/market?major=footwear&middle=sneakers">운동화</a><a href="#/market?major=footwear&middle=dress-shoes">구두</a><a href="#/menswear/clothing?major=menswear&middle=pants">남성 바지</a><a href="#/menswear/clothing?major=menswear&middle=suits">남성 슈트</a></nav>
       <p id="resultStatus" class="muted" role="status"></p>
       <div id="products" class="grid"></div>
     </section>

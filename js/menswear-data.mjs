@@ -1,3 +1,4 @@
+import { categorySelection, productInCategory } from './taxonomy.mjs';
 export const menswearVendors = [{id:'beverly-hills-polo',name:'비버리힐스 폴로'},{id:'lee-won-jae',name:'이원재'},{id:'top-gun',name:'TOP GUN'}];
 export const menswearListings = [
   { id:'p-menswear', title:'남성 이월 경량 패딩', kind:'아우터', condition:'이월 신품', region:'서울', qtyOnHand:35, qtyReserved:4, price:39000, listPrice:99000, color:'딥 네이비', swatch:'#253b50', sizes:['95','100','105','110'], material:'겉감 나일론 100% · 충전재 폴리에스터', description:'가볍게 걸치기 좋은 경량 패딩. 단정한 실루엣으로 일상과 출근길에 활용하는 구성입니다.' },
@@ -9,10 +10,10 @@ export const menswearListings = [
 ].map((p)=>({...p, category:'이월의류', subcategory:'남성복', channel:'marketplace', sellerId:'s-fashion', sellerOfRecord:'샘플패션유통', status:'approved'}));
 export const menswearKinds=['전체','아우터','니트','셔츠','팬츠'];
 export function menswearState(params=new URLSearchParams()) {
-  return {vendor:menswearVendors.some(v=>v.id===params.get('vendor'))?params.get('vendor'):'all',kind:menswearKinds.includes(params.get('kind'))?params.get('kind'):'전체',q:(params.get('q')||'').slice(0,80),price:['under30','30to50','over50'].includes(params.get('price'))?params.get('price'):'all',condition:['이월 신품','전시'].includes(params.get('condition'))?params.get('condition'):'all',stock:params.get('stock')==='1',sort:['price-asc','price-desc','discount'].includes(params.get('sort'))?params.get('sort'):'default'};
+  return {classification:categorySelection(new URLSearchParams({...Object.fromEntries(params),major:'menswear'})),vendor:menswearVendors.some(v=>v.id===params.get('vendor'))?params.get('vendor'):'all',kind:menswearKinds.includes(params.get('kind'))?params.get('kind'):'전체',q:(params.get('q')||'').slice(0,80),price:['under30','30to50','over50'].includes(params.get('price'))?params.get('price'):'all',condition:['이월 신품','전시'].includes(params.get('condition'))?params.get('condition'):'all',stock:params.get('stock')==='1',sort:['price-asc','price-desc','discount'].includes(params.get('sort'))?params.get('sort'):'default'};
 }
 export function filterMenswear(state,rows=menswearListings) {
-  const items=rows.filter(p=>(state.vendor==='all'||p.sellerId===state.vendor)&&(state.kind==='전체'||p.kind===state.kind)&&(state.condition==='all'||p.condition===state.condition)&&(!state.stock||p.qtyOnHand-p.qtyReserved>0)&&(`${p.title} ${p.color} ${p.kind}`.toLowerCase().includes(state.q.trim().toLowerCase()))&&(state.price==='all'||(state.price==='under30'&&p.price<30000)||(state.price==='30to50'&&p.price>=30000&&p.price<50000)||(state.price==='over50'&&p.price>=50000)));
+  const items=rows.filter(p=>(!state.classification||productInCategory(p,state.classification))&&(state.vendor==='all'||p.sellerId===state.vendor)&&(state.kind==='전체'||p.kind===state.kind)&&(state.condition==='all'||p.condition===state.condition)&&(!state.stock||p.qtyOnHand-p.qtyReserved>0)&&(`${p.title} ${p.color} ${p.kind}`.toLowerCase().includes(state.q.trim().toLowerCase()))&&(state.price==='all'||(state.price==='under30'&&p.price<30000)||(state.price==='30to50'&&p.price>=30000&&p.price<50000)||(state.price==='over50'&&p.price>=50000)));
   if(state.sort==='price-asc')items.sort((a,b)=>a.price-b.price);
   if(state.sort==='price-desc')items.sort((a,b)=>b.price-a.price);
   if(state.sort==='discount')items.sort((a,b)=>(1-b.price/b.listPrice)-(1-a.price/a.listPrice));
