@@ -291,6 +291,11 @@ function setAppStatus(id, status) {
 document.querySelectorAll('header nav [data-view]').forEach((btn) => {
   btn.addEventListener('click', () => go(btn.dataset.view));
 });
+document.querySelector('.footer-bottom a[href="#top"]').addEventListener('click', (event) => {
+  event.preventDefault();
+  window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+  document.querySelector('header .brand').focus({ preventScroll: true });
+});
 themeBtn.addEventListener('click', () => {
   const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
   localStorage.setItem(THEME_KEY, next);

@@ -9,7 +9,7 @@ const projectRoot=path.resolve(__dirname,'..');
  for(const width of [320,390,768,1440]){
   const context=await browser.newContext({viewport:{width,height:940},reducedMotion:'reduce'}),page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
   await page.goto(url+'/#/market');await page.locator('.collection-entry').click();await page.locator('#menswear').waitFor({state:'visible'});await page.evaluate(()=>document.fonts.ready);
-  assert.equal(await page.locator('#marketHero').isVisible(),false);assert.equal(await page.locator('.mw-vendor').count(),3);assert.equal(await page.locator('#menswear .mw-card').count(),6);
+  assert.equal(await page.locator('#marketHero').isVisible(),false);assert.equal(await page.locator('.mw-vendor').count(),3);const currentURL=page.url();await page.locator('.footer-bottom a').click();assert.equal(page.url(),currentURL);assert.equal(await page.locator('#menswear .mw-card').count(),6);
   const metrics=await page.evaluate(()=>({page:document.documentElement.scrollWidth,viewport:innerWidth,over:[...document.querySelectorAll('#menswear *')].filter(e=>e.getBoundingClientRect().width>0&&e.scrollWidth>e.clientWidth+2&&getComputedStyle(e).overflowX==='visible').map(e=>e.className).filter(x=>typeof x==='string')}));assert(metrics.page<=width,JSON.stringify(metrics));
   if(width===320||width===1440)await page.screenshot({path:path.join(os.tmpdir(),'dapanda-menswear-'+width+'.png'),fullPage:false});
   for(const vendor of ['beverly-hills-polo','lee-won-jae','top-gun']){await page.locator('#mwFilterForm [name=vendor]').selectOption(vendor);await page.waitForFunction(()=>document.querySelectorAll('#menswear .mw-card').length===0);assert(await page.locator('.mw-empty').innerText().then(s=>s.includes('상품 정보를 준비')));}
