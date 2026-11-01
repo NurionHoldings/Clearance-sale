@@ -9,7 +9,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - name: Verify contract, settlement and access-control flows
+        run: npm run test:operations
+      - name: Build public assets without server source
+        run: npm run build
       - name: Block live-trade UI and invalid catalog
         run: node scripts/production-gate.mjs
       - name: Verify menswear filters and inventory invariants
