@@ -1,3 +1,4 @@
+import { revealSelectedProducts } from './showcase.js';
 import { productDetailURL, marketReturnURL, detailNavigation } from './navigation.mjs';
 import { homeCategories, catalogArt, initializeHome, updateHomeNavigation } from './home-ui.js';
 import { renderArirang } from './arirang-page.js';
@@ -126,6 +127,7 @@ function renderProducts() {
   });
   const root = document.getElementById('products');
   const status = document.getElementById('resultStatus');
+  const trail=categoryTrail(category);document.querySelector('.home-products-heading h2').textContent=trail.length?trail.at(-1).name+' 상품 전시':'지금 둘러볼 상품';
   root.replaceChildren();
   status.textContent = items.length ? items.length + '건 표시 (예시 상품, 거래 없음)' : (q ? '검색 결과가 없습니다.' : '선택한 분류에 등록된 예시 상품이 없습니다.');
   if(!items.length){const empty=document.createElement('div');empty.className='home-empty-actions';const reset=document.createElement('button');reset.type='button';reset.textContent='전체 상품 다시 보기';reset.onclick=()=>{document.getElementById('query').value='';go('market');};const seller=document.createElement('a');seller.href='#/seller';seller.textContent='입점 신청 안내';empty.append(reset,seller);root.append(empty);}
@@ -231,7 +233,7 @@ function applyRoute() {
   if(route.view==='arirang'){
     if(dialog.open)dialog.close();
     if(location.hash.startsWith('#/market')){const q=new URLSearchParams(location.hash.split('?')[1]||'');q.delete('major');history.replaceState(null,'','#/arirang'+(q.toString()?'?'+q:''));}
-    renderArirang();previousView='arirang';previousMenswearPath=null;previousMenswearProduct=null;return;
+    renderArirang();if(new URLSearchParams(location.hash.split('?')[1]||'').get('minor'))revealSelectedProducts('arirang');previousView='arirang';previousMenswearPath=null;previousMenswearProduct=null;return;
   }
   if (route.view === 'menswear' || route.view === 'menswearDetail') {
     if (dialog.open) dialog.close();
@@ -245,6 +247,7 @@ function applyRoute() {
       window.scrollTo({ top: 0, behavior: 'instant' });
       document.getElementById(route.view).querySelector('h1')?.focus({ preventScroll: true });
     }
+    if(route.view==='menswear'&&new URLSearchParams(location.hash.split('?')[1]||'').get('minor'))revealSelectedProducts('menswear');
     previousView = route.view; previousMenswearProduct = route.menswearId; previousMenswearPath = pagePath;
     return;
   }
@@ -252,6 +255,7 @@ function applyRoute() {
   if(route.view==='market')document.getElementById('query').value=(routeParams.get('q')||'').slice(0,80);
   category = categorySelection(routeParams);
   render();
+  if(route.view==='market'&&category.minor&&!route.productId)revealSelectedProducts('market');
   if(route.view==='market'){
     const action=new URLSearchParams(location.hash.split('?')[1]||'');
     if(action.get('focus')==='search')document.getElementById('query').focus({preventScroll:true});
@@ -380,6 +384,7 @@ dialog.addEventListener('close', () => {
   if(parseHash().productId)returnFromProduct();
   requestAnimationFrame(()=>{const active=document.activeElement;if(active&&active!==document.body&&active!==dialog&&active.id!=='closeProduct')return;const target=lastFocus?.isConnected?lastFocus:lastProductId?document.querySelector('#products [data-product-id="'+CSS.escape(lastProductId)+'"]'):null;target?.focus({preventScroll:true});});
 });
+document.addEventListener('click',event=>{const a=event.target.closest?.('[data-taxonomy-level=minor],.ar-subcategories a');if(a&&a.getAttribute('href')===location.hash)revealSelectedProducts(parseHash().view);});
 window.addEventListener('hashchange',event=>{if(event.newURL&&lastAppliedHash===location.hash)return;applyRoute();});
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
   if (localStorage.getItem(THEME_KEY)) return;
