@@ -1,0 +1,19 @@
+{
+  "name": "dapanda-platform",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test:operations": "node --test tests/operations/*.test.mjs",
+    "check": "node scripts/production-gate.mjs && node scripts/arkaon-learning-check.mjs"
+  },
+  "dependencies": {
+    "@netlify/database": "^2.0.1",
+    "@netlify/identity": "^2.0.0",
+    "openai": "^7.36.0"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.2.17",
+    "esbuild": "^0.28.2",
+    "@netlify/functions": "^6.0.2"
+  }
+}
