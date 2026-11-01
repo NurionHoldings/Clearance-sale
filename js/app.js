@@ -4,7 +4,49 @@ import { productDraftManager } from './product-drafts.js';
 import { categorySelection, categoryTrail, productCategoryPath, productInCategory, categoryURL } from './taxonomy.mjs';
 import { taxonomyPicker } from './taxonomy-ui.js';
 import { menswearRoute } from './menswear-routing.mjs';
-import { renderMenswearCollection, ren…441 tokens truncated…ocation.hash === next) applyRoute();
+import { renderMenswearCollection, renderMenswearProduct } from './menswear-page.js';
+import {
+  availableQty,
+  channelLabel,
+  discountPct,
+  freezeOrderSnapshot,
+  liabilityCopy,
+  liveListings,
+  stockCopy
+} from './catalog.mjs';
+
+const knownVendors = menswearVendors;
+const APP_KEY = 'clearance-demo-apps';
+const THEME_KEY = 'clearance-theme';
+const VIEWS = ['market', 'seller', 'manage', 'menswear', 'menswearDetail'];
+let previousView = null;
+let previousMenswearProduct = null;
+let previousMenswearPath = null;
+const STATUS_LABEL = { pending: '검토 대기(체험)', approved: '승인(체험)', rejected: '반려(체험)' };
+
+let category = {major:'',middle:'',minor:''};
+let lastFocus = null;
+const dialog = document.getElementById('productDialog');
+const themeBtn = document.getElementById('themeBtn');
+const themeColor = document.getElementById('themeColor');
+
+const won = (n) => Number(n).toLocaleString('ko-KR') + '원';
+function uid() {
+  return crypto.randomUUID ? crypto.randomUUID() : 'id-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+}
+function parseHash() {
+  const parts = location.hash.split('?')[0].replace(/^#\/?/, '').split('/').filter(Boolean);
+  if (parts[0] === 'menswear') {
+    const page = menswearRoute(location.hash);
+    return { view: page.level === 'product' ? 'menswearDetail' : 'menswear', menswearId: page.productId, menswearRoute: page, productId: null };
+  }
+  if (parts[0] === 'product' && parts[1]) return { view: 'market', productId: parts[1] };
+  if (['market', 'seller', 'manage'].includes(parts[0])) return { view: parts[0], productId: null };
+  return { view: 'market', productId: null };
+}
+function go(view, productId) {
+  const next = productId ? '#/product/' + productId : '#/' + view;
+  if (location.hash === next) applyRoute();
   else location.hash = next;
 }
 function preferredTheme() {
