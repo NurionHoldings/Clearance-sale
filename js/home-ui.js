@@ -1,3 +1,4 @@
+import { photo, categoryPhotos } from './photo-library.mjs';
 import { taxonomy, categoryURL } from './taxonomy.mjs';
 import { taxonomyPicker } from './taxonomy-ui.js';
 import { garmentArt } from './menswear-art.mjs';
@@ -24,7 +25,7 @@ const productArt={
  'p-display-microwave':svg('<rect x="35" y="68" width="170" height="112" rx="12" fill="#aab6b8"/><rect x="45" y="80" width="116" height="85" rx="5" fill="#425c6a"/><path d="m59 140 39-40 46 26" fill="none" stroke="#739096" stroke-width="6"/><rect x="174" y="84" width="20" height="16" rx="2" fill="#435d63"/><circle cx="184" cy="130" r="10" fill="#e3e7e0"/><path d="M55 180v9m130-9v9" stroke="#607a84" stroke-width="7"/>')
 };
 const clothing=(kind='아우터',swatch='#465669',id='')=>garmentArt({kind,swatch,id});
-export function categoryArt(id){if(id==='menswear')return clothing('셔츠','#8b9da5');if(id==='womenswear')return clothing('니트','#bcae9e');if(id==='food')return foodArt('apple');return art[id]||art.accessories;}
+export function categoryArt(id){if(categoryPhotos[id])return photo(categoryPhotos[id]);if(id==='menswear')return clothing('셔츠','#8b9da5');if(id==='womenswear')return clothing('니트','#bcae9e');if(id==='food')return foodArt('apple');return art[id]||art.accessories;}
 export function catalogArt(p){if(productArt[p.id])return productArt[p.id];if(p.subcategory==='남성복')return garmentArt(p);if(p.id==='p-womenswear')return clothing('니트','#bcae9e');if(p.id==='p-sportswear')return clothing('아우터','#82958a');if(p.id==='p-hikingwear')return clothing('아우터','#b29570');if(p.id==='p-rice')return foodArt('rice');if(p.id==='p-apples')return foodArt('apple');const root=p.categoryPath?.[0]||({'신발류':'footwear','모자':'accessories','귀금속':'jewelry','가전제품':'appliances','공산품':p.id==='p-tools'?'tools':'kitchen'})[p.category];return categoryArt(root);}
 export function homeCategories(selection){if(selection.major)return taxonomyPicker(selection);return `<section class="home-categories" aria-labelledby="homeCategoryTitle"><div class="home-section-heading"><div><p class="home-kicker">EXPLORE THE MARKET</p><h2 id="homeCategoryTitle">어떤 상품을 찾으세요?</h2></div><span>품목을 선택하면 중·소분류로 이어집니다.</span></div><nav class="home-category-grid" aria-label="대분류 선택">${taxonomy.map(c=>`<a href="${categoryURL({major:c.id,middle:'',minor:''})}" data-taxonomy-level="major" data-taxonomy-id="${c.id}"><span>${categoryArt(c.id)}</span><strong>${c.name}</strong></a>`).join('')}</nav></section>`;}
 export function updateHomeNavigation(view,selection,q=''){
@@ -38,4 +39,4 @@ export function initializeHome(){
  const mobile=matchMedia('(max-width:760px)'),form=document.getElementById('searchForm');
  const positionSearch=()=>{document.getElementById(mobile.matches?'homeSearchBar':'homeHeroSearchSlot').append(form);};positionSearch();mobile.addEventListener('change',positionSearch);
  document.querySelectorAll('#mobileNav [data-tab=home],#mobileNav [data-tab=categories],header .brand').forEach(a=>a.addEventListener('click',()=>{document.getElementById('query').value='';if(location.hash===a.getAttribute('href'))window.dispatchEvent(new HashChangeEvent('hashchange'));}));
-document.getElementById('homeHeroArt').innerHTML=`<div class="home-art-orbit"></div><div class="home-art-piece home-art-clothing">${clothing('셔츠','#718595')}</div><div class="home-art-piece home-art-bag">${art.accessories}</div><div class="home-art-label">좋은 상품의<br><strong>다음 만남</strong></div><span class="home-art-caption">DAPANDA · EVERYDAY FINDS</span>`;document.getElementById('homeMenswearArt').innerHTML=clothing('니트','#b2a38c');document.getElementById('homeFoodArt').innerHTML=foodArt('greens');}
+document.getElementById('homeHeroArt').innerHTML=`${photo('fashion',true)}<span class="photo-editorial-label">CURATED EVERYDAY<br><strong>일상에 좋은 발견</strong><small>카테고리 연출 이미지</small></span>`;document.getElementById('homeMenswearArt').innerHTML=photo('knit');document.getElementById('homeFoodArt').innerHTML=photo('food');}
