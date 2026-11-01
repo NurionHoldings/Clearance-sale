@@ -1,9 +1,9 @@
+import { homeCategories, catalogArt, initializeHome, updateHomeNavigation } from './home-ui.js';
 import { renderArirang } from './arirang-page.js';
 import { MAX_VENDORS, MAX_PRODUCTS_PER_VENDOR, vendorSlots, applicationError } from './capacity.mjs';
 import { menswearVendors } from './menswear-data.mjs';
 import { productDraftManager } from './product-drafts.js';
 import { categorySelection, categoryTrail, productCategoryPath, productInCategory, categoryURL } from './taxonomy.mjs';
-import { taxonomyPicker } from './taxonomy-ui.js';
 import { menswearRoute } from './menswear-routing.mjs';
 import { renderMenswearCollection, renderMenswearProduct } from './menswear-page.js';
 import {
@@ -47,6 +47,7 @@ function parseHash() {
   return { view: 'market', productId: null };
 }
 function go(view, productId) {
+  if(view==='market'&&!productId)document.getElementById('query').value='';
   const next = productId ? '#/product/' + productId : '#/' + view;
   if (location.hash === next) applyRoute();
   else location.hash = next;
@@ -95,20 +96,24 @@ function syncNav(view) {
   });
 }
 function showView(id) {
+  document.body.dataset.view=id;
+  updateHomeNavigation(id,category,document.getElementById('query').value);
   for (const name of VIEWS) document.getElementById(name).classList.toggle('hidden', name !== id);
   const menswear = id === 'menswear' || id === 'menswearDetail';
-  const specialized=menswear||id==='arirang';
+  const specialized=id!=='market';
   document.getElementById('marketHero').classList.toggle('hidden', specialized);
   document.getElementById('marketDemoNotice').classList.toggle('hidden', specialized);
+  document.getElementById('homeSearchBar').classList.toggle('hidden',specialized);
   syncNav(menswear ? 'market' : id);
   if (id === 'manage') renderApps();
   if (id === 'seller') renderCapacity();
 }
 function renderCategories() {
-  document.getElementById('categories').innerHTML = taxonomyPicker(category);
+  document.getElementById('categories').innerHTML = homeCategories(category);
 }
 function renderProducts() {
   const q = document.getElementById('query').value.trim().toLowerCase();
+  if(parseHash().view==='market')updateHomeNavigation('market',category,q);
   const items = liveListings().filter((x) => {
     if (!productInCategory(x, category)) return false;
     const ids=productCategoryPath(x),labels=categoryTrail({major:ids[0],middle:ids[1],minor:ids[2]}).map(c=>c.name);
@@ -125,7 +130,8 @@ function renderProducts() {
     const art = document.createElement('div');
     art.className = 'art';
     art.setAttribute('aria-hidden', 'true');
-    art.textContent = p.subcategory || p.category;
+    art.innerHTML = catalogArt(p);
+    const sampleLabel=document.createElement('span');sampleLabel.className='home-sample-label';sampleLabel.textContent='예시 이미지';art.append(sampleLabel);
     const detail = document.createElement('div');
     detail.className = 'details';
     const tag = document.createElement('span');
@@ -136,14 +142,14 @@ function renderProducts() {
     h.textContent = p.title;
     const seller = document.createElement('p');
     seller.className = 'muted';
-    seller.textContent = '법적 판매자: ' + p.sellerOfRecord;
+    seller.textContent = '판매자 · ' + p.sellerOfRecord;
     const stock = document.createElement('p');
     stock.className = 'muted';
-    stock.textContent = stockCopy(p) + (availableQty(p) === 0 ? ' · 판매가능 없음' : '');
+    stock.textContent = p.condition + ' · 판매가능 ' + availableQty(p) + '개 (예시)';
     if (p.listPrice > p.price && p.price > 0) {
       const old = document.createElement('div');
       old.className = 'old';
-      old.textContent = won(p.listPrice);
+      old.textContent = '예시 기준가 ' + won(p.listPrice);
       detail.append(tag, h, seller, stock, old);
     } else {
       detail.append(tag, h, seller, stock);
@@ -235,6 +241,11 @@ function applyRoute() {
   }
   category = categorySelection(new URLSearchParams(location.hash.split('?')[1] || ''));
   render();
+  if(route.view==='market'){
+    const action=new URLSearchParams(location.hash.split('?')[1]||'');
+    if(action.get('focus')==='search')document.getElementById('query').focus({preventScroll:true});
+    if(action.get('browse')==='categories')document.getElementById('categories').scrollIntoView({behavior:'instant',block:'start'});
+  }
   previousView = route.view; previousMenswearProduct = null; previousMenswearPath = null;
   document.title = '다판다 | 빠른 판매, 좋은 상품, 합리적인 가격 (데모)';
   const p = route.productId ? liveListings().find((x) => x.id === route.productId) : null;
@@ -313,6 +324,7 @@ document.getElementById('searchForm').addEventListener('submit', (e) => {
   const next=categoryURL(category);
   if(location.hash!==next)location.hash=next;
   render();
+  document.getElementById('products').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});
 });
 document.getElementById('query').addEventListener('input', () => {
   if (!document.getElementById('market').classList.contains('hidden')) renderProducts();
@@ -356,6 +368,7 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e)
   applyTheme(e.matches ? 'dark' : 'light');
 });
 
+initializeHome();
 applyTheme(preferredTheme());
 if (!location.hash) history.replaceState(null, '', '#/market');
 render();

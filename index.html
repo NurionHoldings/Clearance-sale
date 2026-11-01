@@ -9,7 +9,8 @@
     html.intro-pending, html.intro-pending body { background: #07111e; }
     html.intro-pending body > header,
     html.intro-pending body > main,
-    html.intro-pending body > footer { visibility: hidden; }
+    html.intro-pending body > footer,
+    html.intro-pending body > #mobileNav { visibility: hidden; }
   </style>
   <script>
     // Decide before first paint; a failed module must never leave the page hidden.
@@ -152,6 +153,7 @@
   <link rel="stylesheet" href="assets/menswear.css">
   <link rel="stylesheet" href="assets/taxonomy.css">
   <link rel="stylesheet" href="assets/arirang.css">
+  <link rel="stylesheet" href="assets/home.css">
 </head>
 <body>
   <dialog id="dapandaEntry" class="dapanda-entry" aria-label="다판다 브랜드 소개">
@@ -175,28 +177,29 @@
       <button type="button" data-view="market">상품보기</button>
       <button type="button" data-view="arirang">아리랑 마켓</button>
       <button type="button" data-view="seller">입점신청</button>
-      <button type="button" data-view="manage">데모 관리 시뮬</button>
-      <button type="button" id="themeBtn" aria-label="화면 테마 전환" aria-pressed="false">◐ 화면모드</button>
+      <button type="button" id="themeBtn" aria-label="화면 테마 전환" aria-pressed="false">◐<span class="theme-label"> 화면모드</span></button>
     </nav>
   </header>
   <main>
-    <section class="hero" id="marketHero">
-      <h1><span class="hero-line">판매자는 재고를 빠르게,</span> <span class="hero-line">구매자는 좋은 상품을 알뜰하게.</span></h1>
-      <p>제조사 · 도매상 · 리퍼브 · 사업장 재고까지. 공급자의 신속한 재고 판매와 소비자의 합리적인 구매를 연결하는 온라인 판매 플랫폼, 다판다.</p>
-      <form class="search" id="searchForm">
-        <input id="query" name="q" placeholder="상품명, 카테고리, 판매자 검색" aria-label="상품 검색">
-        <button class="primary" type="submit">상품 검색</button>
-      </form>
+    <div id="homeSearchBar" class="home-searchbar"></div>
+    <section class="hero home-hero" id="marketHero" aria-labelledby="homeTitle">
+      <div class="home-hero-copy"><p class="home-kicker">GOOD FINDS, BETTER PRICES.</p>
+        <h1 id="homeTitle">좋은 상품을,<br>합리적인 가격에.</h1>
+        <p>판매자는 재고를 빠르게, 구매자는 알뜰하게.<br>좋은 상품의 다음 만남, 다판다.</p>
+        <div id="homeHeroSearchSlot"><form class="search" id="searchForm"><input id="query" name="q" placeholder="어떤 상품을 찾으세요?" aria-label="상품 검색"><button class="primary" type="submit">검색</button></form></div>
+      </div><div id="homeHeroArt" class="home-hero-art" aria-hidden="true"></div>
     </section>
-    <div class="notice" id="marketDemoNotice">현재는 서비스 구조를 검증하는 데모입니다. 표시된 상품은 예시이며 실제 주문·결제·입점 승인이 이루어지지 않습니다. 입력한 체험 데이터는 이 브라우저에만 저장됩니다. 실제 개인정보나 사업자등록번호를 입력하지 마세요. 검색엔진 색인을 막기 위해 noindex가 설정되어 있습니다.</div>
-    <section id="market">
-      <h2>오늘의 알뜰 상품</h2>
-      <a class="collection-entry" href="#/menswear"><strong>남성복</strong><span>바지 · 슈트 · 운동복 · 등산복 · 아우터 <span aria-hidden="true">↗</span></span></a>
-      <a class="ar-entry" href="#/arirang"><strong>아리랑 마켓</strong><span>신선한 식재료 · 간편한 한 끼 · 매일의 장보기 ↗</span></a>
+    <details class="home-demo" id="marketDemoNotice"><summary><span>서비스 체험 안내</span> 현재는 예시 상품을 둘러보는 데모입니다. <span class="home-demo-more">자세히 보기</span></summary><p>현재는 서비스 구조를 검증하는 데모입니다. 표시된 상품은 예시이며 실제 주문·결제·입점 승인이 이루어지지 않습니다. 입력한 체험 데이터는 이 브라우저에만 저장됩니다. 실제 개인정보나 사업자등록번호를 입력하지 마세요. 검색엔진 색인을 막기 위해 noindex가 설정되어 있습니다.</p></details>
+    <section id="market" aria-label="다판다 상품 탐색">
+      <div class="home-destinations" aria-label="전문관 바로가기">
+        <a class="collection-entry home-destination" href="#/menswear"><div><span class="home-kicker">MEN’S COLLECTION</span><strong>남성복 컬렉션</strong><p>바지·슈트·아우터부터 업체별 상품까지</p><span class="home-destination-link">남성복 둘러보기 ↗</span></div><span id="homeMenswearArt" class="home-destination-art" aria-hidden="true"></span></a>
+        <a class="ar-entry home-destination" href="#/arirang"><div><span class="home-kicker">ARIRANG MARKET</span><strong>아리랑 마켓</strong><p>신선한 식재료부터 간편한 한 끼까지</p><span class="home-destination-link">식품 장보기 ↗</span></div><span id="homeFoodArt" class="home-destination-art" aria-hidden="true"></span></a>
+      </div>
       <div id="categories"></div>
-      <nav class="taxonomy-shortcuts" aria-label="인기 품목 바로가기"><span>바로가기</span><a href="#/market?major=footwear&middle=sneakers">운동화</a><a href="#/market?major=footwear&middle=dress-shoes">구두</a><a href="#/menswear/clothing?major=menswear&middle=pants">남성 바지</a><a href="#/menswear/clothing?major=menswear&middle=suits">남성 슈트</a></nav>
-      <p id="resultStatus" class="muted" role="status"></p>
+
+      <div class="home-section-heading home-products-heading"><div><p class="home-kicker">DISCOVER SOMETHING GOOD</p><h2>지금 둘러볼 상품</h2></div><p id="resultStatus" class="muted" role="status"></p></div>
       <div id="products" class="grid"></div>
+      <aside class="home-seller-invite"><div><p class="home-kicker">GROW WITH DAPANDA</p><h2>새로운 판매 기회를 만나세요.</h2><p>전체 입점업체 최대 100개 · 업체별 상품 최대 50종</p></div><a href="#/seller">입점 신청 안내 ↗</a></aside>
     </section>
     <section id="arirang" class="hidden" aria-label="아리랑 마켓 식품 장보기"></section>
     <section id="menswear" class="hidden" aria-label="남성복 기획관"></section>
@@ -298,7 +301,8 @@
       </div>
       <div class="footer-bottom">
         <p>© 다판다 · 빠른 판매, 좋은 상품, 합리적인 가격</p>
-        <a href="#top">맨 위로 ↑</a>
+          <a href="#top">맨 위로 ↑</a>
+        <a class="home-manage-link" href="#/manage" data-view="manage">관리 시뮬레이션</a>
       </div>
     </div>
   </footer>
@@ -316,6 +320,13 @@
       <p class="notice">실제 구매·결제는 지원하지 않습니다. 재고·가격은 예시입니다.</p>
     </div>
   </dialog>
+  <nav class="mobile-nav" id="mobileNav" aria-label="모바일 주요 탐색">
+    <a href="#/market" data-tab="home"><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 9-8 9 8M6 9v12h5v-7h3v7h5V9"/></svg></span><strong>홈</strong></a>
+    <a href="#/market?browse=categories" data-tab="categories"><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><strong>카테고리</strong></a>
+    <a href="#/market?focus=search" data-tab="search"><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></span><strong>검색</strong></a>
+    <a href="#/arirang" data-tab="food"><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8-2 13h18L19 8ZM8 9V7a4 4 0 0 1 8 0v2m-8 5q4 5 8 0"/></svg></span><strong>식품</strong></a>
+    <a href="#/arirang/cart" data-tab="cart"><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h3l3 13h11l3-10H6M9 20h.01M18 20h.01"/></svg></span><strong>식품 장바구니</strong></a>
+  </nav>
   <script type="module" src="js/app.js"></script>
   <script type="module" src="js/dapanda-intro.js"></script>
   <script type="module" src="js/dapanda-header.js"></script>
