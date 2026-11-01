@@ -214,3 +214,27 @@
 :root[data-skin="noir"][data-appearance] .tag{background:var(--noir-soft);color:var(--noir-gold);border-color:var(--noir-line)}
 @media print{:root[data-skin="noir"][data-appearance]{--noir-bg:#fff;--noir-surface:#fff;--noir-raised:#f5f5f5;--noir-line:#aaa;--noir-ink:#111;--noir-muted:#444;--noir-gold:#654d11;--noir-gold-ink:#fff;--noir-soft:#f5f1e6}}
 :root[data-skin="noir"][data-appearance] :where(.home-hero,.home-searchbar,.ar-search) .search input{border:0;box-shadow:none}
+/* Thearirang's representative photos, shared consistently in list/detail/cart. */
+.ar-market-image{display:block;width:100%;height:100%;object-fit:cover}
+:root[data-skin="noir"][data-appearance] .ar-product-art{display:block;position:relative;aspect-ratio:1.2;overflow:hidden;padding:0;background:#faf9f5}
+:root[data-skin="noir"][data-appearance] .ar-product-art>.ar-market-image{object-fit:contain}
+:root[data-skin="noir"][data-appearance] .ar-product-art>small{background:#171715db;color:#f5e8c4;padding:3px 7px;border-radius:4px}
+:root[data-skin="noir"][data-appearance] .ar-category-grid a>span{overflow:hidden;padding:0;border:1px solid var(--noir-line);border-radius:13px}
+:root[data-skin="noir"][data-appearance] .ar-category-grid .ar-market-image{aspect-ratio:1;object-fit:cover}
+:root[data-skin="noir"][data-appearance] .ar-detail-art{padding:0;overflow:hidden;background:#faf9f5}
+:root[data-skin="noir"][data-appearance] .ar-detail-art>.ar-market-image{aspect-ratio:1;object-fit:contain}
+:root[data-skin="noir"][data-appearance] .ar-detail-art>span{display:block;padding:13px 15px;background:var(--noir-surface);color:var(--noir-muted);font-size:11px}
+:root[data-skin="noir"][data-appearance] .ar-cart-art{overflow:hidden;background:#faf9f5}
+:root[data-skin="noir"][data-appearance] .ar-cart-art .ar-market-image{aspect-ratio:1;object-fit:contain}
+:root[data-skin="noir"][data-appearance] .ar-photo-hero{position:relative;min-height:320px;margin:0;overflow:hidden;align-self:stretch}
+:root[data-skin="noir"][data-appearance] .ar-photo-hero>.ar-market-image{position:absolute;inset:0;object-fit:cover;mask-image:linear-gradient(90deg,transparent,#000 35%);filter:brightness(.85)}
+.ar-photo-credit{position:absolute;bottom:17px;right:20px;font-size:10px;color:#fff;background:#15150fc9;padding:4px 8px;border-radius:4px}
+:root[data-skin="noir"][data-appearance] .ar-theme-grid>a{position:relative;isolation:isolate;overflow:hidden;background:#211e17;color:#fff4d9}
+:root[data-skin="noir"][data-appearance] .ar-theme-grid>a>.ar-market-image{position:absolute;inset:0;z-index:-1;opacity:.4;mask-image:linear-gradient(90deg,transparent,#000 80%)}
+:root[data-skin="noir"][data-appearance] .ar-theme-grid p{color:#e9d6a3}
+@media(max-width:700px){:root[data-skin="noir"][data-appearance] .ar-photo-hero{min-height:220px;margin-top:15px;border-radius:12px}:root[data-skin="noir"][data-appearance] .ar-photo-hero>.ar-market-image{mask-image:linear-gradient(0deg,#000, #000b)}:root[data-skin="noir"][data-appearance] .ar-product-art{aspect-ratio:1.25}}
+:root[data-skin="noir"][data-appearance] .ar-hero-copy>p:not(.ar-kicker){color:var(--noir-muted)}
+:root[data-skin="noir"][data-appearance] .ar-kicker{color:var(--noir-gold)}
+:root[data-skin="noir"][data-appearance] #arirang .ar-basket-dock{background:var(--noir-gold);color:var(--noir-gold-ink)}
+:root[data-skin="noir"][data-appearance] #arirang .ar-basket-link{background:var(--noir-soft);border-color:var(--noir-line);color:var(--noir-ink)}
+:root[data-skin="noir"][data-appearance] #arirang .ar-basket-dock{color:var(--noir-gold-ink)!important}

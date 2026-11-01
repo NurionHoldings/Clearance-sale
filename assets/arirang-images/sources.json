@@ -1,0 +1,257 @@
+{
+  "sourceRepository": "NurionHoldings/thearirang",
+  "sourceCommit": "3ea4dd6b9f3ae294bad08987beba798fb7e0dfa6",
+  "sourceWebsite": "https://xn--9m1bk4fg1bgyv.com",
+  "copiedAt": "2026-11-02",
+  "imageType": "AI-generated representative category and retail packaging images; not actual merchant inventory",
+  "sourceDocumentation": [
+    "docs/market-images-editing.md",
+    "docs/market-retail-images.md"
+  ],
+  "products": {
+    "apple": "fruit--apple-pear",
+    "citrus": "fruit--citrus",
+    "greens": "vegetables--salad",
+    "carrot": "vegetables--root",
+    "meat": "meat--pork",
+    "eggs": "meat--eggs",
+    "fish": "seafood--fish",
+    "milk": "dairy--milk",
+    "yogurt": "dairy--yogurt",
+    "rice": "grains--rice",
+    "meal": "ready-meals--meal-kit",
+    "dumpling": "frozen--dumplings",
+    "chips": "snacks--cookies",
+    "nuts": "snacks--nuts",
+    "water": "drinks--water",
+    "juice": "drinks--juice",
+    "bread": "bakery--bread",
+    "sauce": "condiments--sauce"
+  },
+  "categories": [
+    "fruit",
+    "vegetables",
+    "meat",
+    "seafood",
+    "dairy",
+    "grains",
+    "ready-meals",
+    "frozen",
+    "snacks",
+    "drinks",
+    "bakery",
+    "condiments"
+  ],
+  "files": [
+    {
+      "file": "assets/arirang-images/categories/fruit-v1.webp",
+      "sourcePath": "public/assets/market/categories/fruit-v1.webp",
+      "sha256": "22c408e7360f519e6aad36908510ebbcc52070c128b540f1fe2002ad0bce34c2",
+      "gitBlob": "016594a3f17d57bc9f25b0a1f1059dde3f2fb4cc",
+      "bytes": 84760
+    },
+    {
+      "file": "assets/arirang-images/categories/vegetables-v1.webp",
+      "sourcePath": "public/assets/market/categories/vegetables-v1.webp",
+      "sha256": "c5d4bc7c5da800920cf8c7de03326629c48638a8f590b5dfc1085f34266b70a9",
+      "gitBlob": "04950b7471f8bb6cdcb807d879b1fa6f93d740aa",
+      "bytes": 92610
+    },
+    {
+      "file": "assets/arirang-images/categories/meat-v1.webp",
+      "sourcePath": "public/assets/market/categories/meat-v1.webp",
+      "sha256": "90b67595d1135de3bd01d8a587a05b2ff4a9d5636e3304da1f32e4bed016a694",
+      "gitBlob": "a5ae26ab8eb6679de1b7b1316464b1f33f61837a",
+      "bytes": 75158
+    },
+    {
+      "file": "assets/arirang-images/categories/seafood-v1.webp",
+      "sourcePath": "public/assets/market/categories/seafood-v1.webp",
+      "sha256": "7ec0282752e93f078a2690308dfc1673c5718a65aeb6b4b11e95eaaec1695855",
+      "gitBlob": "d37e637459fb73f51846f616d6a27e225afc2130",
+      "bytes": 121520
+    },
+    {
+      "file": "assets/arirang-images/categories/dairy-v1.webp",
+      "sourcePath": "public/assets/market/categories/dairy-v1.webp",
+      "sha256": "0b08ebf651b817856d0c4fe0fcb0ff005239fe53c3efa4762546c54feab5dcb7",
+      "gitBlob": "4cfea3add1ccf25419479aa5b3c45ce766cf593a",
+      "bytes": 24114
+    },
+    {
+      "file": "assets/arirang-images/categories/grains-v1.webp",
+      "sourcePath": "public/assets/market/categories/grains-v1.webp",
+      "sha256": "764c14dc9d751be746ebbf09be54a6118137eb3eb04400f3052d65a583899042",
+      "gitBlob": "975dcbce4e8df419f745c30abe2a44713af5f3f8",
+      "bytes": 86230
+    },
+    {
+      "file": "assets/arirang-images/categories/ready-meals-v1.webp",
+      "sourcePath": "public/assets/market/categories/ready-meals-v1.webp",
+      "sha256": "a03c5cf2ced5f8448ceb18cf85a17c29d78d1f6cff70dd427e5087250097fc8f",
+      "gitBlob": "76d08d0280795cb11d90e9ff2df513376c2afa5e",
+      "bytes": 63732
+    },
+    {
+      "file": "assets/arirang-images/categories/frozen-v1.webp",
+      "sourcePath": "public/assets/market/categories/frozen-v1.webp",
+      "sha256": "689f66e5a8a3de63cdc9dbcbdf55dbc49952eb1633c1b78b0a8ba42567c91348",
+      "gitBlob": "3a1294bb1fde9fdb9dccfa7f03a6e4eca2484624",
+      "bytes": 50254
+    },
+    {
+      "file": "assets/arirang-images/categories/snacks-v1.webp",
+      "sourcePath": "public/assets/market/categories/snacks-v1.webp",
+      "sha256": "82e13b99430d839aeed73c357e8372f4e525e954a8122b513fdf57b4aec0f0fc",
+      "gitBlob": "d878874aa119d979459529c699d186907787b8c5",
+      "bytes": 74984
+    },
+    {
+      "file": "assets/arirang-images/categories/drinks-v1.webp",
+      "sourcePath": "public/assets/market/categories/drinks-v1.webp",
+      "sha256": "11af706116a71e5fe833e5ae5ffb7dcae6fd8223a14e4dce51ed5f265c86fa1d",
+      "gitBlob": "f3c7df590eb452ea068902a77d94cc2ab2cfa130",
+      "bytes": 33352
+    },
+    {
+      "file": "assets/arirang-images/categories/bakery-v1.webp",
+      "sourcePath": "public/assets/market/categories/bakery-v1.webp",
+      "sha256": "8e4dee44c9afd49c5c263512ed760d832238b638b5ad372ca59a707478aee2cc",
+      "gitBlob": "cb7e4d65f0b8004acfefc815f6420dcc0e4e7683",
+      "bytes": 112800
+    },
+    {
+      "file": "assets/arirang-images/categories/condiments-v1.webp",
+      "sourcePath": "public/assets/market/categories/condiments-v1.webp",
+      "sha256": "d417ac0f91f1a2e31d628f23d3082f8bcf8b67d5444694654d142128ce6002c6",
+      "gitBlob": "233b7fee2995a09637e9f16ad076cc30a21908a3",
+      "bytes": 41452
+    },
+    {
+      "file": "assets/arirang-images/leaves/fruit--apple-pear-retail-v2.webp",
+      "sourcePath": "public/assets/market/leaves/fruit--apple-pear-retail-v2.webp",
+      "sha256": "71728bffef5c70ac4004d2e987637485964777edd69fb53823ac93c302f232d7",
+      "gitBlob": "44f34628750e89e96ad5b85849d99de6740c5998",
+      "bytes": 33778
+    },
+    {
+      "file": "assets/arirang-images/leaves/fruit--citrus-retail-v2.webp",
+      "sourcePath": "public/assets/market/leaves/fruit--citrus-retail-v2.webp",
+      "sha256": "1fb14964992ee056b390a6f69b5c9a17f649884d57961dec855e0e9f0e08f77e",
+      "gitBlob": "8d7bcd0540cc5b857f7be6fbb04640f01bbaecff",
+      "bytes": 23240
+    },
+    {
+      "file": "assets/arirang-images/leaves/vegetables--salad-retail-v2.webp",
+      "sourcePath": "public/assets/market/leaves/vegetables--salad-retail-v2.webp",
+      "sha256": "3159f9f2c42f6a1c444f8201cd3f9fefd0014e9a8092702471ebd2d5951f7a97",
+      "gitBlob": "91ca2e2c83e197d642da44c4f1bab0846c2e7bec",
+      "bytes": 38478
+    },
+    {
+      "file": "assets/arirang-images/leaves/vegetables--root-retail-v2.webp",
+      "sourcePath": "public/assets/market/leaves/vegetables--root-retail-v2.webp",
+      "sha256": "a40b2d529f1905174f08aebe16d8748d03a3f2ad858b837d4b7a6c90b4f2a2ca",
+      "gitBlob": "f9dabe4af32cb8c6a59aee4931a98463f528e716",
+      "bytes": 17974
+    },
+    {
+      "file": "assets/arirang-images/leaves/meat--pork-retail-v2.webp",
+      "sourcePath": "public/assets/market/leaves/meat--pork-retail-v2.webp",
+      "sha256": "687c6ecc1dc4fd6a78dbcec0bc4f7ca89f5fad776fd8e8de092b1049d90be38d",
+      "gitBlob": "85f0a2ee8f112c5a4c0b034aa3b4ab6c28bac0d3",
+      "bytes": 32878
+    },
+    {
+      "file": "assets/arirang-images/leaves/meat--eggs-retail-v2.webp",
+      "sourcePath": "public/assets/market/leaves/meat--eggs-retail-v2.webp",
+      "sha256": "6c0a8a4f35ae206e107f8ec3b6511512073e86ea2a99470d7335dce83446c46f",
+      "gitBlob": "2de78a239b526e33ed6b877910ed553950da13fb",
+      "bytes": 14968
+    },
+    {
+      "file": "assets/arirang-images/leaves/seafood--fish-retail-v2.webp",
+      "sourcePath": "public/assets/market/leaves/seafood--fish-retail-v2.webp",
+      "sha256": "2e5647917b4325f5f9c74a6937320d6b76920e6f4d75962b14622cc046a3a8e6",
+      "gitBlob": "2c36d406ca7178f374ef53c0984839d24c96bdb4",
+      "bytes": 33060
+    },
+    {
+      "file": "assets/arirang-images/leaves/dairy--milk-retail-v2.webp",
+      "sourcePath": "public/assets/market/leaves/dairy--milk-retail-v2.webp",
+      "sha256": "7f50ce43b3039727cf8aa5b5d0d79e2de07a5bd9f5779716413a94cfcda2ab2d",
+      "gitBlob": "881bdc35a5dab3c3b3f75c08215d593cfaa5b6c2",
+      "bytes": 3266
+    },
+    {
+      "file": "assets/arirang-images/leaves/dairy--yogurt-retail-v2.webp",
+      "sourcePath": "public/assets/market/leaves/dairy--yogurt-retail-v2.webp",
+      "sha256": "a62445d75c76cc79fbed6b23eee309e4cb9932338201be98de686f4c92496f26",
+      "gitBlob": "b4e1d41c82036463c84f20743354b17f4172a3b7",
+      "bytes": 4676
+    },
+    {
+      "file": "assets/arirang-images/leaves/grains--rice-retail-v2.webp",
+      "sourcePath": "public/assets/market/leaves/grains--rice-retail-v2.webp",
+      "sha256": "f9371466bebfc264b19d956800b4d31de7b6baa745564f8070b11662c50bb61b",
+      "gitBlob": "0e534f1fe79881a9a93a72c952f0b7f5ae8dc128",
+      "bytes": 11046
+    },
+    {
+      "file": "assets/arirang-images/leaves/ready-meals--meal-kit-retail-v2.webp",
+      "sourcePath": "public/assets/market/leaves/ready-meals--meal-kit-retail-v2.webp",
+      "sha256": "237c4835b348bb6d008314228d591bc23a531a1a64f2548aa1b221a7209363a8",
+      "gitBlob": "4e5485536323f5b0cf78469574c9901c7552c986",
+      "bytes": 21350
+    },
+    {
+      "file": "assets/arirang-images/leaves/frozen--dumplings-retail-v2.webp",
+      "sourcePath": "public/assets/market/leaves/frozen--dumplings-retail-v2.webp",
+      "sha256": "faa880681bf9fce7071d3d03f44a1ff530c64e2e36f4f3ac4d87e4bd6af0f416",
+      "gitBlob": "d1d86f6a19636cb2d6439a02c3ea5381cd7c9138",
+      "bytes": 16924
+    },
+    {
+      "file": "assets/arirang-images/leaves/snacks--cookies-retail-v2.webp",
+      "sourcePath": "public/assets/market/leaves/snacks--cookies-retail-v2.webp",
+      "sha256": "c22bd9c193b6b51d50bf28d3c62adc51a95663c76b7a059582de691f6ee17dc0",
+      "gitBlob": "2833af7ca845765f1444042464c7a3d72b620a2c",
+      "bytes": 23420
+    },
+    {
+      "file": "assets/arirang-images/leaves/snacks--nuts-retail-v2.webp",
+      "sourcePath": "public/assets/market/leaves/snacks--nuts-retail-v2.webp",
+      "sha256": "761313c9d2b779903f15e2a76d7dda47e7a3270a1270aba4417a453aa54917f7",
+      "gitBlob": "8e6439e08c0bbe9371f691952301a5f9c3851de2",
+      "bytes": 23436
+    },
+    {
+      "file": "assets/arirang-images/leaves/drinks--water-retail-v2.webp",
+      "sourcePath": "public/assets/market/leaves/drinks--water-retail-v2.webp",
+      "sha256": "2fa778e39a2b5007e3dbb78409c5ddf651b8d8460ad970745bf4815d7e2c2389",
+      "gitBlob": "3dfbc3bb84c632e15e60aa325a1363ad7ea1600c",
+      "bytes": 11512
+    },
+    {
+      "file": "assets/arirang-images/leaves/drinks--juice-retail-v2.webp",
+      "sourcePath": "public/assets/market/leaves/drinks--juice-retail-v2.webp",
+      "sha256": "a9af0f3c89e20919527af87338edaf8002f0366a6f61772d526e296ebd4272ff",
+      "gitBlob": "a3a630b6c5e8e031689969cc3fbce051bbafd1f4",
+      "bytes": 7822
+    },
+    {
+      "file": "assets/arirang-images/leaves/bakery--bread-retail-v2.webp",
+      "sourcePath": "public/assets/market/leaves/bakery--bread-retail-v2.webp",
+      "sha256": "92fb658de38d45b2c13fc866c8cf19c124651e397dfdaa24dc17b543d96d7e60",
+      "gitBlob": "d60bc489970026c3ec200c2f478a34d782fa8048",
+      "bytes": 18670
+    },
+    {
+      "file": "assets/arirang-images/leaves/condiments--sauce-retail-v2.webp",
+      "sourcePath": "public/assets/market/leaves/condiments--sauce-retail-v2.webp",
+      "sha256": "abbc2546ea519f1ff61b4491163d1b8f213f8f0c7c8b02c3ceccde7025330223",
+      "gitBlob": "4da32e1921a9e8feb3a8996d098f293741dd1dbd",
+      "bytes": 8780
+    }
+  ]
+}

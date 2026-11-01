@@ -1,8 +1,8 @@
+import { foodImage, foodCategoryImage } from './arirang-images.mjs';
 import { photo, categoryPhotos } from './photo-library.mjs';
 import { taxonomy, categoryURL } from './taxonomy.mjs';
 import { taxonomyPicker } from './taxonomy-ui.js';
 import { garmentArt } from './menswear-art.mjs';
-import { foodArt } from './arirang-art.mjs';
 const svg=body=>`<svg viewBox="0 0 240 230" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><ellipse cx="120" cy="190" rx="75" ry="9" fill="#263b50" opacity=".06"/>${body}</svg>`;
 const art={
  footwear:svg('<path d="m61 101 42 11 23-25 21 42 47 18q17 8 10 30H43q-8-28 18-76" fill="#c8bdab"/><path d="M43 169h161v13H43Z" fill="#faf7ef"/><path d="m115 120 20-5m-14 17 21-5m-14 16 21-5" stroke="#f9f6ed" stroke-width="5"/>'),
@@ -25,8 +25,8 @@ const productArt={
  'p-display-microwave':svg('<rect x="35" y="68" width="170" height="112" rx="12" fill="#aab6b8"/><rect x="45" y="80" width="116" height="85" rx="5" fill="#425c6a"/><path d="m59 140 39-40 46 26" fill="none" stroke="#739096" stroke-width="6"/><rect x="174" y="84" width="20" height="16" rx="2" fill="#435d63"/><circle cx="184" cy="130" r="10" fill="#e3e7e0"/><path d="M55 180v9m130-9v9" stroke="#607a84" stroke-width="7"/>')
 };
 const clothing=(kind='아우터',swatch='#465669',id='')=>garmentArt({kind,swatch,id});
-export function categoryArt(id){if(categoryPhotos[id])return photo(categoryPhotos[id]);if(id==='menswear')return clothing('셔츠','#8b9da5');if(id==='womenswear')return clothing('니트','#bcae9e');if(id==='food')return foodArt('apple');return art[id]||art.accessories;}
-export function catalogArt(p){if(productArt[p.id])return productArt[p.id];if(p.subcategory==='남성복')return garmentArt(p);if(p.id==='p-womenswear')return clothing('니트','#bcae9e');if(p.id==='p-sportswear')return clothing('아우터','#82958a');if(p.id==='p-hikingwear')return clothing('아우터','#b29570');if(p.id==='p-rice')return foodArt('rice');if(p.id==='p-apples')return foodArt('apple');const root=p.categoryPath?.[0]||({'신발류':'footwear','모자':'accessories','귀금속':'jewelry','가전제품':'appliances','공산품':p.id==='p-tools'?'tools':'kitchen'})[p.category];return categoryArt(root);}
+export function categoryArt(id){if(id==='food')return foodCategoryImage('fruit');if(categoryPhotos[id])return photo(categoryPhotos[id]);if(id==='menswear')return clothing('셔츠','#8b9da5');if(id==='womenswear')return clothing('니트','#bcae9e');if(id==='food')return foodCategoryImage('fruit');return art[id]||art.accessories;}
+export function catalogArt(p){if(productArt[p.id])return productArt[p.id];if(p.subcategory==='남성복')return garmentArt(p);if(p.id==='p-womenswear')return clothing('니트','#bcae9e');if(p.id==='p-sportswear')return clothing('아우터','#82958a');if(p.id==='p-hikingwear')return clothing('아우터','#b29570');if(p.id==='p-rice')return foodImage('rice');if(p.id==='p-apples')return foodImage('apple');const root=p.categoryPath?.[0]||({'신발류':'footwear','모자':'accessories','귀금속':'jewelry','가전제품':'appliances','공산품':p.id==='p-tools'?'tools':'kitchen'})[p.category];return categoryArt(root);}
 export function homeCategories(selection){if(selection.major)return taxonomyPicker(selection);return `<section class="home-categories" aria-labelledby="homeCategoryTitle"><div class="home-section-heading"><div><p class="home-kicker">EXPLORE THE MARKET</p><h2 id="homeCategoryTitle">어떤 상품을 찾으세요?</h2></div><span>품목을 선택하면 중·소분류로 이어집니다.</span></div><nav class="home-category-grid" aria-label="대분류 선택">${taxonomy.map(c=>`<a href="${categoryURL({major:c.id,middle:'',minor:''})}" data-taxonomy-level="major" data-taxonomy-id="${c.id}"><span>${categoryArt(c.id)}</span><strong>${c.name}</strong></a>`).join('')}</nav></section>`;}
 export function updateHomeNavigation(view,selection,q=''){
  const params=new URLSearchParams(location.hash.split('?')[1]||'');
@@ -39,4 +39,4 @@ export function initializeHome(){
  const mobile=matchMedia('(max-width:760px)'),form=document.getElementById('searchForm');
  const positionSearch=()=>{document.getElementById(mobile.matches?'homeSearchBar':'homeHeroSearchSlot').append(form);};positionSearch();mobile.addEventListener('change',positionSearch);
  document.querySelectorAll('#mobileNav [data-tab=home],#mobileNav [data-tab=categories],header .brand').forEach(a=>a.addEventListener('click',()=>{document.getElementById('query').value='';if(location.hash===a.getAttribute('href'))window.dispatchEvent(new HashChangeEvent('hashchange'));}));
-document.getElementById('homeHeroArt').innerHTML=`${photo('fashion',true)}<span class="photo-editorial-label">CURATED EVERYDAY<br><strong>일상에 좋은 발견</strong><small>카테고리 연출 이미지</small></span>`;document.getElementById('homeMenswearArt').innerHTML=photo('knit');document.getElementById('homeFoodArt').innerHTML=photo('food');}
+document.getElementById('homeHeroArt').innerHTML=`${photo('fashion',true)}<span class="photo-editorial-label">CURATED EVERYDAY<br><strong>일상에 좋은 발견</strong><small>카테고리 연출 이미지</small></span>`;document.getElementById('homeMenswearArt').innerHTML=photo('knit');document.getElementById('homeFoodArt').innerHTML=foodCategoryImage('fruit');}
