@@ -73,11 +73,19 @@ export const taxonomy=[
   ['bedding','침구',[['blankets','이불'],['pillows','베개'],['sheets','침구 커버']]]
  ]),
  major('food','식품·농산물',[
-  ['grains','쌀·잡곡',[['rice','쌀'],['mixed','잡곡'],['beans','콩']]],
   ['fruit','과일',[['apples','사과'],['pears','배'],['citrus','감귤·오렌지'],['seasonal','제철 과일']]],
   ['vegetables','채소',[['leafy','잎채소'],['roots','뿌리채소'],['mushrooms','버섯']]],
-  ['fresh','축산·수산',[['meat','육류'],['fish','생선'],['seafood','해산물']]],
-  ['processed','가공식품',[['snacks','과자·간식'],['drinks','음료'],['ready-meals','간편식'],['condiments','조미료·소스']]]
+  ['meat','정육·계란',[['pork','돼지고기'],['beef','소고기'],['chicken','닭고기'],['eggs','계란']]],
+  ['seafood','수산',[['fish','생선'],['shellfish','조개·갑각류'],['dried','건어물·김']]],
+  ['dairy','유제품',[['milk','우유'],['yogurt','요거트'],['cheese','치즈']]],
+  ['grains','쌀·잡곡',[['rice','쌀'],['mixed','잡곡'],['beans','콩']]],
+  ['ready-meals','간편식·밀키트',[['meal-kits','밀키트'],['rice-meals','즉석밥·도시락'],['soups','국·탕·찌개']]],
+  ['frozen','냉동식품',[['dumplings','만두'],['fried','튀김·너겟'],['desserts','아이스크림']]],
+  ['snacks','과자·간식',[['chips','과자'],['nuts','견과류'],['chocolate','초콜릿']]],
+  ['drinks','생수·음료',[['water','생수'],['juice','주스'],['coffee-tea','커피·차']]],
+  ['bakery','베이커리',[['bread','식빵·빵'],['desserts','케이크·디저트']]],
+  ['condiments','양념·소스',[['sauces','소스·장류'],['oils','식용유·오일'],['spices','조미료']]],
+  ['processed','기타 가공식품',[['snacks','가공 간식'],['drinks','가공 음료'],['ready-meals','가공 간편식'],['condiments','가공 조미료']]]
  ]),
  major('tools','공구·산업용품',[
   ['hand','수공구',[['sets','공구 세트'],['drivers','드라이버'],['wrenches','렌치'],['pliers','플라이어']]],

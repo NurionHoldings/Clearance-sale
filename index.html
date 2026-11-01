@@ -151,6 +151,7 @@
   <link rel="stylesheet" href="assets/responsive.css">
   <link rel="stylesheet" href="assets/menswear.css">
   <link rel="stylesheet" href="assets/taxonomy.css">
+  <link rel="stylesheet" href="assets/arirang.css">
 </head>
 <body>
   <dialog id="dapandaEntry" class="dapanda-entry" aria-label="다판다 브랜드 소개">
@@ -172,6 +173,7 @@
     </div>
     <nav aria-label="주요 메뉴">
       <button type="button" data-view="market">상품보기</button>
+      <button type="button" data-view="arirang">아리랑 마켓</button>
       <button type="button" data-view="seller">입점신청</button>
       <button type="button" data-view="manage">데모 관리 시뮬</button>
       <button type="button" id="themeBtn" aria-label="화면 테마 전환" aria-pressed="false">◐ 화면모드</button>
@@ -190,11 +192,13 @@
     <section id="market">
       <h2>오늘의 알뜰 상품</h2>
       <a class="collection-entry" href="#/menswear"><strong>남성복</strong><span>바지 · 슈트 · 운동복 · 등산복 · 아우터 <span aria-hidden="true">↗</span></span></a>
+      <a class="ar-entry" href="#/arirang"><strong>아리랑 마켓</strong><span>신선한 식재료 · 간편한 한 끼 · 매일의 장보기 ↗</span></a>
       <div id="categories"></div>
       <nav class="taxonomy-shortcuts" aria-label="인기 품목 바로가기"><span>바로가기</span><a href="#/market?major=footwear&middle=sneakers">운동화</a><a href="#/market?major=footwear&middle=dress-shoes">구두</a><a href="#/menswear/clothing?major=menswear&middle=pants">남성 바지</a><a href="#/menswear/clothing?major=menswear&middle=suits">남성 슈트</a></nav>
       <p id="resultStatus" class="muted" role="status"></p>
       <div id="products" class="grid"></div>
     </section>
+    <section id="arirang" class="hidden" aria-label="아리랑 마켓 식품 장보기"></section>
     <section id="menswear" class="hidden" aria-label="남성복 기획관"></section>
     <section id="menswearDetail" class="hidden" aria-label="남성복 상품 상세"></section>
     <section id="seller" class="hidden">
