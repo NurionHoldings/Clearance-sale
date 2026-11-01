@@ -14,6 +14,8 @@ jobs:
         run: node scripts/production-gate.mjs
       - name: Verify menswear filters and inventory invariants
         run: node --test tests/menswear-data.test.mjs tests/taxonomy.test.mjs tests/capacity.test.mjs tests/arirang.test.mjs tests/navigation.test.mjs
+      - name: Validate Arkaon lessons and image provenance
+        run: node scripts/arkaon-learning-check.mjs
       - name: Check browser module syntax
         run: |
           node --check js/app.js
