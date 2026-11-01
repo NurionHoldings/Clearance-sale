@@ -3,3 +3,5 @@
 @media(max-width:400px){.taxonomy-picker-heading{padding:14px;gap:8px}.taxonomy-picker-heading>span{font-size:10px}.taxonomy-picker-heading>a{margin-left:0}.taxonomy-column{padding:14px}.taxonomy-options{gap:5px}.taxonomy-options>a{font-size:11px;padding:7px 4px}.taxonomy-middle-grid{grid-template-columns:1fr}.taxonomy-current{padding:13px 14px}}
 .taxonomy-levels{grid-template-columns:repeat(3,minmax(0,1fr))}.taxonomy-levels li:nth-child(2){border-right:1px solid #e3e8ed}.taxonomy-levels li:nth-child(-n+2){border-bottom:0}
 @media(max-width:500px){.taxonomy-levels li{padding:12px 9px}.taxonomy-levels strong{font-size:12px}.taxonomy-levels li>span{font-size:9px}}
+
+.draft-list{list-style:none;padding:0}.draft-list li{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #bbc5d0}.draft-list span{min-width:0;overflow-wrap:anywhere}.draft-list button{flex-shrink:0;min-height:44px}

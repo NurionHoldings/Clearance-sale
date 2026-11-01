@@ -200,7 +200,8 @@
     <section id="seller" class="hidden">
       <h2>입점업체 신청 체험</h2>
       <div class="panel">
-        <p class="muted">실제 접수 전 단계입니다. 업체명은 가명으로 입력하세요. 이 브라우저에 최대 20건까지 저장됩니다.</p>
+        <p class="muted">실제 접수 전 단계입니다. 업체명은 가명으로 입력하세요. 전체 입점 정원은 100개, 업체별 상품 등록 한도는 50개입니다. 심사 대기 업체는 정원을 미리 사용하며 반려 시 반환됩니다.</p>
+        <p data-vendor-capacity class="notice" role="status"></p>
         <form id="sellerForm">
           <div class="fields">
             <label>업체명 (체험용)<input name="name" maxlength="60" required placeholder="예: 샘플유통"></label>
@@ -223,6 +224,7 @@
       <div class="notice">인증·권한 검증이 없는 로컬 시연 화면입니다. 여기서 승인해도 실제 입점이나 상품 공개가 되지 않으며, 이 데모의 상품 목록에도 반영되지 않습니다.</div>
       <div class="panel">
         <h3>입점신청 현황 (이 브라우저)</h3>
+        <p data-vendor-capacity class="notice" role="status"></p><p id="manageStatus" role="status"></p>
         <div id="applications"></div>
         <button type="button" id="clearDemo">체험 데이터 초기화</button>
       </div>
@@ -230,6 +232,16 @@
         <h3>판매 방식 구분</h3>
         <p>플랫폼 직접판매: 운영사가 법적 판매자 · 입점업체 중개판매: 제휴 판매자가 법적 판매자</p>
         <p class="muted">이후 주문이 생기면 법적 판매자·채널·세금계산서 주체를 주문 행에 고정합니다. 이 화면은 주문을 만들지 않습니다.</p>
+      </div>
+      <div class="panel">
+        <h3>업체별 상품 등록 체험</h3>
+        <p class="muted">승인된 체험 업체마다 상품 초안을 최대 50개 저장합니다. 옵션·재고 수량은 상품 개수에 포함하지 않습니다. 초안은 공개 상품 목록에 반영되지 않습니다.</p>
+        <form id="draftForm">
+          <div class="fields"><label>승인된 체험 업체<select name="sellerId" required></select></label><label>상품명<input name="title" maxlength="80" required></label></div>
+          <div class="fields"><label>대분류<select name="major" required></select></label><label>중분류<select name="middle" required></select></label><label>소분류<select name="minor" required></select></label></div>
+          <div class="fields"><label>가격 (원)<input name="price" type="number" min="1" max="9007199254740991" step="1" required></label><label>재고 수량<input name="quantity" type="number" min="0" max="9007199254740991" step="1" required></label></div>
+          <p id="draftUsage" role="status"></p><button class="primary" type="submit">상품 초안 저장 (체험)</button><p id="draftStatus" role="status"></p>
+        </form><ul id="draftList" class="draft-list"></ul>
       </div>
       <div class="panel">
         <h3>여정 설계 (실행 아님)</h3>

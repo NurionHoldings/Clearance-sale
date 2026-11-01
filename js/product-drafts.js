@@ -1,0 +1,16 @@
+import { MAX_PRODUCTS_PER_VENDOR, vendorProductCount, draftError } from './capacity.mjs';
+import { taxonomy, categorySelection } from './taxonomy.mjs';
+const KEY='dapanda-product-drafts-v1';
+export function productDraftManager(getVendors) {
+ const form=document.getElementById('draftForm'), seller=form.elements.sellerId, major=form.elements.major,middle=form.elements.middle,minor=form.elements.minor;
+ const status=document.getElementById('draftStatus'),list=document.getElementById('draftList'),usage=document.getElementById('draftUsage');
+ const read=()=>{try{const rows=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(rows)?rows.filter(p=>p&&typeof p.id==='string'&&typeof p.sellerId==='string'):[]}catch{return []}};
+ const options=(el,rows)=>{el.replaceChildren();for(const row of rows){const o=document.createElement('option');o.value=row.id;o.textContent=row.name;el.append(o)}};
+ function categories(level){if(level==='major')options(middle,taxonomy.find(x=>x.id===major.value)?.children||[]);options(minor,taxonomy.find(x=>x.id===major.value)?.children.find(x=>x.id===middle.value)?.children||[]);}
+ options(major,taxonomy);categories('major');major.addEventListener('change',()=>categories('major'));middle.addEventListener('change',()=>categories('middle'));
+ function refresh(){const previous=seller.value;options(seller,getVendors());if([...seller.options].some(o=>o.value===previous))seller.value=previous;render();}
+ function render(){const rows=read(),count=vendorProductCount(rows,seller.value);usage.textContent=seller.value?`이 업체 등록 ${count} / ${MAX_PRODUCTS_PER_VENDOR}개 · 남은 등록 ${Math.max(0,MAX_PRODUCTS_PER_VENDOR-count)}개`:'입점 신청을 승인한 뒤 상품 등록을 체험할 수 있습니다.';form.querySelector('[type=submit]').disabled=!seller.value||count>=MAX_PRODUCTS_PER_VENDOR;list.replaceChildren();for(const p of rows.filter(p=>p.sellerId===seller.value)){const li=document.createElement('li'),text=document.createElement('span'),button=document.createElement('button');text.textContent=`${p.title} · ${Number(p.price).toLocaleString('ko-KR')}원 · ${p.quantity}개 (초안)`;button.type='button';button.textContent='삭제';button.setAttribute('aria-label',p.title+' 초안 삭제');button.onclick=()=>{try{localStorage.setItem(KEY,JSON.stringify(read().filter(x=>x.id!==p.id)));render();status.textContent='초안을 삭제했습니다. 등록 가능 수가 복구됩니다.';}catch{status.textContent='브라우저 저장에 실패했습니다.'}};li.append(text,button);list.append(li);}}
+ seller.addEventListener('change',render);
+ form.addEventListener('submit',e=>{e.preventDefault();const rows=read(),data=new FormData(form),draft={id:crypto.randomUUID(),sellerId:seller.value,title:String(data.get('title')||'').trim(),price:Number(data.get('price')),quantity:Number(data.get('quantity')),categoryPath:[major.value,middle.value,minor.value],status:'draft',executable:false};const error=draftError(getVendors(),rows,draft);if(error){status.textContent=error;return;}if(!categorySelection(new URLSearchParams({major:major.value,middle:middle.value,minor:minor.value})).minor){status.textContent='소분류까지 선택하세요.';return;}try{localStorage.setItem(KEY,JSON.stringify([...rows,draft]));form.elements.title.value='';render();status.textContent='상품 초안을 이 브라우저에 저장했습니다. 실제 상품 공개는 이루어지지 않습니다.';}catch{status.textContent='브라우저 저장에 실패했습니다. 저장 용량을 확인하세요.'}});
+ return {refresh,clear(){localStorage.removeItem(KEY);refresh();}};
+}
