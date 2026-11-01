@@ -13,7 +13,7 @@ jobs:
       - name: Block live-trade UI and invalid catalog
         run: node scripts/production-gate.mjs
       - name: Verify menswear filters and inventory invariants
-        run: node --test tests/menswear-data.test.mjs tests/taxonomy.test.mjs tests/capacity.test.mjs tests/arirang.test.mjs
+        run: node --test tests/menswear-data.test.mjs tests/taxonomy.test.mjs tests/capacity.test.mjs tests/arirang.test.mjs tests/navigation.test.mjs
       - name: Check browser module syntax
         run: |
           node --check js/app.js
@@ -21,6 +21,7 @@ jobs:
           node --check js/menswear-page.js
           node --check js/arirang-page.js
           node --check js/home-ui.js
+          node --check js/navigation.mjs
       - name: Reject production release flag
         env:
           CLEARANCE_PRODUCTION_RELEASE: '1'

@@ -1,3 +1,4 @@
+import { productDetailURL, marketReturnURL } from './navigation.mjs';
 import { homeCategories, catalogArt, initializeHome, updateHomeNavigation } from './home-ui.js';
 import { renderArirang } from './arirang-page.js';
 import { MAX_VENDORS, MAX_PRODUCTS_PER_VENDOR, vendorSlots, applicationError } from './capacity.mjs';
@@ -21,12 +22,14 @@ const APP_KEY = 'clearance-demo-apps';
 const THEME_KEY = 'clearance-theme';
 const VIEWS = ['market', 'seller', 'manage', 'menswear', 'menswearDetail', 'arirang'];
 let previousView = null;
+let lastAppliedHash = null;
 let previousMenswearProduct = null;
 let previousMenswearPath = null;
 const STATUS_LABEL = { pending: '검토 대기(체험)', approved: '승인(체험)', rejected: '반려(체험)' };
 
 let category = {major:'',middle:'',minor:''};
 let lastFocus = null;
+let lastProductId = null;
 const dialog = document.getElementById('productDialog');
 const themeBtn = document.getElementById('themeBtn');
 const themeColor = document.getElementById('themeColor');
@@ -124,12 +127,16 @@ function renderProducts() {
   const status = document.getElementById('resultStatus');
   root.replaceChildren();
   status.textContent = items.length ? items.length + '건 표시 (예시 상품, 거래 없음)' : (q ? '검색 결과가 없습니다.' : '선택한 분류에 등록된 예시 상품이 없습니다.');
+  if(!items.length){const empty=document.createElement('div');empty.className='home-empty-actions';const reset=document.createElement('button');reset.type='button';reset.textContent='전체 상품 다시 보기';reset.onclick=()=>{document.getElementById('query').value='';go('market');};const seller=document.createElement('a');seller.href='#/seller';seller.textContent='입점 신청 안내';empty.append(reset,seller);root.append(empty);}
   for (const p of items) {
     const article = document.createElement('article');
     article.className = 'card';
-    const art = document.createElement('div');
+    const art = document.createElement('a');
     art.className = 'art';
-    art.setAttribute('aria-hidden', 'true');
+    art.href=productDetailURL(p.id,category,document.getElementById('query').value);
+    art.setAttribute('aria-label',p.title+' 상세 보기');
+    art.dataset.productId=p.id;
+    art.addEventListener('click',()=>{lastFocus=art;lastProductId=p.id;});
     art.innerHTML = catalogArt(p);
     const sampleLabel=document.createElement('span');sampleLabel.className='home-sample-label';sampleLabel.textContent='예시 이미지';art.append(sampleLabel);
     const detail = document.createElement('div');
@@ -139,7 +146,7 @@ function renderProducts() {
     const ids=productCategoryPath(p);
     tag.textContent = categoryTrail({major:ids[0],middle:ids[1],minor:ids[2]}).map(c=>c.name).join(' · ');
     const h = document.createElement('h3');
-    h.textContent = p.title;
+    const titleLink=document.createElement('a');titleLink.href=art.href;titleLink.textContent=p.title;titleLink.addEventListener('click',()=>{lastFocus=titleLink;lastProductId=p.id;});h.append(titleLink);
     const seller = document.createElement('p');
     seller.className = 'muted';
     seller.textContent = '판매자 · ' + p.sellerOfRecord;
@@ -170,10 +177,10 @@ function renderProducts() {
     btn.type = 'button';
     btn.textContent = p.subcategory === '남성복' ? '남성복 입점업체 보기' : productCategoryPath(p)[0]==='food'?'아리랑 마켓 보기':'상세 보기';
     btn.addEventListener('click', () => {
-      lastFocus = btn;
+      lastFocus = btn;lastProductId=p.id;
       if (p.subcategory === '남성복') location.hash = '#/menswear/clothing';
       else if(productCategoryPath(p)[0]==='food')location.hash='#/arirang?middle='+productCategoryPath(p)[1];
-      else go('market', p.id);
+      else location.hash=productDetailURL(p.id,category,document.getElementById('query').value);
     });
     detail.append(row, btn);
     article.append(art, detail);
@@ -217,6 +224,7 @@ function fillDialog(p) {
   document.getElementById('productSnapshot').textContent = JSON.stringify(snap, null, 2);
 }
 function applyRoute() {
+  lastAppliedHash=location.hash;
   const route = parseHash();
   showView(route.view);
   if(route.view==='arirang'){
@@ -239,7 +247,9 @@ function applyRoute() {
     previousView = route.view; previousMenswearProduct = route.menswearId; previousMenswearPath = pagePath;
     return;
   }
-  category = categorySelection(new URLSearchParams(location.hash.split('?')[1] || ''));
+  const routeParams=new URLSearchParams(location.hash.split('?')[1]||'');
+  if(route.view==='market')document.getElementById('query').value=(routeParams.get('q')||'').slice(0,80);
+  category = categorySelection(routeParams);
   render();
   if(route.view==='market'){
     const action=new URLSearchParams(location.hash.split('?')[1]||'');
@@ -321,9 +331,10 @@ themeBtn.addEventListener('click', () => {
 });
 document.getElementById('searchForm').addEventListener('submit', (e) => {
   e.preventDefault();
-  const next=categoryURL(category);
-  if(location.hash!==next)location.hash=next;
-  render();
+  const searchParams=new URLSearchParams();const text=document.getElementById('query').value.trim();if(text)searchParams.set('q',text.slice(0,80));
+  const next=categoryURL(category,'#/market',searchParams);
+  if(location.hash!==next)history.pushState(null,'',next);
+  applyRoute();
   document.getElementById('products').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});
 });
 document.getElementById('query').addEventListener('input', () => {
@@ -357,12 +368,17 @@ document.getElementById('clearDemo').addEventListener('click', () => {
   localStorage.removeItem(APP_KEY);
   renderApps();
 });
-document.getElementById('closeProduct').addEventListener('click', () => dialog.close());
+function returnFromProduct(){
+ if(parseHash().productId){history.replaceState(null,'',marketReturnURL(new URLSearchParams(location.hash.split('?')[1]||'')));applyRoute();}
+ else if(dialog.open)dialog.close();
+}
+document.getElementById('closeProduct').addEventListener('click',returnFromProduct);
+dialog.addEventListener('cancel',e=>{e.preventDefault();returnFromProduct();});
 dialog.addEventListener('close', () => {
-  if (parseHash().productId) location.hash = '#/market';
-  if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+  if(parseHash().productId)returnFromProduct();
+  requestAnimationFrame(()=>{const active=document.activeElement;if(active&&active!==document.body&&active!==dialog&&active.id!=='closeProduct')return;const target=lastFocus?.isConnected?lastFocus:lastProductId?document.querySelector('#products [data-product-id="'+CSS.escape(lastProductId)+'"]'):null;target?.focus({preventScroll:true});});
 });
-window.addEventListener('hashchange', applyRoute);
+window.addEventListener('hashchange',event=>{if(event.newURL&&lastAppliedHash===location.hash)return;applyRoute();});
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
   if (localStorage.getItem(THEME_KEY)) return;
   applyTheme(e.matches ? 'dark' : 'light');
