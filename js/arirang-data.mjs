@@ -13,12 +13,12 @@ export const foodProducts=[
  ['ar-rice','우리 쌀','1포 · 2kg','grains','rice',12900,8,'ambient','rice','국내산','매일의 기본'],
  ['ar-mealkit','따뜻한 한 끼 밀키트','1팩 · 2인분','ready-meals','meal-kits',9900,7,'chilled','meal','상품 등록 시 확인','간편한 한 끼'],
  ['ar-dumpling','든든한 냉동만두','1봉 · 500g','frozen','dumplings',5900,9,'frozen','dumpling','상품 등록 시 확인','간편한 한 끼'],
- ['ar-chips','바삭한 감자 스낵','1봉 · 60g','snacks','chips',1900,20,'ambient','chips','상품 등록 시 확인','잠깐의 달콤함'],
+ ['ar-chips','바삭한 초코칩 쿠키','1봉 · 60g','snacks','chips',1900,20,'ambient','chips','상품 등록 시 확인','잠깐의 달콤함'],
  ['ar-nuts','하루 견과','1봉 · 200g','snacks','nuts',6900,10,'ambient','nuts','상품 등록 시 확인','잠깐의 달콤함'],
  ['ar-water','가볍게 챙기는 생수','500mL × 6병','drinks','water',2900,15,'ambient','water','상품 등록 시 확인','매일의 기본'],
  ['ar-juice','상큼한 오렌지 주스','1병 · 1L','drinks','juice',4900,10,'chilled','juice','상품 등록 시 확인','잠깐의 달콤함'],
  ['ar-bread','부드러운 식빵','1봉 · 400g','bakery','bread',3900,6,'ambient','bread','상품 등록 시 확인','매일의 기본'],
- ['ar-sauce','요리의 기본 간장','1병 · 500mL','condiments','sauces',4900,8,'ambient','sauce','상품 등록 시 확인','매일의 기본']
+ ['ar-sauce','요리의 기본 토마토소스','1병 · 500mL','condiments','sauces',4900,8,'ambient','sauce','상품 등록 시 확인','매일의 기본']
 ].map(([id,title,unit,middle,minor,price,stock,storage,art,origin,theme])=>({id,title,unit,categoryPath:['food',middle,minor],price,stock,storage,art,origin,theme,sellerId:'arirang-demo',sellerOfRecord:'아리랑 식품 예시 업체 (가상)',executable:false}));
 export const storageLabels={ambient:'실온',chilled:'냉장',frozen:'냉동'};
 export function foodState(params=new URLSearchParams()) {return {classification:categorySelection(new URLSearchParams({major:'food',middle:params.get('middle')||'',minor:params.get('minor')||''})),q:(params.get('q')||'').slice(0,80),sort:['price-asc','price-desc'].includes(params.get('sort'))?params.get('sort'):'recommend',stock:params.get('stock')==='1'};}

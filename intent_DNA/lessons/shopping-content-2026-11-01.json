@@ -13,27 +13,88 @@
       "id": "final-category-results",
       "problem": "소분류 선택 후 상품 전시 영역이 보이지 않거나 업체 안내에 머물렀음.",
       "rule": "최종 소분류에서 상품 목록을 표시하고 결과 영역으로 이동한다. 상세 복귀 시 분류를 보존하며 빈 결과에도 안내를 표시한다.",
-      "implementation": ["js/showcase.js", "js/app.js", "js/menswear-page.js"],
-      "evidence": [{"pr": "https://github.com/NurionHoldings/Clearance-sale/pull/15", "merge_commit": "733eeeb028f8f410a70ad0cfb7c3e39255679fa0"}],
-      "checks": ["tests/showcase-browser.cjs", "tests/menswear-browser.cjs"]
+      "implementation": [
+        "js/showcase.js",
+        "js/app.js",
+        "js/menswear-page.js"
+      ],
+      "evidence": [
+        {
+          "pr": "https://github.com/NurionHoldings/Clearance-sale/pull/15",
+          "merge_commit": "733eeeb028f8f410a70ad0cfb7c3e39255679fa0"
+        }
+      ],
+      "checks": [
+        "tests/showcase-browser.cjs",
+        "tests/menswear-browser.cjs"
+      ]
     },
     {
       "id": "licensed-editorial-imagery",
       "problem": "단순 일러스트 위주 전시는 상품 질감과 쇼핑몰 분위기를 전달하기 어려웠음.",
       "rule": "사용 허용이 확인된 이미지를 로컬 최적화 파일로 제공하고 출처를 남긴다. 연출 이미지를 실제 판매 상품 사진으로 설명하지 않는다.",
-      "implementation": ["js/photo-library.mjs", "assets/photography.css", "assets/photos/sources.json"],
-      "evidence": [{"pr": "https://github.com/NurionHoldings/Clearance-sale/pull/16", "merge_commit": "fa2ecb6d1a9cdc44bd0980aaa2772e0cb8583bee"}],
-      "checks": ["tests/home-browser.cjs", "tests/menswear-browser.cjs"],
-      "verified_viewports": [320, 390, 768, 1440, 1920]
+      "implementation": [
+        "js/photo-library.mjs",
+        "assets/photography.css",
+        "assets/photos/sources.json"
+      ],
+      "evidence": [
+        {
+          "pr": "https://github.com/NurionHoldings/Clearance-sale/pull/16",
+          "merge_commit": "fa2ecb6d1a9cdc44bd0980aaa2772e0cb8583bee"
+        }
+      ],
+      "checks": [
+        "tests/home-browser.cjs",
+        "tests/menswear-browser.cjs"
+      ],
+      "verified_viewports": [
+        320,
+        390,
+        768,
+        1440,
+        1920
+      ],
+      "followups": [
+        {
+          "date": "2026-11-02",
+          "sourceRepository": "NurionHoldings/thearirang",
+          "sourceCommit": "3ea4dd6b9f3ae294bad08987beba798fb7e0dfa6",
+          "rule": "사용자가 요청한 동일 플랫폼 자산은 원본 파일을 복사하고 해시·출처를 기록한다. AI 대표 이미지임을 고지하며 목록·상세·장바구니를 중앙 연결로 통일한다.",
+          "implementation": [
+            "js/arirang-images.mjs",
+            "assets/arirang-images/sources.json"
+          ],
+          "checks": [
+            "tests/arirang-images.test.mjs"
+          ]
+        }
+      ]
     },
     {
       "id": "editing-capability-truth",
       "problem": "파일을 수정해 배포할 수 있는 상태와 운영자가 화면에서 편집·공개할 수 있는 상태를 혼동할 위험이 있음.",
       "rule": "업체 편집·이미지 업로드·서버 저장·공개 반영을 각각 확인한다. 브라우저 초안 저장을 운영용 편집 완료로 보고하지 않는다.",
-      "implementation": ["docs/content-editing-audit.md", "js/product-drafts.js"],
-      "evidence": [{"pr": "https://github.com/NurionHoldings/Clearance-sale/pull/16", "merge_commit": "fa2ecb6d1a9cdc44bd0980aaa2772e0cb8583bee"}],
-      "checks": ["scripts/production-gate.mjs"],
-      "remaining_work": ["관리자·업체 인증과 수정 권한", "공유 DB와 이미지 저장소", "업체·상품 수정 화면", "이미지 업로드·검증·미리보기", "공개 반영·변경 이력·복구"]
+      "implementation": [
+        "docs/content-editing-audit.md",
+        "js/product-drafts.js"
+      ],
+      "evidence": [
+        {
+          "pr": "https://github.com/NurionHoldings/Clearance-sale/pull/16",
+          "merge_commit": "fa2ecb6d1a9cdc44bd0980aaa2772e0cb8583bee"
+        }
+      ],
+      "checks": [
+        "scripts/production-gate.mjs"
+      ],
+      "remaining_work": [
+        "관리자·업체 인증과 수정 권한",
+        "공유 DB와 이미지 저장소",
+        "업체·상품 수정 화면",
+        "이미지 업로드·검증·미리보기",
+        "공개 반영·변경 이력·복구"
+      ]
     }
   ],
   "assessment_limit": "위 근거는 해당 변경의 검증 기록이다. 독립 과제에서의 일반화 개선이나 Foundry 학습 성공은 검증하지 않았다."
