@@ -1,0 +1,20 @@
+const {chromium}=require('playwright');
+const fs=require('fs'),path=require('path'),http=require('http'),assert=require('node:assert/strict'),os=require('os');
+const projectRoot=path.resolve(__dirname,'..');
+(async()=>{
+ const server=http.createServer((req,res)=>{const name=decodeURIComponent(new URL(req.url,'http://local').pathname);const file=path.join(projectRoot,name==='/'?'index.html':name);res.setHeader('Content-Type',({'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.woff2':'font/woff2','.svg':'image/svg+xml','.png':'image/png'})[path.extname(file)]||'application/octet-stream');fs.createReadStream(file).on('error',()=>{res.statusCode=404;res.end()}).pipe(res)});await new Promise(r=>server.listen(0,'127.0.0.1',r));
+ const url='http://127.0.0.1:'+server.address().port;
+ const browser=await chromium.launch({headless:true,...(process.env.DAPANDA_CHROMIUM_EXECUTABLE?{executablePath:process.env.DAPANDA_CHROMIUM_EXECUTABLE}:{})});
+
+ const errors=[];
+ for(const width of [320,390,768,1440]){
+ const context=await browser.newContext({viewport:{width,height:940},reducedMotion:'reduce'}),page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
+ await page.goto(url+'/#/market');await page.locator('#products .art').first().waitFor();assert.equal(await page.locator('#products .art[href]').count(),23);assert.equal(await page.locator('#products h3 a[href]').count(),23);await page.locator('#products .art').first().click();await page.locator('#productDialog').waitFor({state:'visible'});await page.locator('#closeProduct').click();await page.waitForFunction(()=>location.hash==='#/market');
+ await page.goto(url+'/#/market?major=accessories&middle=hats&minor=baseball&q='+encodeURIComponent('야구'));await page.locator('#products h3 a').click();await page.locator('#productDialog').waitFor({state:'visible'});assert(page.url().includes('minor=baseball'));await page.reload();await page.locator('#productDialog').waitFor({state:'visible'});await page.locator('#closeProduct').click();await page.waitForFunction(()=>location.hash.startsWith('#/market?'));assert.equal(await page.locator('#products .card').count(),1);assert.equal(await page.locator('#query').inputValue(),'야구');assert((await page.locator('#categories .taxonomy-current').innerText()).includes('야구모자'));
+ await page.goto(url+'/#/market?major=watches');await page.getByRole('button',{name:'전체 상품 다시 보기'}).click();await page.waitForFunction(()=>document.querySelectorAll('#products .card').length===23);
+ await page.goto(url+'/#/menswear/clothing?major=menswear&middle=pants&minor=slacks');await page.locator('#menswear .mw-hierarchy a').first().waitFor();assert.equal(await page.locator('#menswear .mw-hierarchy a').count(),3);await page.locator('#menswear .mw-hierarchy a').nth(1).click();await page.waitForFunction(()=>document.querySelector('#menswear h1')?.textContent==='바지');await page.locator('#menswear [data-taxonomy-id=slacks]').click();await page.waitForFunction(()=>document.querySelector('#menswear h1')?.textContent==='슬랙스');await page.locator('#menswear .mw-hierarchy a').first().click();await page.waitForFunction(()=>document.querySelector('#menswear h1')?.textContent==='남성복');
+ await page.goto(url+'/#/menswear/clothing/vendor/top-gun?major=menswear&middle=pants&minor=slacks');await page.locator('.mw-empty-next').first().click();await page.waitForFunction(()=>document.querySelectorAll('#menswear .mw-card').length===1);assert(page.url().includes('/samples?'));assert.equal(await page.locator('#menswear .mw-card').count(),1);assert((await page.locator('#menswear .mw-demo-note').innerText()).includes('실제 상품이 아니며'));
+ assert.equal(await page.locator('.footer-domain[href^="https://"]').count(),2);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));console.log(width+': clickable images/titles, deep-link close and reload, empty-state recovery, hierarchy stages, vendor next actions and domain links PASS');await context.close();
+ }
+ assert.deepEqual(errors,[]);await browser.close();server.close();
+})().catch(e=>{console.error(e);process.exit(1)});
