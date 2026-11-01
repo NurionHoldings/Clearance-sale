@@ -42,3 +42,6 @@ window.addEventListener('pagehide',()=>{attempt++;pending=false;savePosition();a
 window.addEventListener('pageshow',event=>{if(event.persisted&&enabled)play();});
 window.addEventListener('storage',event=>{if(event.key===preferenceKey&&event.newValue==='false')stop(false);});
 if(enabled)play();else update('paused');
+
+// A deliberate switch to a live player takes audio focus without overwriting the user's saved preference.
+document.addEventListener('dapanda:media-focus',()=>{stop(false);status.textContent='방송 소리를 위해 배경음악을 정지했습니다.';});

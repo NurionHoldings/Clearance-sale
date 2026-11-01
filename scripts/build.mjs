@@ -2,7 +2,7 @@ import {createHash} from 'node:crypto';
 import {cp,mkdir,rm,readFile,writeFile} from 'node:fs/promises';
 import {build} from 'esbuild';
 await rm('dist',{recursive:true,force:true});await mkdir('dist',{recursive:true});
-for(const p of ['index.html','operations.html','robots.txt','assets','js'])await cp(p,'dist/'+p,{recursive:true});
+for(const p of ['index.html','operations.html','live.html','robots.txt','assets','js'])await cp(p,'dist/'+p,{recursive:true});
 const manifest=JSON.parse(await readFile('media-source/background-music/manifest.json','utf8'));
 const parts=[];
 for(const part of manifest.parts){
