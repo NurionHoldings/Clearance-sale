@@ -156,6 +156,7 @@
   <link rel="stylesheet" href="assets/arirang.css">
   <link rel="stylesheet" href="assets/home.css">
   <link rel="stylesheet" href="assets/photography.css">
+<link rel="stylesheet" href="assets/background-music.css">
 </head>
 <body>
   <dialog id="dapandaEntry" class="dapanda-entry" aria-label="다판다 브랜드 소개">
@@ -165,7 +166,7 @@
       <img src="assets/dapanda-logo-transparent.png" width="1774" height="887" alt="다판다 — 빠른 판매, 좋은 상품, 합리적인 가격 · www.다판다.shop" fetchpriority="high">
       <div class="intro-shine" aria-hidden="true"></div>
     </div>
-    <div class="intro-controls"><span role="status"></span><button id="introPlay" type="button" hidden>영상 재생</button><button id="introSkip" type="button">다판다로 바로가기</button></div>
+    <div class="intro-controls"><span role="status"></span><button id="introPlay" type="button" hidden>영상 재생</button><button type="button" data-music-toggle aria-pressed="false">♫ 음악 켜기</button><button id="introSkip" type="button">다판다로 바로가기</button></div>
   </dialog>
   <header id="top">
     <div class="brand-group">
@@ -315,7 +316,7 @@
     <div class="dialog-body">
       <div class="dialog-head">
         <h2 id="productTitle" style="margin:0"></h2>
-        <button type="button" id="closeProduct">닫기</button>
+        <button type="button" data-music-toggle aria-pressed="false">♫ 음악 켜기</button><button type="button" id="closeProduct">닫기</button>
       </div>
       <p id="productChannel" class="tag"></p>
       <nav class="page-return-nav" aria-label="이전 화면 및 홈 이동"><button type="button" id="productPrevious">← 이전</button><a href="#/market" data-page-home>홈가기</a></nav>
@@ -336,5 +337,8 @@
   <script type="module" src="js/app.js"></script>
   <script type="module" src="js/dapanda-intro.js"></script>
   <script type="module" src="js/dapanda-header.js"></script>
+<audio id="backgroundMusic" data-src="assets/audio/dapanda-background.mp3" loop preload="none" playsinline></audio>
+  <div class="music-control" aria-label="배경음악 제어"><button type="button" data-music-toggle aria-pressed="false" aria-label="배경음악 재생">♫ 음악 켜기</button><span id="musicStatus" class="music-status" role="status" aria-live="polite"></span></div>
+  <script type="module" src="js/background-music.js"></script>
 </body>
 </html>

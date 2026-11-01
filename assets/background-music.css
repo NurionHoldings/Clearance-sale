@@ -1,0 +1,7 @@
+.music-control{position:fixed;right:20px;bottom:20px;z-index:150;display:flex;align-items:center;border:1px solid #baa270;border-radius:24px;background:#162c39;box-shadow:0 5px 18px #12263624;max-width:calc(100vw - 32px)}
+.music-control button{font:600 12px/1.4 Pretendard,sans-serif;min-height:44px;padding:10px 17px;border:0;border-radius:24px;background:transparent;color:#fff;cursor:pointer;white-space:nowrap}
+.music-control button:hover{background:#254658}.music-control button:focus-visible,[data-music-toggle]:focus-visible{outline:3px solid #d5b977;outline-offset:3px}
+.music-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.intro-controls [data-music-toggle]{min-height:44px;font-size:12px}.dialog-head [data-music-toggle]{margin-left:auto;min-height:44px;font-size:12px}
+@media(max-width:760px){.music-control{right:12px;bottom:calc(90px + env(safe-area-inset-bottom,0px))}.music-control button{padding:10px 14px;font-size:11px}body[data-operations-page] .music-control{bottom:calc(16px + env(safe-area-inset-bottom,0px))}}
+@media print{.music-control,[data-music-toggle],#backgroundMusic{display:none!important}}
