@@ -1,2 +1,9 @@
 User-agent: *
+Allow: /$
+Allow: /index.html$
+Allow: /sitemap.xml$
+Allow: /assets/
+Allow: /js/
 Disallow: /
+
+Sitemap: https://xn--2j1ba128v.store/sitemap.xml
