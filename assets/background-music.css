@@ -5,3 +5,11 @@
 .intro-controls [data-music-toggle]{min-height:44px;font-size:12px}.dialog-head [data-music-toggle]{margin-left:auto;min-height:44px;font-size:12px}
 @media(max-width:760px){.music-control{right:12px;bottom:calc(90px + env(safe-area-inset-bottom,0px))}.music-control button{padding:10px 14px;font-size:11px}body[data-operations-page] .music-control{bottom:calc(16px + env(safe-area-inset-bottom,0px))}}
 @media print{.music-control,[data-music-toggle],#backgroundMusic{display:none!important}}
+
+/* Compact music launcher; playback controls open only on request. */
+.music-launcher{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;border:0;border-radius:50%;font-size:22px;cursor:pointer;background:#204f91;color:#fff;flex-shrink:0}
+[data-disclosure-ready][data-expanded=false]>:not(.music-launcher){display:none!important}
+[data-disclosure-ready][data-expanded=false]{padding:0;gap:0;border-radius:50%}
+.music-control .music-launcher{font-size:22px;padding:0;width:44px}
+.music-launcher:focus-visible{outline:3px solid #d5b977;outline-offset:3px}
+@media print{.music-launcher{display:none!important}}
