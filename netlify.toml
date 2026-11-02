@@ -9,7 +9,12 @@
   node_bundler = "esbuild"
 
 [[headers]]
-  for = "/*"
+  for = "/operations.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/live.html"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
 
