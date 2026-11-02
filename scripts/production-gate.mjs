@@ -20,9 +20,15 @@ const robots = read('robots.txt');
 const netlify = read('netlify.toml');
 const dna = read('intent_DNA/clearance-sale.seed.json');
 
-ok(/noindex/.test(html), 'index.html에 noindex가 없습니다.');
-ok(/Disallow:\s*\//.test(robots), 'robots.txt가 데모 전체를 막지 않습니다.');
-ok(/X-Robots-Tag/.test(netlify) && /noindex/.test(netlify), 'netlify.toml에 noindex 헤더가 없습니다.');
+ok(/<meta name="robots" content="index,follow">/.test(html), '공개 홈 검색 허용 설정이 없습니다.');
+ok(!/noindex/.test(html), '공개 홈이 검색 차단되어 있습니다.');
+ok(html.includes('https://xn--2j1ba128v.store/'), '대표 주소가 없습니다.');
+ok(read('sitemap.xml').includes('<loc>https://xn--2j1ba128v.store/</loc>'), '공개 홈 사이트맵이 없습니다.');
+ok(robots.includes('Allow: /$') && robots.includes('Disallow: /') && robots.includes('Sitemap: https://xn--2j1ba128v.store/sitemap.xml'), '공개 홈 허용·내부 경로 차단·사이트맵 설정이 필요합니다.');
+ok(!/for = "\/\*"[\s\S]*?X-Robots-Tag/.test(netlify), '전체 검색 차단 헤더가 남아 있습니다.');
+for (const path of ['operations.html', 'live.html']) {
+  ok(netlify.includes(`for = "/${path}"`) && /noindex/.test(read(path)), `${path}: 내부 화면 검색 차단이 필요합니다.`);
+}
 ok(/시제품|데모/.test(html) && /주문·결제/.test(html), '데모 고지 문구가 약합니다.');
 ok(/다판다/.test(html) && /다판다/.test(readme), '다판다 브랜드 표기가 없습니다.');
 ok(/www\.다판다\.store/.test(readme + html) && /www\.다판다\.shop/.test(readme + html), '등록 도메인 안내가 없습니다.');
